@@ -1,4 +1,5 @@
 import Header from "../components/Header";
+import BottomNav from "../components/BottomNav";
 
 export default function Home() {
   return (
@@ -51,6 +52,8 @@ export default function Home() {
 
         </div>
       </main>
+             <BottomNav />
+
     </>
   );
 }
