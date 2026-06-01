@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-
+import BottomNav from "../components/BottomNav";
 export default function Results() {
   return (
     <>
@@ -10,6 +10,7 @@ export default function Results() {
 
         <p>Placeholder</p>
       </main>
+             <BottomNav />
     </>
   );
 }

@@ -1,3 +1,4 @@
+import BottomNav from "../components/BottomNav";
 export default function Login() {
   return (
     <div
@@ -67,6 +68,7 @@ export default function Login() {
         </div>
 
       </div>
+      <BottomNav />
     </div>
   );
 }

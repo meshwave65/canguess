@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-
+import BottomNav from "../components/BottomNav";
 export default function Ranking() {
   return (
     <>
@@ -15,6 +15,7 @@ export default function Ranking() {
           <li>CARLINHOS - 6</li>
         </ol>
       </main>
+             <BottomNav />
     </>
   );
 }

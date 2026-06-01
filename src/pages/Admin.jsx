@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-
+import BottomNav from "../components/BottomNav";
 export default function Admin() {
   return (
     <>
@@ -16,6 +16,7 @@ export default function Admin() {
           <li>Resultados</li>
         </ul>
       </main>
+             <BottomNav />
     </>
   );
 }

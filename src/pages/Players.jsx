@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-
+import BottomNav from "../components/BottomNav";
 export default function Players() {
   return (
     <>
@@ -10,6 +10,7 @@ export default function Players() {
 
         <p>Placeholder</p>
       </main>
+             <BottomNav />
     </>
   );
 }
