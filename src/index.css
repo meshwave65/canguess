@@ -1,9 +1,24 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
   background: #f5f5f5;
 
   font-family: "Inter", "Roboto", "Helvetica Neue", Arial, sans-serif;
-  font-size: 12px;        /* reduz base global */
-  font-weight: 300;       /* mais leve */
+  font-size: 13px;
+  font-weight: 300;
   line-height: 1.4;
   color: #222;
+}
+
+button {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 400;
 }

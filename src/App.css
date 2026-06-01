@@ -1,5 +1,5 @@
 .counter {
-  font-size: 16px;
+  font-size: 13px;
   padding: 5px 10px;
   border-radius: 5px;
   color: var(--accent);
@@ -7,178 +7,179 @@
   border: 2px solid transparent;
   transition: border-color 0.3s;
   margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+.counter:hover {
+  border-color: var(--accent-border);
 }
 
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+.counter:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+/* =========================
+   TABLE WRAPPER
+========================= */
+.table-wrapper {
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid #ddd;
+  background: #fff;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
+/* =========================
+   TABLE BASE
+========================= */
+table {
   width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
+/* =========================
+   HEADER STICKY
+========================= */
+thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
+  font-size: 10px;
+  padding: 0;
+}
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+/* =========================
+   CELLS
+========================= */
+td, th {
+  font-size: 13px;
+  padding: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   PLAYER COLUMN
+========================= */
+.player-column {
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
+}
+
+/* =========================
+   GAME HEADER GRID
+========================= */
+.game-grid {
+  display: grid;
+  grid-template-rows: 1fr 0.5fr 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  height: 70px;
+  font-size: 9px;
+}
+
+.vs {
+  font-size: 8px;
+  color: #666;
+}
+
+.result {
+  font-weight: bold;
+  color: #C1121F;
+}
+
+/* =========================
+   MODE VISIBILITY (IMPORTANTE)
+========================= */
+
+/* TEXTO MODE */
+body[data-mode="text"] .team-logo {
+  display: none;
+}
+body[data-mode="text"] .team-text {
+  display: block;
+}
+
+/* LOGO MODE */
+body[data-mode="logo"] .team-logo {
+  display: block;
+}
+body[data-mode="logo"] .team-text {
+  display: none;
+}
+
+.table-wrapper {
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid #ddd;
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
+  font-size: 10px;
+  padding: 0;
+}
+
+/* GRID DO HEADER */
+.game-grid {
+  display: grid;
+  grid-template-rows: 1fr 0.5fr 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  height: 70px;
+  font-size: 9px;
+}
+
+.vs {
+  font-size: 8px;
+  color: #666;
+}
+
+.result {
+  font-weight: bold;
+  color: #C1121F;
+}
+
+/* TOGGLE VISUAL (ESSENCIAL) */
+body[data-mode="text"] .team-logo {
+  display: none;
+}
+
+body[data-mode="text"] .team-text {
+  display: block;
+}
+
+body[data-mode="logo"] .team-text {
+  display: none;
+}
+
+body[data-mode="logo"] .team-logo {
+  display: block;
+}
+
+/* logos padrão */
+.team-logo {
+  height: 18px;
+}
+
+.team-logo {
+  width: 18px;
+  height: 18px;
+  max-width: 18px;
+  max-height: 18px;
+  object-fit: contain;
+  display: block;
 }

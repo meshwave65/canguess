@@ -1,11 +1,20 @@
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
+import { useState, useEffect } from "react";
 
-const PLAYER_COL_WIDTH = 50;
-const POINTS_COL_WIDTH = 15;
-const GAME_COL_WIDTH = 15;
+const PLAYER_COL_WIDTH = 140;
+const POINTS_COL_WIDTH = 60;
+const GAME_COL_WIDTH = 80;
 
 export default function Ranking() {
+  const [modo, setModo] = useState("text");
+
+  useEffect(() => {
+    document.body.setAttribute("data-mode", modo);
+  }, [modo]);
+
+  const getLogo = (time) => `/logos/${time}.svg`;
+
   const jogos = [
     { mandante: "FLA", visitante: "VAS", resultado: "3X1" },
     { mandante: "BOT", visitante: "FLU", resultado: "0X0" },
@@ -22,140 +31,92 @@ export default function Ranking() {
 
   const jogadores = [
     {
-        nome: "ZE BANGU",
-        pontos: 8,
-        palpites: [
-            true, true, false, true, true,
-            true, false, true, true, true, false
-    ],
-  },
-
-  {
-        nome: "JUCA BALA",
-        pontos: 7,
-        palpites: [
-            true, false, true, false, true,
-            true, true, false, true, false, true
-    ],
-  },
-
-  {
-        nome: "AÇOG....NH74",
-        pontos: 6,
-        palpites: [
-            false, true, false, true, false,
-            true, true, true, false, true, false
-    ],
-  },
-];
+      nome: "ZE BANGU",
+      pontos: 8,
+      palpites: [true, true, false, true, true, true, false, true, true, true, false],
+    },
+    {
+      nome: "JUCA BALA",
+      pontos: 7,
+      palpites: [true, false, true, false, true, true, true, false, true, false, true],
+    },
+    {
+      nome: "AÇOG....NH74",
+      pontos: 6,
+      palpites: [false, true, false, true, false, true, true, true, false, true, false],
+    },
+  ];
 
   return (
     <>
       <Header />
 
-      <main
-        style={{
-          padding: "8px",
-          paddingBottom: "90px",
-        }}
-      >
-        <h2
-          style={{
-            color: "#C1121F",
-            marginBottom: "10px",
-            fontSize: "14px",
-          }}
-        >
+      <main style={{ padding: "8px", paddingBottom: "90px" }}>
+        <h2 style={{ color: "#C1121F", fontSize: "14px", marginBottom: "10px" }}>
           Classificação Geral
         </h2>
 
-        <div
-          style={{
-            overflow: "auto",
-            border: "1px solid #ddd",
-          }}
-        >
-          <table
-            style={{
-              borderCollapse: "collapse",
-              minWidth: "598px",
-              tableLayout: "fixed",
-              fontSize: "10px",
-            }}
-          >
-            <thead
-              style={{
-                position: "sticky",
-                top: 0,
-                background: "#fff",
-                zIndex: 10,
-              }}
-            >
-              <tr>
-                <th
-                  style={{
-                    width: `${PLAYER_COL_WIDTH}px`,
-                    minWidth: `${PLAYER_COL_WIDTH}px`,
-                    maxWidth: `${PLAYER_COL_WIDTH}px`,
-                    border: "1px solid #ddd",
-                    background: "#C1121F",
-                    color: "#fff",
-                    padding: "2px",
-                    fontSize: "9px",
-                  }}
-                >
-                  JOGADOR
-                </th>
+        {/* TOGGLE */}
+        <label style={{ fontSize: "12px", display: "block", marginBottom: "10px" }}>
+          <input
+            type="checkbox"
+            checked={modo === "logo"}
+            onChange={(e) => setModo(e.target.checked ? "logo" : "text")}
+          />
+          {" "}Modo Escudos
+        </label>
 
-                <th
-                  style={{
-                    width: `${POINTS_COL_WIDTH}px`,
-                    minWidth: `${POINTS_COL_WIDTH}px`,
-                    maxWidth: `${POINTS_COL_WIDTH}px`,
-                    border: "1px solid #ddd",
-                    background: "#C1121F",
-                    color: "#fff",
-                    padding: "2px",
-                    fontSize: "9px",
-                  }}
-                >
-                  PTS
-                </th>
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style={{ width: PLAYER_COL_WIDTH }}>JOGADOR</th>
+                <th style={{ width: POINTS_COL_WIDTH }}>PTS</th>
 
                 {jogos.map((jogo, idx) => (
-                  <th
-                    key={idx}
-                    style={{
-                      width: `${GAME_COL_WIDTH}px`,
-                      minWidth: `${GAME_COL_WIDTH}px`,
-                      maxWidth: `${GAME_COL_WIDTH}px`,
-                      border: "1px solid #ddd",
-                      padding: "1px",
-                      lineHeight: "1",
-                      textAlign: "center",
-                      fontSize: "9px",
-                    }}
-                  >
-                    <div>{jogo.mandante}</div>
+                  <th key={idx} style={{ width: GAME_COL_WIDTH }}>
+                    <div className="game-grid">
 
-                    <div
-                      style={{
-                        color: "#666",
-                      }}
-                    >
-                      X
-                    </div>
+                      {/* MANDANTE */}
+                      <div className="team">
+                        {modo === "text" ? (
+                          <span>{jogo.mandante}</span>
+                        ) : (
+                          <img
+                            className="team-logo"
+                            src={getLogo(jogo.mandante)}
+                            alt={jogo.mandante}
+                            width="18"
+                            height="18"
+                            onError={(e) => {
+                              e.currentTarget.src = "/logos/time-a.svg";
+                            }}
+                          />
+                        )}
+                      </div>
 
-                    <div>{jogo.visitante}</div>
+                      <div>X</div>
 
-                    <div
-                      style={{
-                        marginTop: "2px",
-                        color: "#C1121F",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {jogo.resultado}
+                      {/* VISITANTE */}
+                      <div className="team">
+                        {modo === "text" ? (
+                          <span>{jogo.visitante}</span>
+                        ) : (
+                          <img
+                            className="team-logo"
+                            src={getLogo(jogo.visitante)}
+                            alt={jogo.visitante}
+                            width="18"
+                            height="18"
+                            onError={(e) => {
+                              e.currentTarget.src = "/logos/time-b.svg";
+                            }}
+                          />
+                        )}
+                      </div>
+
+                      <div>{jogo.resultado}</div>
+
                     </div>
                   </th>
                 ))}
@@ -165,50 +126,20 @@ export default function Ranking() {
             <tbody>
               {jogadores.map((jogador, idx) => (
                 <tr key={idx}>
-                  <td
-                    style={{
-                      border: "1px solid #ddd",
-                      padding: "3px",
-                      fontWeight: "bold",
-                      fontSize: "10px",
-                    }}
-                  >
-                    {jogador.nome}
-                  </td>
-
-                  <td
-                    style={{
-                      border: "1px solid #ddd",
-                      textAlign: "center",
-                      padding: "2px",
-                      fontWeight: "bold",
-                      fontSize: "10px",
-                    }}
-                  >
+                  <td>{jogador.nome}</td>
+                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
                     {jogador.pontos}
                   </td>
 
-                  {jogador.palpites.map((acertou, pidx) => (
-                    <td
-                      key={pidx}
-                      style={{
-                        border: "1px solid #ddd",
-                        textAlign: "center",
-                        padding: "2px",
-                        height: "22px",
-                      }}
-                    >
+                  {jogador.palpites.map((p, i) => (
+                    <td key={i} style={{ textAlign: "center" }}>
                       <div
-                        title="Visualizar palpite"
                         style={{
-                          width: "12px",
-                          height: "12px",
+                          width: 10,
+                          height: 10,
                           borderRadius: "50%",
-                          backgroundColor: acertou
-                            ? "#16a34a"
-                            : "#d1d5db",
+                          background: p ? "#16a34a" : "#d1d5db",
                           margin: "0 auto",
-                          cursor: "pointer",
                         }}
                       />
                     </td>
