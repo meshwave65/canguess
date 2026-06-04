@@ -9,14 +9,14 @@ import uuid
 # ENV
 # =========================================================
 
-load_dotenv("/mnt/hd1tb/projetos/.env")  # ou ajusta depois se quiser local
+load_dotenv()  # ou ajusta depois se quiser local
 
-SUPABASE_URL = os.getenv("VITE_BOLAO_SUPABASE_URL")
-SUPABASE_KEY = os.getenv("VITE_BOLAO_SUPABASE_ANON_KEY")
+VITE_BOLAO_SUPABASE_URL = os.getenv("VITE_BOLAO_SUPABASE_URL")
+VITE_BOLAO_SUPABASE_KEY = os.getenv("VITE_BOLAO_SUPABASE_ANON_KEY")
 
 HEADERS = {
-    "apikey": SUPABASE_KEY,
-    "Authorization": f"Bearer {SUPABASE_KEY}",
+    "apikey": VITE_BOLAO_SUPABASE_KEY,
+    "Authorization": f"Bearer {VITE_BOLAO_SUPABASE_KEY}",
     "Content-Type": "application/json"
 }
 
@@ -49,7 +49,7 @@ def root():
 @app.get("/countries")
 def get_countries():
     r = requests.get(
-        f"{SUPABASE_URL}/rest/v1/countries?select=*",
+        f"{VITE_BOLAO_SUPABASE_URL}/rest/v1/countries?select=*",
         headers=HEADERS
     )
 
@@ -65,7 +65,7 @@ async def create_country(payload: dict):
     }
 
     r = requests.post(
-        f"{SUPABASE_URL}/rest/v1/countries",
+        f"{VITE_BOLAO_SUPABASE_URL}/rest/v1/countries",
         json=data,
         headers=HEADERS
     )
