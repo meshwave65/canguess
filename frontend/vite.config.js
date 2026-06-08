@@ -15,16 +15,16 @@ export default defineConfig({
 
       includeAssets: [
         "favicon.ico",
-        "icon-192.png",
-        "icon-512.png"
+        "canguess-logo-192.png",
+        "canguess-logo-512.png"
       ],
 
       manifest: {
-        name: "CanGuess,
-        short_name: "Bolão",
+        name: "CanGuess",
+        short_name: "CanGuess",
         description: "CanGuess - Já deu seu palpite hoje?",
 
-        theme_color: "#C1121F",
+        theme_color: "#0F4C5C",
         background_color: "#FFFFFF",
 
         display: "standalone",
@@ -35,17 +35,17 @@ export default defineConfig({
 
         icons: [
           {
-            src: "icon-192.png",
+            src: "canguess-logo-192.png",
             sizes: "192x192",
             type: "image/png"
           },
           {
-            src: "icon-512.png",
+            src: "canguess-logo-512.png",
             sizes: "512x512",
             type: "image/png"
           },
           {
-            src: "icon-512.png",
+            src: "canguess-logo-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable"
