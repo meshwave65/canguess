@@ -31,12 +31,12 @@ export default function Predictions() {
   // =========================
   async function validarSenha() {
     const { data, error } = await supabase
-      .from("game_passw")
+      .from("event_passw")
       .select("*")
-      .eq("code_game", senha)
+      .eq("code_event", senha)
       .eq("status", 1)
-      .limit(1)
-      .maybeSingle();
+//      .limit(1)
+      .single();
 
     if (error || !data) {
       setValidada(false);
@@ -69,9 +69,9 @@ export default function Predictions() {
   // CONFIRMAR SALVAMENTO
   // =========================
   async function confirmar() {
-    const { error } = await supabase.from("bets").insert([
+    const { error } = await supabase.from("rounds").insert([
       {
-        code_game: senha,
+        code_event: senha,
         bets,
       },
     ]);
@@ -82,9 +82,9 @@ export default function Predictions() {
     }
 
     await supabase
-      .from("game_passw")
+      .from("event_passw")
       .update({ status: 0 })
-      .eq("code_game", senha);
+      .eq("code_event", senha);
 
     setMsg("Aposta registrada com sucesso ✔");
     setShowConfirm(false);

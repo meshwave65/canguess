@@ -33,6 +33,19 @@ export default function CadastrosHome() {
           </Link>
 
           <Link
+            to="/admin/cadastros/eventos"
+            style={{
+                padding: "12px",
+                border: "1px solid #ccc",
+                borderRadius: "8px",
+                textDecoration: "none",
+                color: "#000",
+            }}
+           >
+            Eventos
+          </Link>
+
+          <Link
             to="/admin/cadastros/rodadas"
             style={{
               padding: "12px",

@@ -58,7 +58,7 @@ export default function CadastrosTimes() {
   async function addCountry() {
     const { data, error } = await supabase
       .from("countries")
-      .insert([{ code: countryCode, name: countryName }])
+      .insert([{ code: countryCode, country: countryName }])
       .select();
 
     if (error) return show(error.message);
@@ -80,7 +80,7 @@ export default function CadastrosTimes() {
         {
           country_id: countryId,
           code: regionCode,
-          name: regionName,
+          region: regionName,
         },
       ])
       .select();
@@ -239,7 +239,7 @@ export default function CadastrosTimes() {
           <select style={s.select} value={countryId} onChange={e => setCountryId(e.target.value)}>
             <option>País</option>
             {countries.map(c => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.id}>{c.country}</option>
             ))}
           </select>
 
@@ -267,7 +267,7 @@ export default function CadastrosTimes() {
           <select style={s.select} value={regionId} onChange={e => setRegionId(e.target.value)}>
             <option>Região</option>
             {regions.map(r => (
-              <option key={r.id} value={r.id}>{r.name}</option>
+              <option key={r.id} value={r.id}>{r.region}</option>
             ))}
           </select>
 

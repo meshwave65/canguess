@@ -25,7 +25,7 @@ export default function CadastrosRodadas() {
   async function loadTimes() {
     const { data, error } = await supabase
       .from("times")
-      .select("id,codigo");
+      .select("id,nome,codigo");
 
     if (!error) setTimes(data || []);
   }
@@ -116,7 +116,7 @@ export default function CadastrosRodadas() {
               <option value="">Casa</option>
               {times.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.codigo}
+                  {t.nome}
                 </option>
               ))}
             </select>
@@ -132,7 +132,7 @@ export default function CadastrosRodadas() {
               <option value="">Fora</option>
               {times.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.codigo}
+                  {t.nome}
                 </option>
               ))}
             </select>

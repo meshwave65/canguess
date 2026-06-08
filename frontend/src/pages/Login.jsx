@@ -1,5 +1,28 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
+
 export default function Login() {
+  const navigate = useNavigate();
+
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleLogin() {
+    // TODO:
+    // Validar usuário
+    // Buscar usuário no Supabase
+    // Validar senha
+    // Criar sessão
+
+    console.log({
+      userName,
+      password,
+    });
+
+    navigate("/home");
+  }
+
   return (
     <div
       className="
@@ -8,6 +31,7 @@ export default function Login() {
         items-center
         justify-center
         bg-white
+        pb-20
       "
     >
       <div className="w-full max-w-sm p-6">
@@ -19,11 +43,11 @@ export default function Login() {
           </div>
 
           <h1 className="text-3xl font-bold text-red-700 mt-4">
-            BOLÃO
+            MUNDIVINUS
           </h1>
 
-          <h2 className="text-xl">
-            ZÉ BANGU
+          <h2 className="text-lg text-gray-600 mt-2">
+            Eventos Preditivos
           </h2>
 
         </div>
@@ -31,7 +55,10 @@ export default function Login() {
         <div className="mt-8">
 
           <input
+            type="text"
             placeholder="User Name"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
             className="
               w-full
               border
@@ -42,7 +69,10 @@ export default function Login() {
           />
 
           <input
-            placeholder="Telefone"
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="
               w-full
               border
@@ -52,6 +82,7 @@ export default function Login() {
           />
 
           <button
+            onClick={handleLogin}
             className="
               w-full
               mt-4
@@ -65,10 +96,39 @@ export default function Login() {
             ENTRAR
           </button>
 
+          <button
+            onClick={() => navigate("/register")}
+            className="
+              w-full
+              mt-3
+              border
+              border-gray-300
+              p-3
+              rounded-lg
+              font-bold
+            "
+          >
+            CRIAR CONTA
+          </button>
+
+          <button
+            onClick={() => navigate("/forgot-password")}
+            className="
+              w-full
+              mt-3
+              text-sm
+              text-blue-600
+            "
+          >
+            Esqueci minha senha
+          </button>
+
         </div>
 
       </div>
+
       <BottomNav />
     </div>
   );
 }
+
