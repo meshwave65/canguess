@@ -10,14 +10,13 @@ export default function EventDashboard() {
   const [phases, setPhases] = useState([]);
   const [selectedPhaseId, setSelectedPhaseId] = useState(null);
   const [selectedRound, setSelectedRound] = useState(null);
-  const [viewLevel, setViewLevel] = useState("phases"); // phases | rounds | parts
+  const [viewLevel, setViewLevel] = useState("phases");
 
   useEffect(() => {
     load();
   }, [eventId]);
 
   async function load() {
-    // EVENTO
     const { data: eventData } = await supabase
       .from("events")
       .select("*")
@@ -26,7 +25,6 @@ export default function EventDashboard() {
 
     setEvent(eventData);
 
-    // FASES
     const { data: phasesData } = await supabase
       .from("event_phases")
       .select("*")
@@ -36,7 +34,9 @@ export default function EventDashboard() {
     setPhases(phasesData || []);
   }
 
-  const selectedPhase = phases.find(p => p.id === selectedPhaseId);
+  const selectedPhase = phases.find(
+    (p) => p.id === selectedPhaseId
+  );
 
   const s = {
     page: {
@@ -78,6 +78,7 @@ export default function EventDashboard() {
       gap: 10,
       flexWrap: "wrap",
       alignItems: "center",
+      marginBottom: 10,
     },
 
     btn: {
@@ -92,7 +93,7 @@ export default function EventDashboard() {
       padding: 8,
       borderRadius: 8,
       border: "1px solid #ddd",
-      minWidth: 260,
+      minWidth: 180,
     },
 
     input: {
@@ -109,11 +110,19 @@ export default function EventDashboard() {
       {/* HEADER */}
       <div style={s.header}>
         <div>
-          <div style={s.title}>{event?.name || "Carregando..."}</div>
-          <div style={s.uuid}>{eventId}</div>
+          <div style={s.title}>
+            {event?.name || "Carregando..."}
+          </div>
+
+          <div style={s.uuid}>
+            {eventId}
+          </div>
         </div>
 
-        <button style={s.btn} onClick={() => navigate("/")}>
+        <button
+          style={s.btn}
+          onClick={() => navigate("/")}
+        >
           🏠 Home
         </button>
       </div>
@@ -127,6 +136,7 @@ export default function EventDashboard() {
         </p>
 
         <div style={s.row}>
+
           <select
             style={s.select}
             value={selectedPhaseId || ""}
@@ -135,97 +145,226 @@ export default function EventDashboard() {
               setViewLevel("phases");
             }}
           >
-            <option value="">Selecione uma fase</option>
+            <option value="">
+              Selecione uma fase
+            </option>
 
             {phases.map((p) => (
-              <option key={p.id} value={p.id}>
-                Fase {p.phase_number} - {p.phase_name}
+              <option
+                key={p.id}
+                value={p.id}
+              >
+                Fase {p.phase_number}
               </option>
             ))}
           </select>
+
+          <input
+            style={s.input}
+            placeholder="Nome da fase"
+            value={selectedPhase?.phase_name || ""}
+            onChange={(e) => {
+              setPhases(
+                phases.map((p) =>
+                  p.id === selectedPhaseId
+                    ? {
+                        ...p,
+                        phase_name: e.target.value,
+                      }
+                    : p
+                )
+              );
+            }}
+          />
+
+          <input
+            style={{
+              ...s.input,
+              minWidth: 80,
+              width: 80,
+            }}
+            placeholder="Rounds"
+            value={selectedPhase?.num_rounds || ""}
+            onChange={(e) => {
+              setPhases(
+                phases.map((p) =>
+                  p.id === selectedPhaseId
+                    ? {
+                        ...p,
+                        num_rounds: e.target.value,
+                      }
+                    : p
+                )
+              );
+            }}
+          />
+
+          <input
+            style={{
+              ...s.input,
+              minWidth: 80,
+              width: 80,
+            }}
+            placeholder="Ordem"
+            value={selectedPhase?.phase_number || ""}
+            onChange={(e) => {
+              setPhases(
+                phases.map((p) =>
+                  p.id === selectedPhaseId
+                    ? {
+                        ...p,
+                        phase_number: e.target.value,
+                      }
+                    : p
+                )
+              );
+            }}
+          />
+
+          <button style={s.btn}>
+            💾
+          </button>
+
+          <button style={s.btn}>
+            🗑
+          </button>
 
           <button
             style={{
               ...s.btn,
               opacity: !selectedPhaseId ? 0.4 : 1,
-              pointerEvents: !selectedPhaseId ? "none" : "auto",
+              pointerEvents: !selectedPhaseId
+                ? "none"
+                : "auto",
             }}
             onClick={() => setViewLevel("rounds")}
           >
             ⚽ Rounds
           </button>
+
         </div>
       </div>
 
       {/* ROUNDS */}
       {viewLevel === "rounds" && selectedPhase && (
         <div style={s.card}>
-            <h3>{selectedPhase.phase_name}</h3>
 
-            <button style={s.btn} onClick={() => setViewLevel("phases")}>
-                ⬅ Voltar Fases
-            </button>
+          <h3>
+            {selectedPhase.phase_name}
+          </h3>
 
-            <hr />
+          <button
+            style={s.btn}
+            onClick={() => setViewLevel("phases")}
+          >
+            ⬅ Voltar Fases
+          </button>
 
-            {Array.from({ length: selectedPhase.num_rounds || 0 }, (_, i) => i + 1).map((r) => (
-                <div key={r} style={s.row}>
+          <hr />
 
-                    <span>
-                        Round {r}/{selectedPhase.num_rounds} - {selectedPhase.phase_name}
-                    </span>
-
-                    <input style={s.input} placeholder="Nome do Round" />
-                    <input style={s.input} placeholder="Data" />
-                    <input style={s.input} placeholder="Hora" />
-                    <input style={s.input} placeholder="Local" />
-
-                    <button
-                        style={s.btn}
-                        onClick={() => {
-                            setSelectedRound(r);
-                            setViewLevel("parts");
-                    }}
-                >
-                        🧩 Parts
-                    </button>
-
-                 </div>
-              ))}
-            </div>
-        )}
-
-      {/* PARTS */}
-      {viewLevel === "parts" && selectedRound && (
-        <div style={s.card}>
-            <h3>
-                Round {selectedRound}/{selectedPhase?.num_rounds} - {selectedPhase?.phase_name}
-            </h3>
-
-            <button style={s.btn} onClick={() => setViewLevel("rounds")}>
-                ⬅ Voltar Rounds
-            </button>
-
-            <hr />
-
-            {Array.from({ length: 2 }, (_, i) => i + 1).map((p) => (
-                <div key={p} style={s.row}>
+          {Array.from(
+            {
+              length:
+                selectedPhase.num_rounds || 0,
+            },
+            (_, i) => i + 1
+          ).map((r) => (
+            <div
+              key={r}
+              style={s.row}
+            >
 
               <span>
-                Part {p}/2
+                Round {r}/
+                {selectedPhase.num_rounds}
+                {" - "}
+                {selectedPhase.phase_name}
               </span>
 
-              <select style={s.input}>
-                <option>Brasil</option>
-                <option>Marrocos</option>
-                <option>França</option>
-              </select>
+              <input
+                style={s.input}
+                placeholder="Nome do Round"
+              />
 
-              <button style={s.btn}>💾</button>
+              <input
+                style={s.input}
+                placeholder="Data"
+              />
+
+              <input
+                style={s.input}
+                placeholder="Hora"
+              />
+
+              <input
+                style={s.input}
+                placeholder="Local"
+              />
+
+              <button
+                style={s.btn}
+                onClick={() => {
+                  setSelectedRound(r);
+                  setViewLevel("parts");
+                }}
+              >
+                🧩 Parts
+              </button>
 
             </div>
-            ))}
+          ))}
         </div>
+      )}
+
+      {/* PARTS */}
+      {viewLevel === "parts" &&
+        selectedRound && (
+          <div style={s.card}>
+
+            <h3>
+              Round {selectedRound}/
+              {selectedPhase?.num_rounds}
+              {" - "}
+              {selectedPhase?.phase_name}
+            </h3>
+
+            <button
+              style={s.btn}
+              onClick={() =>
+                setViewLevel("rounds")
+              }
+            >
+              ⬅ Voltar Rounds
+            </button>
+
+            <hr />
+
+            {Array.from(
+              { length: 2 },
+              (_, i) => i + 1
+            ).map((p) => (
+              <div
+                key={p}
+                style={s.row}
+              >
+
+                <span>
+                  Part {p}/2
+                </span>
+
+                <select style={s.input}>
+                  <option>Brasil</option>
+                  <option>Marrocos</option>
+                  <option>França</option>
+                </select>
+
+                <button style={s.btn}>
+                  💾
+                </button>
+
+              </div>
+            ))}
+          </div>
         )}
 
     </div>
