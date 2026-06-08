@@ -1,3 +1,20 @@
+:root {
+  --primary: #0b3c49;        /* azul petróleo */
+  --primary-dark: #062a33;
+  --accent: #ff6a00;         /* laranja intenso */
+
+  --accent-bg: rgba(255, 106, 0, 0.12);
+  --accent-border: rgba(255, 106, 0, 0.35);
+
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --text: #111827;
+  --border: #e5e7eb;
+}
+
+/* =========================
+   COUNTER
+========================= */
 .counter {
   font-size: 13px;
   padding: 5px 10px;
@@ -24,8 +41,8 @@
 .table-wrapper {
   max-height: 70vh;
   overflow: auto;
-  border: 1px solid #ddd;
-  background: #fff;
+  border: 1px solid var(--border);
+  background: var(--card);
 }
 
 /* =========================
@@ -43,10 +60,11 @@ table {
 thead th {
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--card);
   z-index: 10;
   font-size: 10px;
   padding: 0;
+  border-bottom: 1px solid var(--border);
 }
 
 /* =========================
@@ -88,72 +106,12 @@ td, th {
 
 .result {
   font-weight: bold;
-  color: #C1121F;
+  color: var(--accent);
 }
 
 /* =========================
-   MODE VISIBILITY (IMPORTANTE)
+   MODE VISIBILITY
 ========================= */
-
-/* TEXTO MODE */
-body[data-mode="text"] .team-logo {
-  display: none;
-}
-body[data-mode="text"] .team-text {
-  display: block;
-}
-
-/* LOGO MODE */
-body[data-mode="logo"] .team-logo {
-  display: block;
-}
-body[data-mode="logo"] .team-text {
-  display: none;
-}
-
-.table-wrapper {
-  max-height: 70vh;
-  overflow: auto;
-  border: 1px solid #ddd;
-  background: #fff;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-thead th {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 10;
-  font-size: 10px;
-  padding: 0;
-}
-
-/* GRID DO HEADER */
-.game-grid {
-  display: grid;
-  grid-template-rows: 1fr 0.5fr 1fr 1fr;
-  justify-items: center;
-  align-items: center;
-  height: 70px;
-  font-size: 9px;
-}
-
-.vs {
-  font-size: 8px;
-  color: #666;
-}
-
-.result {
-  font-weight: bold;
-  color: #C1121F;
-}
-
-/* TOGGLE VISUAL (ESSENCIAL) */
 body[data-mode="text"] .team-logo {
   display: none;
 }
@@ -162,24 +120,19 @@ body[data-mode="text"] .team-text {
   display: block;
 }
 
-body[data-mode="logo"] .team-text {
-  display: none;
-}
-
 body[data-mode="logo"] .team-logo {
   display: block;
 }
 
-/* logos padrão */
-.team-logo {
-  height: 18px;
+body[data-mode="logo"] .team-text {
+  display: none;
 }
 
+/* =========================
+   LOGOS
+========================= */
 .team-logo {
   width: 18px;
   height: 18px;
-  max-width: 18px;
-  max-height: 18px;
   object-fit: contain;
-  display: block;
 }

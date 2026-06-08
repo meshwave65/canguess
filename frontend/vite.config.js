@@ -20,9 +20,9 @@ export default defineConfig({
       ],
 
       manifest: {
-        name: "Bolão Zé Bangu",
+        name: "CanGuess,
         short_name: "Bolão",
-        description: "Bolão Zé Bangu - O palpite da galera",
+        description: "CanGuess - Já deu seu palpite hoje?",
 
         theme_color: "#C1121F",
         background_color: "#FFFFFF",
