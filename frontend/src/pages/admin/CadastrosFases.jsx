@@ -28,7 +28,17 @@ export default function CadastrosFases() {
       .eq("event_uuid", eventId)
       .order("id", { ascending: true });
 
-    setPhases(ph || []);
+    setPhases(
+      (ph || []).map((p) => {
+        const current_num_rounds = Number(p.num_rounds || 0);
+
+        return {
+          ...p,
+          // valor editável da UI, inicia com o que está no banco ou 1 se for novo
+          newRounds: current_num_rounds === 0 ? 1 : current_num_rounds,
+        };
+      })
+    );
   }
 
   function updatePhase(index, field, value) {
@@ -38,25 +48,63 @@ export default function CadastrosFases() {
   }
 
   async function save() {
-    for (const p of phases) {
-      if (!p.id) {
-        await supabase.from("event_phases").insert({
-          event_uuid: eventId,
-          phase_name: p.phase_name || "",
-          num_rounds: Number(p.num_rounds || 0),
-        });
-      } else {
-        await supabase
-          .from("event_phases")
-          .update({
-            phase_name: p.phase_name,
-            num_rounds: Number(p.num_rounds),
-          })
-          .eq("id", p.id);
-      }
-    }
+    try {
+      for (const p of phases) {
+        const numRounds = Number(p.newRounds || 0);
 
-    load();
+        if (p.id) {
+          // 1. Atualiza os dados da fase existente
+          const { error: updateError } = await supabase
+            .from("event_phases")
+            .update({
+              phase_name: p.phase_name,
+              num_rounds: numRounds,
+            })
+            .eq("id", p.id);
+
+          if (updateError) {
+            console.error("Erro ao atualizar fase:", updateError);
+            continue;
+          }
+
+          // 2. Chama a RPC para garantir que os rounds existam
+          // A lógica de "criar apenas se faltar" agora está dentro do SQL
+          await supabase.rpc("add_event_rounds", {
+            p_phase_id: p.id,
+            p_new_rounds: numRounds,
+          });
+
+        } else {
+          // Inserção de nova fase (caso tenha clicado em "+ Adicionar fase")
+          const { data: inserted, error: insertError } = await supabase
+            .from("event_phases")
+            .insert({
+              event_uuid: eventId,
+              phase_name: p.phase_name || "",
+              num_rounds: numRounds,
+            })
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error("Erro ao inserir fase:", insertError);
+            continue;
+          }
+
+          // Chama a RPC para a nova fase criada
+          await supabase.rpc("add_event_rounds", {
+            p_phase_id: inserted.id,
+            p_new_rounds: numRounds,
+          });
+        }
+      }
+
+      alert("Dados salvos com sucesso!");
+      load(); // Recarrega para sincronizar o estado
+    } catch (err) {
+      console.error("Erro geral no salvamento:", err);
+      alert("Ocorreu um erro ao salvar as alterações.");
+    }
   }
 
   const s = {
@@ -93,9 +141,9 @@ export default function CadastrosFases() {
             style={s.input}
             type="number"
             placeholder="Rounds"
-            value={p.num_rounds || ""}
+            value={p.newRounds || ""}
             onChange={(e) =>
-              updatePhase(i, "num_rounds", e.target.value)
+              updatePhase(i, "newRounds", e.target.value)
             }
           />
         </div>
@@ -104,7 +152,13 @@ export default function CadastrosFases() {
       <button
         style={s.btn}
         onClick={() =>
-          setPhases([...phases, { phase_name: "", num_rounds: 0 }])
+          setPhases([
+            ...phases,
+            {
+              phase_name: "",
+              newRounds: 1,
+            },
+          ])
         }
       >
         + Adicionar fase
