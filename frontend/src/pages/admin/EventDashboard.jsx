@@ -38,6 +38,39 @@ export default function EventDashboard() {
     (p) => p.id === selectedPhaseId
   );
 
+  // atualiza estado local da fase
+  const updatePhaseField = (field, value) => {
+    setPhases((prev) =>
+      prev.map((p) =>
+        p.id === selectedPhaseId
+          ? { ...p, [field]: value }
+          : p
+      )
+    );
+  };
+
+  // salva fase no supabase
+  async function savePhase() {
+    if (!selectedPhase) return;
+
+    const { error } = await supabase
+      .from("event_phases")
+      .update({
+        phase_name: selectedPhase.phase_name,
+        num_rounds: selectedPhase.num_rounds,
+        phase_number: selectedPhase.phase_number,
+      })
+      .eq("id", selectedPhase.id);
+
+    if (error) {
+      alert("Erro ao salvar fase");
+      console.error(error);
+      return;
+    }
+
+    alert("Fase salva com sucesso");
+  }
+
   const s = {
     page: {
       padding: 20,
@@ -78,7 +111,6 @@ export default function EventDashboard() {
       gap: 10,
       flexWrap: "wrap",
       alignItems: "center",
-      marginBottom: 10,
     },
 
     btn: {
@@ -93,7 +125,7 @@ export default function EventDashboard() {
       padding: 8,
       borderRadius: 8,
       border: "1px solid #ddd",
-      minWidth: 180,
+      minWidth: 260,
     },
 
     input: {
@@ -113,16 +145,10 @@ export default function EventDashboard() {
           <div style={s.title}>
             {event?.name || "Carregando..."}
           </div>
-
-          <div style={s.uuid}>
-            {eventId}
-          </div>
+          <div style={s.uuid}>{eventId}</div>
         </div>
 
-        <button
-          style={s.btn}
-          onClick={() => navigate("/")}
-        >
+        <button style={s.btn} onClick={() => navigate("/")}>
           🏠 Home
         </button>
       </div>
@@ -137,6 +163,7 @@ export default function EventDashboard() {
 
         <div style={s.row}>
 
+          {/* SELECT FASE */}
           <select
             style={s.select}
             value={selectedPhaseId || ""}
@@ -145,97 +172,64 @@ export default function EventDashboard() {
               setViewLevel("phases");
             }}
           >
-            <option value="">
-              Selecione uma fase
-            </option>
+            <option value="">Selecione uma fase</option>
 
             {phases.map((p) => (
-              <option
-                key={p.id}
-                value={p.id}
-              >
-                Fase {p.phase_number}
+              <option key={p.id} value={p.id}>
+                Fase {p.phase_number} - {p.phase_name}
               </option>
             ))}
           </select>
 
+          {/* NOME FASE */}
           <input
             style={s.input}
-            placeholder="Nome da fase"
             value={selectedPhase?.phase_name || ""}
-            onChange={(e) => {
-              setPhases(
-                phases.map((p) =>
-                  p.id === selectedPhaseId
-                    ? {
-                        ...p,
-                        phase_name: e.target.value,
-                      }
-                    : p
-                )
-              );
-            }}
+            onChange={(e) =>
+              updatePhaseField("phase_name", e.target.value)
+            }
           />
 
+          {/* NUM ROUNDS */}
           <input
-            style={{
-              ...s.input,
-              minWidth: 80,
-              width: 80,
-            }}
-            placeholder="Rounds"
+            style={{ ...s.input, width: 90 }}
             value={selectedPhase?.num_rounds || ""}
-            onChange={(e) => {
-              setPhases(
-                phases.map((p) =>
-                  p.id === selectedPhaseId
-                    ? {
-                        ...p,
-                        num_rounds: e.target.value,
-                      }
-                    : p
-                )
-              );
-            }}
+            onChange={(e) =>
+              updatePhaseField(
+                "num_rounds",
+                Number(e.target.value)
+              )
+            }
           />
 
+          {/* ORDEM */}
           <input
-            style={{
-              ...s.input,
-              minWidth: 80,
-              width: 80,
-            }}
-            placeholder="Ordem"
+            style={{ ...s.input, width: 90 }}
             value={selectedPhase?.phase_number || ""}
-            onChange={(e) => {
-              setPhases(
-                phases.map((p) =>
-                  p.id === selectedPhaseId
-                    ? {
-                        ...p,
-                        phase_number: e.target.value,
-                      }
-                    : p
-                )
-              );
-            }}
+            onChange={(e) =>
+              updatePhaseField(
+                "phase_number",
+                Number(e.target.value)
+              )
+            }
           />
 
-          <button style={s.btn}>
+          {/* SALVAR FASE */}
+          <button style={s.btn} onClick={savePhase}>
             💾
           </button>
 
+          {/* DELETE (visual apenas) */}
           <button style={s.btn}>
             🗑
           </button>
 
+          {/* ROUNDS */}
           <button
             style={{
               ...s.btn,
               opacity: !selectedPhaseId ? 0.4 : 1,
-              pointerEvents: !selectedPhaseId
-                ? "none"
-                : "auto",
+              pointerEvents: !selectedPhaseId ? "none" : "auto",
             }}
             onClick={() => setViewLevel("rounds")}
           >
@@ -245,13 +239,10 @@ export default function EventDashboard() {
         </div>
       </div>
 
-      {/* ROUNDS */}
+      {/* ROUNDS (inalterado) */}
       {viewLevel === "rounds" && selectedPhase && (
         <div style={s.card}>
-
-          <h3>
-            {selectedPhase.phase_name}
-          </h3>
+          <h3>{selectedPhase.phase_name}</h3>
 
           <button
             style={s.btn}
@@ -263,43 +254,19 @@ export default function EventDashboard() {
           <hr />
 
           {Array.from(
-            {
-              length:
-                selectedPhase.num_rounds || 0,
-            },
+            { length: selectedPhase.num_rounds || 0 },
             (_, i) => i + 1
           ).map((r) => (
-            <div
-              key={r}
-              style={s.row}
-            >
-
+            <div key={r} style={s.row}>
               <span>
-                Round {r}/
-                {selectedPhase.num_rounds}
-                {" - "}
+                Round {r}/{selectedPhase.num_rounds} -{" "}
                 {selectedPhase.phase_name}
               </span>
 
-              <input
-                style={s.input}
-                placeholder="Nome do Round"
-              />
-
-              <input
-                style={s.input}
-                placeholder="Data"
-              />
-
-              <input
-                style={s.input}
-                placeholder="Hora"
-              />
-
-              <input
-                style={s.input}
-                placeholder="Local"
-              />
+              <input style={s.input} placeholder="Nome do Round" />
+              <input style={s.input} placeholder="Data" />
+              <input style={s.input} placeholder="Hora" />
+              <input style={s.input} placeholder="Local" />
 
               <button
                 style={s.btn}
@@ -310,62 +277,43 @@ export default function EventDashboard() {
               >
                 🧩 Parts
               </button>
-
             </div>
           ))}
         </div>
       )}
 
-      {/* PARTS */}
-      {viewLevel === "parts" &&
-        selectedRound && (
-          <div style={s.card}>
+      {/* PARTS (inalterado) */}
+      {viewLevel === "parts" && selectedRound && (
+        <div style={s.card}>
+          <h3>
+            Round {selectedRound}/{selectedPhase?.num_rounds} -{" "}
+            {selectedPhase?.phase_name}
+          </h3>
 
-            <h3>
-              Round {selectedRound}/
-              {selectedPhase?.num_rounds}
-              {" - "}
-              {selectedPhase?.phase_name}
-            </h3>
+          <button
+            style={s.btn}
+            onClick={() => setViewLevel("rounds")}
+          >
+            ⬅ Voltar Rounds
+          </button>
 
-            <button
-              style={s.btn}
-              onClick={() =>
-                setViewLevel("rounds")
-              }
-            >
-              ⬅ Voltar Rounds
-            </button>
+          <hr />
 
-            <hr />
+          {Array.from({ length: 2 }, (_, i) => i + 1).map((p) => (
+            <div key={p} style={s.row}>
+              <span>Part {p}/2</span>
 
-            {Array.from(
-              { length: 2 },
-              (_, i) => i + 1
-            ).map((p) => (
-              <div
-                key={p}
-                style={s.row}
-              >
+              <select style={s.input}>
+                <option>Brasil</option>
+                <option>Marrocos</option>
+                <option>França</option>
+              </select>
 
-                <span>
-                  Part {p}/2
-                </span>
-
-                <select style={s.input}>
-                  <option>Brasil</option>
-                  <option>Marrocos</option>
-                  <option>França</option>
-                </select>
-
-                <button style={s.btn}>
-                  💾
-                </button>
-
-              </div>
-            ))}
-          </div>
-        )}
+              <button style={s.btn}>💾</button>
+            </div>
+          ))}
+        </div>
+      )}
 
     </div>
   );

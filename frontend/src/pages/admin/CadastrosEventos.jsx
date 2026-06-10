@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 
 export default function CadastrosEventos() {
+
   const navigate = useNavigate();
 
   const [eventTypes, setEventTypes] = useState([]);
@@ -36,12 +37,75 @@ export default function CadastrosEventos() {
       .order("created_at", { ascending: false });
 
     setEventTypes(tipos || []);
-    setEvents(eventos || []);
+    setEvents(
+      (eventos || []).map((e) => ({
+        ...e,
+        original_num_phases: e.num_phases,
+      }))
+    );
   }
 
   function show(msg) {
     setMessage(msg);
     setTimeout(() => setMessage(""), 3000);
+  }
+
+  const handleInlineChange = (id, field, value) => {
+    setEvents((prev) =>
+      prev.map((ev) => (ev.id === id ? { ...ev, [field]: value } : ev))
+    );
+  };
+
+  // ✅ FUNÇÃO CORRIGIDA E ENCAIXADA
+  async function salvarEdicaoInline(event) {
+    try {
+      // 1. validação de fases
+      const currentCount = Number(event.original_num_phases);
+      const newCount = Number(event.num_phases);
+
+      if (newCount < currentCount) {
+        alert(
+          "⚠️ Alerta: Não é possível reduzir o número de fases por esta tela. Para deletar fases, realize a operação diretamente na tabela no Supabase."
+        );
+        return;
+      }
+
+      // 2. update evento
+      const { error: updateError } = await supabase
+        .from("events")
+        .update({
+          name: event.name,
+          event_type_uuid: event.event_type_uuid,
+          data_inicio: event.data_inicio,
+          data_fim: event.data_fim,
+          num_phases: newCount,
+          description: event.description,
+        })
+        .eq("id", event.id);
+
+      if (updateError) throw updateError;
+
+      // 3. criar fases se aumentou
+      if (newCount > currentCount) {
+        const { error: phaseError } = await supabase.rpc(
+          "add_event_phases",
+          {
+            p_event_id: event.id,
+            p_current_phases: currentCount,
+            p_new_phases: newCount,
+          }
+        );
+
+        if (phaseError) throw phaseError;
+      }
+
+      show("Evento atualizado com sucesso");
+      load();
+
+    } catch (error) {
+      console.error("Erro ao salvar:", error);
+      show("Erro ao salvar alterações");
+    }
   }
 
   async function salvarEvento() {
@@ -64,15 +128,11 @@ export default function CadastrosEventos() {
       .select()
       .single();
 
-    console.log("DATA:", data);
-    console.log("ERROR:", error);
-
     if (error) {
       show(error.message);
       return;
     }
 
-    // ✅ CRIA FASES AUTOMATICAMENTE
     const { error: phaseError } = await supabase.rpc(
       "create_default_phases",
       {
@@ -82,7 +142,6 @@ export default function CadastrosEventos() {
     );
 
     if (phaseError) {
-      console.log("PHASE ERROR:", phaseError);
       show("Evento criado, mas erro ao gerar fases");
     } else {
       show("Evento e fases criados com sucesso");
@@ -115,103 +174,22 @@ export default function CadastrosEventos() {
   }
 
   const s = {
-    page: {
-      padding: 20,
-      background: "#f5f6fa",
-      minHeight: "100vh",
-    },
-
-    header: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 15,
-      paddingBottom: 10,
-      borderBottom: "1px solid #e6e6e6",
-    },
-
-    titleBox: {
-      display: "flex",
-      flexDirection: "column",
-    },
-
-    title: {
-      fontSize: 18,
-      fontWeight: 600,
-    },
-
-    subtitle: {
-      fontSize: 12,
-      color: "#777",
-    },
-
-    navBtn: {
-      fontSize: 18,
-      padding: "6px 10px",
-      borderRadius: 8,
-      border: "1px solid #ddd",
-      background: "#fff",
-      cursor: "pointer",
-    },
-
-    card: {
-      background: "#fff",
-      padding: 12,
-      borderRadius: 10,
-      marginBottom: 12,
-      boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-    },
-
-    row: {
-      display: "flex",
-      gap: 8,
-      alignItems: "center",
-      marginBottom: 8,
-      flexWrap: "wrap",
-    },
-
-    input: {
-      padding: 8,
-      border: "1px solid #ddd",
-      borderRadius: 6,
-      fontSize: 13,
-    },
-
-    select: {
-      padding: 8,
-      border: "1px solid #ddd",
-      borderRadius: 6,
-      fontSize: 13,
-    },
-
-    btn: {
-      padding: "8px 12px",
-      border: "1px solid #ddd",
-      borderRadius: 6,
-      cursor: "pointer",
-      background: "#fff",
-      fontSize: 13,
-    },
-
-    statusOpen: {
-      color: "green",
-      fontWeight: "bold",
-    },
-
-    statusClosed: {
-      color: "#d97706",
-      fontWeight: "bold",
-    },
-
-    statusEnded: {
-      color: "#dc2626",
-      fontWeight: "bold",
-    },
+    page: { padding: 20, background: "#f5f6fa", minHeight: "100vh" },
+    header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 15, paddingBottom: 10, borderBottom: "1px solid #e6e6e6" },
+    titleBox: { display: "flex", flexDirection: "column" },
+    title: { fontSize: 18, fontWeight: 600 },
+    subtitle: { fontSize: 12, color: "#777" },
+    navBtn: { fontSize: 18, padding: "6px 10px", borderRadius: 8, border: "1px solid #ddd", background: "#fff", cursor: "pointer" },
+    card: { background: "#fff", padding: 12, borderRadius: 10, marginBottom: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.06)" },
+    row: { display: "flex", gap: 8, alignItems: "center", marginBottom: 8, flexWrap: "wrap" },
+    input: { padding: 8, border: "1px solid #ddd", borderRadius: 6, fontSize: 13 },
+    select: { padding: 8, border: "1px solid #ddd", borderRadius: 6, fontSize: 13 },
+    btn: { padding: "8px 12px", border: "1px solid #ddd", borderRadius: 6, cursor: "pointer", background: "#fff", fontSize: 13 },
+    btnSave: { padding: "8px 12px", border: "none", borderRadius: 6, cursor: "pointer", background: "#28a745", color: "#fff", fontSize: 13, fontWeight: "bold" },
   };
 
   return (
     <div style={s.page}>
-      {/* HEADER */}
       <div style={s.header}>
         <div style={s.titleBox}>
           <div style={s.title}>Cadastro de Eventos</div>
@@ -219,19 +197,17 @@ export default function CadastrosEventos() {
         </div>
 
         <div style={{ display: "flex", gap: 8 }}>
-          <button style={s.navBtn} onClick={() => navigate(-1)}>
-            ⬅️
-          </button>
-
-          <button style={s.navBtn} onClick={() => navigate("/")}>
-            🏠
-          </button>
+          <button style={s.navBtn} onClick={() => navigate(-1)}>⬅️</button>
+          <button style={s.navBtn} onClick={() => navigate("/")}>🏠</button>
         </div>
       </div>
 
-      {message && <div style={{ marginBottom: 12 }}>{message}</div>}
+      {message && (
+        <div style={{ marginBottom: 12, padding: 10, background: "#e1f5fe", borderRadius: 6 }}>
+          {message}
+        </div>
+      )}
 
-      {/* NOVO EVENTO */}
       <div style={s.card}>
         <h3>Novo Evento</h3>
 
@@ -250,9 +226,7 @@ export default function CadastrosEventos() {
           >
             <option value="">Tipo do evento</option>
             {eventTypes.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
+              <option key={t.id} value={t.id}>{t.name}</option>
             ))}
           </select>
 
@@ -276,108 +250,94 @@ export default function CadastrosEventos() {
 
         <div style={s.row}>
           <span>Início:</span>
-
-          <input
-            type="date"
-            style={s.input}
-            value={dataInicio}
-            onChange={(e) => setDataInicio(e.target.value)}
-          />
+          <input type="date" style={s.input} value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
 
           <span>Fim:</span>
+          <input type="date" style={s.input} value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
 
-          <input
-            type="date"
-            style={s.input}
-            value={dataFim}
-            onChange={(e) => setDataFim(e.target.value)}
-          />
-
-          <button style={s.btn} onClick={salvarEvento}>
+          <button
+            style={{ ...s.btn, background: "#007bff", color: "#fff" }}
+            onClick={salvarEvento}
+          >
             💾 Salvar Evento
           </button>
         </div>
       </div>
 
-      {/* EVENTOS */}
       <div style={s.card}>
         <h3>Eventos cadastrados</h3>
 
-        <table width="100%" cellPadding="6">
+        <table width="100%" cellPadding="6" style={{ borderCollapse: "collapse" }}>
           <thead>
-            <tr>
-              <th align="left">Evento</th>
+            <tr style={{ borderBottom: "2px solid #eee" }}>
+              <th align="left">Evento / Nome</th>
               <th align="left">Tipo</th>
               <th align="center">Fases</th>
-              <th align="center">Status</th>
+              <th align="center">Datas</th>
               <th align="center">Ações</th>
             </tr>
           </thead>
 
           <tbody>
-            {events.map((e) => {
-              let statusTexto = "Fechado";
-              let statusStyle = s.statusClosed;
+            {events.map((e) => (
+              <tr key={e.id}>
+                <td>
+                  <input
+                    style={{ ...s.input, width: "95%", fontWeight: "bold" }}
+                    value={e.name || ""}
+                    onChange={(ev) => handleInlineChange(e.id, "name", ev.target.value)}
+                  />
+                  <input
+                    style={{ ...s.input, width: "95%", fontSize: 11 }}
+                    value={e.description || ""}
+                    onChange={(ev) => handleInlineChange(e.id, "description", ev.target.value)}
+                  />
+                </td>
 
-              if (e.encerrada) {
-                statusTexto = "Encerrado";
-                statusStyle = s.statusEnded;
-              } else if (e.is_open) {
-                statusTexto = "Aberto";
-                statusStyle = s.statusOpen;
-              }
+                <td>
+                  <select
+                    style={s.select}
+                    value={e.event_type_uuid || ""}
+                    onChange={(ev) => handleInlineChange(e.id, "event_type_uuid", ev.target.value)}
+                  >
+                    <option value="">Tipo...</option>
+                    {eventTypes.map((t) => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+                </td>
 
-              return (
-                <tr key={e.id}>
-                  <td>
-                    <strong>{e.name}</strong>
-                    <br />
-                    <small>{e.description}</small>
-                  </td>
+                <td align="center">
+                  <input
+                    type="number"
+                    style={{ ...s.input, width: 60, textAlign: "center" }}
+                    value={e.num_phases || 0}
+                    onChange={(ev) => handleInlineChange(e.id, "num_phases", ev.target.value)}
+                  />
+                </td>
 
-                  <td>{e.event_types?.name || "-"}</td>
+                <td align="center">
+                  <input
+                    type="date"
+                    style={s.input}
+                    value={e.data_inicio || ""}
+                    onChange={(ev) => handleInlineChange(e.id, "data_inicio", ev.target.value)}
+                  />
+                  <input
+                    type="date"
+                    style={s.input}
+                    value={e.data_fim || ""}
+                    onChange={(ev) => handleInlineChange(e.id, "data_fim", ev.target.value)}
+                  />
+                </td>
 
-                  <td align="center">{e.num_phases}</td>
-
-                  <td align="center" style={statusStyle}>
-                    {statusTexto}
-                  </td>
-
-                  <td align="center">
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 4,
-                        justifyContent: "center",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      <button
-                        style={s.btn}
-                        onClick={() =>
-                          navigate(`/admin/cadastros/eventos/${e.id}/estrutura`)
-                        }
-                      >
-                        Estrutura
-                      </button>
-
-                      <button
-                        style={s.btn}
-                        onClick={() =>
-                          navigate(`/admin/cadastros/eventos/${e.id}/editar`)
-                        }
-                      >
-                        Editar
-                      </button>
-
-                      <button style={s.btn} onClick={() => excluirEvento(e.id)}>
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+                <td align="center">
+                  <button style={s.btnSave} onClick={() => salvarEdicaoInline(e)}>💾</button>
+                  <button style={s.btn} onClick={() => navigate(`/admin/cadastros/eventos/${e.id}/estrutura`)}>Estrutura</button>
+                  <button style={s.btn} onClick={() => excluirEvento(e.id)}>🗑️</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
