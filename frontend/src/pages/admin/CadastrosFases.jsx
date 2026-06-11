@@ -67,15 +67,14 @@ export default function CadastrosFases() {
             continue;
           }
 
-          // 2. Chama a RPC para garantir que os rounds existam
-          // A lógica de "criar apenas se faltar" agora está dentro do SQL
-          const { data: rpcRes, error: rpcError } = await supabase.rpc("add_event_rounds", {
+          // 2. Chama a RPC simplificada (burra) para criar os rounds
+          const { data: rpcRes, error: rpcError } = await supabase.rpc("t_add_event_rounds", {
             p_phase_id: p.id,
-            p_new_rounds: numRounds,
+            p_num_rounds: numRounds,
           });
 
           if (rpcError) {
-            console.error("Erro na RPC add_event_rounds:", rpcError);
+            console.error("Erro na RPC t_add_event_rounds:", rpcError);
           } else {
             console.log("Resultado RPC:", rpcRes);
           }
@@ -97,14 +96,14 @@ export default function CadastrosFases() {
             continue;
           }
 
-          // Chama a RPC para a nova fase criada
-          const { data: rpcRes, error: rpcError } = await supabase.rpc("add_event_rounds", {
+          // Chama a RPC simplificada (burra) para a nova fase criada
+          const { data: rpcRes, error: rpcError } = await supabase.rpc("t_add_event_rounds", {
             p_phase_id: inserted.id,
-            p_new_rounds: numRounds,
+            p_num_rounds: numRounds,
           });
 
           if (rpcError) {
-            console.error("Erro na RPC add_event_rounds (nova fase):", rpcError);
+            console.error("Erro na RPC t_add_event_rounds (nova fase):", rpcError);
           } else {
             console.log("Resultado RPC (nova fase):", rpcRes);
           }
