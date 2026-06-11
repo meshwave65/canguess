@@ -53,7 +53,7 @@ export default function CadastrosFases() {
         const numRounds = Number(p.newRounds || 0);
 
         if (p.id) {
-          // 1. Atualiza os dados da fase existente
+          // 1. Atualiza os dados da fase existente (sem tocar no event_uuid)
           const { error: updateError } = await supabase
             .from("event_phases")
             .update({
@@ -69,10 +69,16 @@ export default function CadastrosFases() {
 
           // 2. Chama a RPC para garantir que os rounds existam
           // A lógica de "criar apenas se faltar" agora está dentro do SQL
-          await supabase.rpc("add_event_rounds", {
+          const { data: rpcRes, error: rpcError } = await supabase.rpc("add_event_rounds", {
             p_phase_id: p.id,
             p_new_rounds: numRounds,
           });
+
+          if (rpcError) {
+            console.error("Erro na RPC add_event_rounds:", rpcError);
+          } else {
+            console.log("Resultado RPC:", rpcRes);
+          }
 
         } else {
           // Inserção de nova fase (caso tenha clicado em "+ Adicionar fase")
@@ -92,10 +98,16 @@ export default function CadastrosFases() {
           }
 
           // Chama a RPC para a nova fase criada
-          await supabase.rpc("add_event_rounds", {
+          const { data: rpcRes, error: rpcError } = await supabase.rpc("add_event_rounds", {
             p_phase_id: inserted.id,
             p_new_rounds: numRounds,
           });
+
+          if (rpcError) {
+            console.error("Erro na RPC add_event_rounds (nova fase):", rpcError);
+          } else {
+            console.log("Resultado RPC (nova fase):", rpcRes);
+          }
         }
       }
 
