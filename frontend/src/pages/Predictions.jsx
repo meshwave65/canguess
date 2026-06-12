@@ -2,9 +2,6 @@ import { useState } from "react";
 import { supabase } from "./admin/lib/supabase";
 import { useNavigate } from "react-router-dom";
 
-import Header from "../components/Header";
-import BottomNav from "../components/BottomNav";
-
 export default function Predictions() {
   const navigate = useNavigate();
 
@@ -24,98 +21,105 @@ export default function Predictions() {
     "ARABIA SAUDITA x URUGUAI",
   ];
 
-  const [form, setForm] = useState({
-    full_name: "",
-    user_name: "",
-    phone: "",
-  });
-
-  const [validatedUser, setValidatedUser] = useState(null);
-  const [bets, setBets] = useState({});
+  const [step, setStep] = useState("form"); // form | bets | confirm
   const [msg, setMsg] = useState("");
-  const [showConfirm, setShowConfirm] = useState(false);
 
-  function handleFormChange(e) {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  }
+  const [fullName, setFullName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [phone, setPhone] = useState("");
 
-  function escolher(i, value) {
-    setBets((prev) => ({
-      ...prev,
-      [i]: value,
-    }));
-  }
+  const [bets, setBets] = useState({});
+  const [showModal, setShowModal] = useState(false);
+
+  // =========================
+  // UTIL: telefone BR
+  // =========================
+  const formatPhone = (value) => {
+    const clean = value.replace(/\D/g, "");
+    return clean;
+  };
 
   // =========================
   // VALIDAR / CRIAR USUÁRIO
   // =========================
   async function validarUsuario() {
-    try {
-      if (!form.phone) {
-        setMsg("Telefone obrigatório");
+    if (!phone) {
+      setMsg("⚠️ Informe o telefone com DDD");
+      return;
+    }
+
+    const cleanPhone = formatPhone(phone);
+
+    setMsg("Validando usuário...");
+
+    let { data: user } = await supabase
+      .from("users")
+      .select("*")
+      .eq("phone", cleanPhone)
+      .maybeSingle();
+
+    if (!user) {
+      const { data: newUser, error } = await supabase
+        .from("users")
+        .insert({
+          phone: cleanPhone,
+          full_name: fullName || "Usuário sem nome",
+          user_name: userName || `user_${cleanPhone.slice(-4)}`,
+          email: `temp_${cleanPhone}@bolao.app`,
+          cpf: cleanPhone.padEnd(11, "0"),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error(error);
+        setMsg("❌ Erro ao criar usuário");
         return;
       }
 
-      const phone = form.phone.replace(/\D/g, "");
-
-      const { data: existing } = await supabase
-        .from("users")
-        .select("*")
-        .eq("phone", phone)
-        .maybeSingle();
-
-      let user = existing;
-
-      if (!existing) {
-        const { data: created, error } = await supabase
-          .from("users")
-          .insert({
-            full_name: form.full_name,
-            user_name: form.user_name,
-            phone,
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        user = created;
-      }
-
-      setValidatedUser(user);
-      setMsg("Usuário validado ✔");
-    } catch (err) {
-      console.error(err);
-      setMsg("Erro ao validar usuário");
+      user = newUser;
     }
+
+    setMsg("✔ Usuário validado");
+    setStep("bets");
   }
 
   // =========================
-  // ABRIR CONFIRMAÇÃO (NÃO SALVA)
+  // ESCOLHA PALPITES
   // =========================
-  function salvar() {
-    setShowConfirm(true);
+  function escolher(i, v) {
+    setBets((prev) => ({ ...prev, [i]: v }));
   }
 
   // =========================
-  // CONFIRMAR: SALVA + WHATSAPP
+  // ABRIR CONFIRMAÇÃO
   // =========================
-  async function confirmar() {
+  function abrirConfirmacao() {
+    setShowModal(true);
+  }
+
+  // =========================
+  // SALVAR + WHATSAPP
+  // =========================
+  async function confirmarEnvio() {
     try {
       setMsg("Salvando palpites...");
 
-      if (!validatedUser) {
-        setMsg("Valide o usuário primeiro");
-        return;
-      }
+      const cleanPhone = formatPhone(phone);
+
+      const { data: user } = await supabase
+        .from("users")
+        .select("*")
+        .eq("phone", cleanPhone)
+        .single();
+
+      if (!user) throw new Error("Usuário não encontrado");
 
       const inserts = jogos.map((_, i) => ({
         event_id: EVENT_ID,
-        user_id: validatedUser.id,
+        user_id: user.id,
         game_index: i + 1,
-        prediction: bets[i] || null,
+        prediction: bets[i] || "-",
         status: "Em validação",
       }));
 
@@ -127,219 +131,220 @@ export default function Predictions() {
 
       if (error) throw error;
 
-      const now = new Date().toLocaleString();
+      // =========================
+      // WHATSAPP (PADRÃO BR)
+      // =========================
 
-      const linhas = jogos.map((j, i) => `${j} - ${bets[i] || "-"}`);
-
-      const msgWhats = `
+      const header = `
 Palpite registrado de:
 
-Nome: ${validatedUser.full_name}
-Username: ${validatedUser.user_name}
-Telefone: +55${validatedUser.phone}
+Nome: ${user.full_name}
+Username: ${user.user_name}
+Telefone: +55${user.phone}
 
-Data/Hora: ${now}
+Data/Hora: ${new Date().toLocaleString("pt-BR")}
 Status: Em validação
 
 SEUS PALPITES:
-
-${linhas.join("\n")}
 `;
 
-      const url = `https://wa.me/5521972341965?text=${encodeURIComponent(
-        msgWhats
+      const body = jogos
+        .map((j, i) => `${j} - ${bets[i] || "-"}`)
+        .join("\n");
+
+      const msgFinal = `${header}\n${body}`;
+
+      const whatsappUrl = `https://wa.me/5521972341965?text=${encodeURIComponent(
+        msgFinal
       )}`;
 
-      setShowConfirm(false);
+      window.open(whatsappUrl, "_blank");
 
-      window.open(url, "_blank");
+      setMsg("✔ Enviado com sucesso");
+      setShowModal(false);
+      setStep("form");
     } catch (err) {
       console.error(err);
-      setMsg("Erro ao salvar palpites");
+      setMsg("❌ Erro ao salvar palpites");
     }
   }
 
+  // =========================
+  // UI
+  // =========================
+
   return (
-    <>
-      <Header />
-
-      <div style={{ padding: 12, paddingBottom: 90 }}>
-
-        {/* NAV */}
-        <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
-          <button onClick={() => navigate(-1)}>⬅️</button>
-          <h3 style={{ margin: 0 }}>CanGuess - Bolão do Zé</h3>
-          <button onClick={() => navigate("/")}>🏠</button>
-        </div>
-
-        {/* INTRO */}
-        <div style={{
-          fontSize: 12,
-          lineHeight: 1.4,
-          background: "#fff",
+    <div style={{ background: "#f4f4f4", minHeight: "100vh", padding: 12 }}>
+      {/* HEADER */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
           padding: 10,
+          background: "#C1121F",
+          color: "#fff",
           borderRadius: 8,
-          marginBottom: 12
-        }}>
-          <strong>Bem vindos ao CanGuess</strong><br /><br />
-          Sistema de bolões em desenvolvimento.<br />
-          Use seu telefone como identificação única.<br />
-        </div>
-
-        {/* FORM */}
-        {!validatedUser && (
-          <div style={{
-            background: "#fff",
-            padding: 12,
-            borderRadius: 8,
-            marginBottom: 12
-          }}>
-            <input
-              name="full_name"
-              placeholder="Nome completo"
-              value={form.full_name}
-              onChange={handleFormChange}
-              style={input}
-            />
-
-            <input
-              name="user_name"
-              placeholder="Username"
-              value={form.user_name}
-              onChange={handleFormChange}
-              style={input}
-            />
-
-            <input
-              name="phone"
-              placeholder="Telefone (DDD + número)"
-              value={form.phone}
-              onChange={handleFormChange}
-              style={input}
-            />
-
-            <button onClick={validarUsuario} style={btn}>
-              Validar
-            </button>
-
-            {msg && <p style={{ fontSize: 12 }}>{msg}</p>}
-          </div>
-        )}
-
-        {/* PALPITES */}
-        {validatedUser && (
-          <div style={{
-            background: "#fff",
-            padding: 10,
-            borderRadius: 8
-          }}>
-            <table style={{ width: "100%", fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: "#C1121F", color: "#fff" }}>
-                  <th>JOGO</th>
-                  <th>M</th>
-                  <th>E</th>
-                  <th>V</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {jogos.map((jogo, i) => (
-                  <tr key={i}>
-                    <td>{jogo}</td>
-
-                    {["M", "E", "V"].map((v) => (
-                      <td key={v} style={{ textAlign: "center" }}>
-                        <input
-                          type="radio"
-                          name={`jogo-${i}`}
-                          onChange={() => escolher(i, v)}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <button onClick={salvar} style={btn}>
-              SALVAR PALPITES
-            </button>
-          </div>
-        )}
+        }}
+      >
+        <button onClick={() => navigate(-1)}>⬅</button>
+        <strong>Bolão Zé Bangu</strong>
+        <button onClick={() => navigate("/")}>🏠</button>
       </div>
 
-      <BottomNav />
+      {/* ================= FORM ================= */}
+      {step === "form" && (
+        <div
+          style={{
+            marginTop: 15,
+            background: "#fff",
+            padding: 15,
+            borderRadius: 10,
+          }}
+        >
+          <h3>Identificação do Palpiteiro</h3>
 
-      {/* MODAL CONFIRMAÇÃO */}
-      {showConfirm && (
-        <div style={overlay}>
-          <div style={modal}>
-            <h3>Confirmar palpites</h3>
+          <input
+            placeholder="Nome completo"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            style={inputStyle}
+          />
 
-            <p style={{ fontSize: 12 }}>
-              Revise seus palpites antes de confirmar.
-            </p>
+          <input
+            placeholder="Nome de usuário"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            style={inputStyle}
+          />
 
-            <ul style={{ fontSize: 12, maxHeight: 200, overflow: "auto" }}>
+          <input
+            placeholder="Telefone (DDD + número)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            style={inputStyle}
+          />
+
+          <button style={btnStyle} onClick={validarUsuario}>
+            Validar e continuar
+          </button>
+
+          <p style={{ fontSize: 12 }}>{msg}</p>
+        </div>
+      )}
+
+      {/* ================= BETS ================= */}
+      {step === "bets" && (
+        <div
+          style={{
+            marginTop: 15,
+            background: "#fff",
+            padding: 10,
+            borderRadius: 10,
+          }}
+        >
+          <h3>Seus palpites</h3>
+
+          {jogos.map((j, i) => (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: 8,
+                borderBottom: "1px solid #eee",
+              }}
+            >
+              <span style={{ fontSize: 12 }}>{j}</span>
+
+              <div style={{ display: "flex", gap: 10 }}>
+                {["M", "E", "V"].map((v) => (
+                  <label key={v} style={{ fontSize: 12 }}>
+                    <input
+                      type="radio"
+                      name={`j-${i}`}
+                      onChange={() => escolher(i, v)}
+                    />{" "}
+                    {v}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <button style={btnStyle} onClick={abrirConfirmacao}>
+            Revisar palpites
+          </button>
+        </div>
+      )}
+
+      {/* ================= MODAL ================= */}
+      {showModal && (
+        <div style={modalBg}>
+          <div style={modalBox}>
+            <h3>Confirmação final</h3>
+
+            <div style={{ fontSize: 12, maxHeight: 250, overflowY: "auto" }}>
               {jogos.map((j, i) => (
-                <li key={i}>
+                <div key={i}>
                   {j} → {bets[i] || "-"}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
 
-            <button onClick={confirmar} style={btn}>
-              Confirmar
+            <button style={btnStyle} onClick={confirmarEnvio}>
+              Confirmar e enviar WhatsApp
             </button>
 
             <button
-              onClick={() => setShowConfirm(false)}
-              style={{ ...btn, background: "#999", marginTop: 8 }}
+              style={{ marginTop: 10 }}
+              onClick={() => setShowModal(false)}
             >
               Cancelar
             </button>
           </div>
         </div>
       )}
-    </>
+
+      <p style={{ textAlign: "center", fontSize: 12 }}>{msg}</p>
+    </div>
   );
 }
 
-// =========================
-// styles
-// =========================
-const input = {
-  display: "block",
+// ================= STYLES =================
+const inputStyle = {
   width: "100%",
-  marginBottom: 8,
-  padding: 8,
+  padding: 10,
+  marginBottom: 10,
+  borderRadius: 8,
   border: "1px solid #ddd",
-  borderRadius: 6,
 };
 
-const btn = {
+const btnStyle = {
   width: "100%",
   padding: 12,
   background: "#C1121F",
   color: "#fff",
   border: "none",
   borderRadius: 8,
+  fontWeight: "bold",
   marginTop: 10,
 };
 
-const overlay = {
+const modalBg = {
   position: "fixed",
-  inset: 0,
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
   background: "rgba(0,0,0,0.6)",
   display: "flex",
-  alignItems: "center",
   justifyContent: "center",
+  alignItems: "center",
 };
 
-const modal = {
+const modalBox = {
   background: "#fff",
-  padding: 16,
+  padding: 15,
   borderRadius: 10,
   width: "90%",
 };
