@@ -132,7 +132,7 @@ export default function Predictions() {
       if (error) throw error;
 
       // =========================
-      // WHATSAPP (PADRÃO BR)
+      // WHATSAPP (CORRIGIDO)
       // =========================
 
       const header = `
@@ -154,11 +154,24 @@ SEUS PALPITES:
 
       const msgFinal = `${header}\n${body}`;
 
-      const whatsappUrl = `https://wa.me/5521964906217text=${encodeURIComponent(
-        msgFinal
-      )}`;
+      const encodedMsg = encodeURIComponent(msgFinal);
 
-      window.open(whatsappUrl, "_blank");
+      const phoneAdmin = "5521964906217";
+
+      const appUrl = `whatsapp://send?phone=${phoneAdmin}&text=${encodedMsg}`;
+      const webUrl = `https://wa.me/${phoneAdmin}?text=${encodedMsg}`;
+
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        window.open(appUrl, "_self");
+
+        setTimeout(() => {
+          window.open(webUrl, "_blank");
+        }, 1200);
+      } else {
+        window.open(webUrl, "_blank");
+      }
 
       setMsg("✔ Enviado com sucesso");
       setShowModal(false);
@@ -191,104 +204,81 @@ SEUS PALPITES:
         <button onClick={() => navigate("/")}>🏠</button>
       </div>
 
-      {/* ================= FORM ================= */}
+      {/* FORM */}
       {step === "form" && (
-  <div
-    style={{
-      marginTop: 15,
-      background: "#fff",
-      padding: 15,
-      borderRadius: 10,
-      lineHeight: 1.4,
-    }}
-  >
-    {/* ================= TEXTO INTRO ================= */}
-    <h3>Bem-vindo ao CanGuess</h3>
-
-    <p>
-      Seu ecossistema de palpites do <strong>Bolão do Zé Bangu</strong>.
-    </p>
-
-    <p>
-      Você está acessando o <strong>Workspace Zé Bangu</strong>. Este é o
-      primeiro evento do sistema.
-    </p>
-
-    <p>
-      Estamos em desenvolvimento. Caso encontre qualquer problema, entre em
-      contato:
-    </p>
-
-    <p>
-      📞 Admin: +351 914 845 439 / +55 21 97234-1976 <br />
-      📞 Zé Luiz: (21) 96490-6217
-    </p>
-
-    <hr />
-
-    <p>
-      <strong>IMPORTANTE:</strong> Este formulário de cadastro é obrigatório
-      apenas na primeira vez.
-    </p>
-
-    <p>
-      Depois, basta usar apenas seu <strong>telefone</strong> para acessar o
-      sistema.
-    </p>
-
-    <p>
-      Formato: DDD + número (ex: 21972341965)
-    </p>
-
-    <hr />
-
-    <p>
-      Após validar, você poderá inserir seus palpites e revisar antes de
-      confirmar.
-    </p>
-
-    {/* ================= FORM ================= */}
-    <h4>Identificação do Palpiteiro</h4>
-
-    <input
-      placeholder="Nome completo"
-      value={fullName}
-      onChange={(e) => setFullName(e.target.value)}
-      style={inputStyle}
-    />
-
-    <input
-      placeholder="Nome de usuário (nickname)"
-      value={userName}
-      onChange={(e) => setUserName(e.target.value)}
-      style={inputStyle}
-    />
-
-    <input
-      placeholder="Telefone (DDD + número)"
-      value={phone}
-      onChange={(e) => setPhone(e.target.value)}
-      style={inputStyle}
-    />
-
-    <button style={btnStyle} onClick={validarUsuario}>
-      Validar e continuar
-    </button>
-
-    <p style={{ fontSize: 12 }}>{msg}</p>
-  </div>
-)}
-
-      {/* ================= BETS ================= */}
-      {step === "bets" && (
         <div
           style={{
             marginTop: 15,
             background: "#fff",
-            padding: 10,
+            padding: 15,
             borderRadius: 10,
+            lineHeight: 1.4,
           }}
         >
+          <h3>Bem-vindo ao CanGuess</h3>
+
+          <p>Seu ecossistema de palpites do <strong>Bolão do Zé Bangu</strong>.</p>
+
+          <p>
+            Você está acessando o <strong>Workspace Zé Bangu</strong>. Este é o
+            primeiro evento do sistema.
+          </p>
+
+          <p>
+            Estamos em desenvolvimento. Caso encontre qualquer problema, entre em contato:
+          </p>
+
+          <p>
+            📞 Admin: +351 914 845 439 / +55 21 97234-1976 <br />
+            📞 Zé Luiz: (21) 96490-6217
+          </p>
+
+          <hr />
+
+          <p><strong>IMPORTANTE:</strong> Este formulário de cadastro é obrigatório apenas na primeira vez.</p>
+
+          <p>Depois, basta usar apenas seu <strong>telefone</strong> para acessar o sistema.</p>
+
+          <p>Formato: DDD + número (ex: 21972341965)</p>
+
+          <hr />
+
+          <p>Após validar, você poderá inserir seus palpites e revisar antes de confirmar.</p>
+
+          <h4>Identificação do Palpiteiro</h4>
+
+          <input
+            placeholder="Nome completo"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            style={inputStyle}
+          />
+
+          <input
+            placeholder="Nome de usuário (nickname)"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            style={inputStyle}
+          />
+
+          <input
+            placeholder="Telefone (DDD + número)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            style={inputStyle}
+          />
+
+          <button style={btnStyle} onClick={validarUsuario}>
+            Validar e continuar
+          </button>
+
+          <p style={{ fontSize: 12 }}>{msg}</p>
+        </div>
+      )}
+
+      {/* BETS */}
+      {step === "bets" && (
+        <div style={{ marginTop: 15, background: "#fff", padding: 10, borderRadius: 10 }}>
           <h3>Seus palpites</h3>
 
           {jogos.map((j, i) => (
@@ -324,7 +314,7 @@ SEUS PALPITES:
         </div>
       )}
 
-      {/* ================= MODAL ================= */}
+      {/* MODAL */}
       {showModal && (
         <div style={modalBg}>
           <div style={modalBox}>
@@ -342,10 +332,7 @@ SEUS PALPITES:
               Confirmar e enviar WhatsApp
             </button>
 
-            <button
-              style={{ marginTop: 10 }}
-              onClick={() => setShowModal(false)}
-            >
+            <button style={{ marginTop: 10 }} onClick={() => setShowModal(false)}>
               Cancelar
             </button>
           </div>
@@ -357,7 +344,7 @@ SEUS PALPITES:
   );
 }
 
-// ================= STYLES =================
+// STYLES
 const inputStyle = {
   width: "100%",
   padding: 10,
