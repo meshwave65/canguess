@@ -15,6 +15,9 @@ import CadastrosRodadas from "../pages/admin/CadastrosRodadas";
 import CadastroRounds from "../pages/admin/CadastrosRounds";
 import CadastroParts from "../pages/admin/CadastrosParts";
 
+import AdminLogin from "../pages/AdminLogin";
+import AdminGuard from "../components/AdminGuard";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -23,7 +26,18 @@ export default function AppRoutes() {
       <Route path="/palpites" element={<Predictions />} />
       <Route path="/ranking" element={<Ranking />} />
 
-      <Route path="/admin" element={<Admin />} />
+      {/* 🔐 ADMIN LOGIN */}
+      <Route path="/admin-login" element={<AdminLogin />} />
+
+      {/* 🔒 ADMIN PROTEGIDO (CORRETO) */}
+      <Route
+        path="/admin"
+        element={
+          <AdminGuard>
+            <Admin />
+          </AdminGuard>
+        }
+      />
 
       <Route path="/admin/resultados" element={<div>Resultados</div>} />
       <Route path="/admin/usuarios" element={<div>Usuários</div>} />
