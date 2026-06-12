@@ -2,247 +2,344 @@ import { useState } from "react";
 import { supabase } from "./admin/lib/supabase";
 import { useNavigate } from "react-router-dom";
 
+import Header from "../components/Header";
+import BottomNav from "../components/BottomNav";
+
 export default function Predictions() {
   const navigate = useNavigate();
 
+  const EVENT_ID = "dc0631b5-c7aa-4294-92e6-6d2fcc78f082";
+
   const jogos = [
-    "FLAMENGO x VASCO",
-    "BOTAFOGO x FLUMINENSE",
-    "PALMEIRAS x CORINTHIANS",
-    "SANTOS x SÃO PAULO",
-    "GRÊMIO x INTERNACIONAL",
-    "CRUZEIRO x ATLÉTICO MG",
-    "BAHIA x VITÓRIA",
-    "FORTALEZA x CEARÁ",
-    "SPORT x NÁUTICO",
-    "GOIÁS x VILA NOVA",
-    "ATHLETICO x CORITIBA",
+    "QATAR x SUIÇA",
+    "BRASIL x MARROCOS",
+    "HAITI x ESCOCIA",
+    "AUSTRALIA x TURQUIA",
+    "ALEMANHA x CURAÇAO",
+    "HOLANDA x JAPAO",
+    "COSTA DO MARFIM x EQUADOR",
+    "SUECIA x TUNISIA",
+    "ESPANHA x CABO VERDE",
+    "BELGICA x EGITO",
+    "ARABIA SAUDITA x URUGUAI",
   ];
 
-  const [senha, setSenha] = useState("");
-  const [validada, setValidada] = useState(false);
-  const [msg, setMsg] = useState("");
+  const [form, setForm] = useState({
+    full_name: "",
+    user_name: "",
+    phone: "",
+  });
 
+  const [validatedUser, setValidatedUser] = useState(null);
   const [bets, setBets] = useState({});
+  const [msg, setMsg] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // =========================
-  // VALIDAR SENHA
-  // =========================
-  async function validarSenha() {
-    const { data, error } = await supabase
-      .from("event_passw")
-      .select("*")
-      .eq("code_event", senha)
-      .eq("status", 1)
-//      .limit(1)
-      .single();
-
-    if (error || !data) {
-      setValidada(false);
-      setMsg("Senha inválida ou já utilizada");
-      return;
-    }
-
-    setValidada(true);
-    setMsg("Senha validada ✔");
+  function handleFormChange(e) {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   }
 
-  // =========================
-  // ESCOLHA DOS PALPITES
-  // =========================
-  function escolher(jogoIndex, valor) {
+  function escolher(i, value) {
     setBets((prev) => ({
       ...prev,
-      [jogoIndex]: valor,
+      [i]: value,
     }));
   }
 
   // =========================
-  // SALVAR (ABRE CONFIRMAÇÃO)
+  // VALIDAR / CRIAR USUÁRIO
+  // =========================
+  async function validarUsuario() {
+    try {
+      if (!form.phone) {
+        setMsg("Telefone obrigatório");
+        return;
+      }
+
+      const phone = form.phone.replace(/\D/g, "");
+
+      const { data: existing } = await supabase
+        .from("users")
+        .select("*")
+        .eq("phone", phone)
+        .maybeSingle();
+
+      let user = existing;
+
+      if (!existing) {
+        const { data: created, error } = await supabase
+          .from("users")
+          .insert({
+            full_name: form.full_name,
+            user_name: form.user_name,
+            phone,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        user = created;
+      }
+
+      setValidatedUser(user);
+      setMsg("Usuário validado ✔");
+    } catch (err) {
+      console.error(err);
+      setMsg("Erro ao validar usuário");
+    }
+  }
+
+  // =========================
+  // ABRIR CONFIRMAÇÃO (NÃO SALVA)
   // =========================
   function salvar() {
     setShowConfirm(true);
   }
 
   // =========================
-  // CONFIRMAR SALVAMENTO
+  // CONFIRMAR: SALVA + WHATSAPP
   // =========================
   async function confirmar() {
-    const { error } = await supabase.from("rounds").insert([
-      {
-        code_event: senha,
-        bets,
-      },
-    ]);
+    try {
+      setMsg("Salvando palpites...");
 
-    if (error) {
-      setMsg("Erro ao salvar aposta");
-      return;
+      if (!validatedUser) {
+        setMsg("Valide o usuário primeiro");
+        return;
+      }
+
+      const inserts = jogos.map((_, i) => ({
+        event_id: EVENT_ID,
+        user_id: validatedUser.id,
+        game_index: i + 1,
+        prediction: bets[i] || null,
+        status: "Em validação",
+      }));
+
+      const { error } = await supabase
+        .from("bolao")
+        .upsert(inserts, {
+          onConflict: "event_id,user_id,game_index",
+        });
+
+      if (error) throw error;
+
+      const now = new Date().toLocaleString();
+
+      const linhas = jogos.map((j, i) => `${j} - ${bets[i] || "-"}`);
+
+      const msgWhats = `
+Palpite registrado de:
+
+Nome: ${validatedUser.full_name}
+Username: ${validatedUser.user_name}
+Telefone: +55${validatedUser.phone}
+
+Data/Hora: ${now}
+Status: Em validação
+
+SEUS PALPITES:
+
+${linhas.join("\n")}
+`;
+
+      const url = `https://wa.me/5521972341965?text=${encodeURIComponent(
+        msgWhats
+      )}`;
+
+      setShowConfirm(false);
+
+      window.open(url, "_blank");
+    } catch (err) {
+      console.error(err);
+      setMsg("Erro ao salvar palpites");
     }
-
-    await supabase
-      .from("event_passw")
-      .update({ status: 0 })
-      .eq("code_event", senha);
-
-    setMsg("Aposta registrada com sucesso ✔");
-    setShowConfirm(false);
   }
 
   return (
-    <div style={{ padding: 12, paddingBottom: 90 }}>
+    <>
+      <Header />
 
-      {/* HEADER */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 10
-      }}>
-        <button onClick={() => navigate(-1)}>⬅️</button>
-        <h3>Palpites da Rodada</h3>
-        <button onClick={() => navigate("/")}>🏠</button>
-      </div>
+      <div style={{ padding: 12, paddingBottom: 90 }}>
 
-      {/* SENHA */}
-      <div style={{ marginBottom: 10 }}>
-        <input
-          placeholder="Senha da aposta"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          style={{
-            padding: 8,
-            width: "60%",
-            border: "1px solid #ccc",
-            borderRadius: 6
-          }}
-        />
-
-        <button
-          onClick={validarSenha}
-          style={{
-            marginLeft: 8,
-            padding: "8px 10px"
-          }}
-        >
-          Validar
-        </button>
-      </div>
-
-      {msg && (
-        <div style={{ marginBottom: 10, fontSize: 14 }}>
-          {msg}
+        {/* NAV */}
+        <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+          <button onClick={() => navigate(-1)}>⬅️</button>
+          <h3 style={{ margin: 0 }}>CanGuess - Bolão do Zé</h3>
+          <button onClick={() => navigate("/")}>🏠</button>
         </div>
-      )}
 
-      {!validada && (
-        <div style={{ color: "#777", marginBottom: 10 }}>
-          Informe uma senha válida para liberar os palpites
-        </div>
-      )}
-
-      {/* TABELA */}
-      {validada && (
-        <>
-          <table style={{
-            width: "100%",
-            background: "#fff",
-            borderCollapse: "collapse"
-          }}>
-            <thead>
-              <tr style={{ background: "#C1121F", color: "#fff" }}>
-                <th style={{ padding: 8, textAlign: "left" }}>JOGO</th>
-                <th>M</th>
-                <th>E</th>
-                <th>V</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {jogos.map((jogo, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: 8 }}>{jogo}</td>
-
-                  {["M", "E", "V"].map((v) => (
-                    <td key={v} style={{ textAlign: "center" }}>
-                      <input
-                        type="radio"
-                        name={`jogo-${i}`}
-                        onChange={() => escolher(i, v)}
-                      />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <button
-            onClick={salvar}
-            style={{
-              width: "100%",
-              marginTop: 15,
-              padding: 14,
-              background: "#C1121F",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              fontWeight: "bold"
-            }}
-          >
-            SALVAR PALPITES
-          </button>
-        </>
-      )}
-
-      {/* CONFIRMAÇÃO */}
-      {showConfirm && (
+        {/* INTRO */}
         <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0,0,0,0.6)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          fontSize: 12,
+          lineHeight: 1.4,
+          background: "#fff",
+          padding: 10,
+          borderRadius: 8,
+          marginBottom: 12
         }}>
+          <strong>Bem vindos ao CanGuess</strong><br /><br />
+          Sistema de bolões em desenvolvimento.<br />
+          Use seu telefone como identificação única.<br />
+        </div>
+
+        {/* FORM */}
+        {!validatedUser && (
           <div style={{
             background: "#fff",
-            padding: 20,
-            width: "90%",
-            borderRadius: 10
+            padding: 12,
+            borderRadius: 8,
+            marginBottom: 12
           }}>
-            <h3>Confirmação</h3>
+            <input
+              name="full_name"
+              placeholder="Nome completo"
+              value={form.full_name}
+              onChange={handleFormChange}
+              style={input}
+            />
 
-            <p style={{ marginBottom: 10 }}>
-              Confira atentamente seus palpites antes de confirmar sua aposta:
+            <input
+              name="user_name"
+              placeholder="Username"
+              value={form.user_name}
+              onChange={handleFormChange}
+              style={input}
+            />
+
+            <input
+              name="phone"
+              placeholder="Telefone (DDD + número)"
+              value={form.phone}
+              onChange={handleFormChange}
+              style={input}
+            />
+
+            <button onClick={validarUsuario} style={btn}>
+              Validar
+            </button>
+
+            {msg && <p style={{ fontSize: 12 }}>{msg}</p>}
+          </div>
+        )}
+
+        {/* PALPITES */}
+        {validatedUser && (
+          <div style={{
+            background: "#fff",
+            padding: 10,
+            borderRadius: 8
+          }}>
+            <table style={{ width: "100%", fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: "#C1121F", color: "#fff" }}>
+                  <th>JOGO</th>
+                  <th>M</th>
+                  <th>E</th>
+                  <th>V</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {jogos.map((jogo, i) => (
+                  <tr key={i}>
+                    <td>{jogo}</td>
+
+                    {["M", "E", "V"].map((v) => (
+                      <td key={v} style={{ textAlign: "center" }}>
+                        <input
+                          type="radio"
+                          name={`jogo-${i}`}
+                          onChange={() => escolher(i, v)}
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <button onClick={salvar} style={btn}>
+              SALVAR PALPITES
+            </button>
+          </div>
+        )}
+      </div>
+
+      <BottomNav />
+
+      {/* MODAL CONFIRMAÇÃO */}
+      {showConfirm && (
+        <div style={overlay}>
+          <div style={modal}>
+            <h3>Confirmar palpites</h3>
+
+            <p style={{ fontSize: 12 }}>
+              Revise seus palpites antes de confirmar.
             </p>
 
-            <ul>
+            <ul style={{ fontSize: 12, maxHeight: 200, overflow: "auto" }}>
               {jogos.map((j, i) => (
                 <li key={i}>
-                  {j} → {bets[i] || "sem escolha"}
+                  {j} → {bets[i] || "-"}
                 </li>
               ))}
             </ul>
 
-            <button onClick={confirmar} style={{ marginTop: 10 }}>
+            <button onClick={confirmar} style={btn}>
               Confirmar
             </button>
 
             <button
               onClick={() => setShowConfirm(false)}
-              style={{ marginTop: 10, marginLeft: 10 }}
+              style={{ ...btn, background: "#999", marginTop: 8 }}
             >
               Cancelar
             </button>
           </div>
         </div>
       )}
-
-    </div>
+    </>
   );
 }
+
+// =========================
+// styles
+// =========================
+const input = {
+  display: "block",
+  width: "100%",
+  marginBottom: 8,
+  padding: 8,
+  border: "1px solid #ddd",
+  borderRadius: 6,
+};
+
+const btn = {
+  width: "100%",
+  padding: 12,
+  background: "#C1121F",
+  color: "#fff",
+  border: "none",
+  borderRadius: 8,
+  marginTop: 10,
+};
+
+const overlay = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(0,0,0,0.6)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const modal = {
+  background: "#fff",
+  padding: 16,
+  borderRadius: 10,
+  width: "90%",
+};

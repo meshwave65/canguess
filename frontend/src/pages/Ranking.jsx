@@ -5,48 +5,58 @@ import { useNavigate } from "react-router-dom";
 
 const PLAYER_COL_WIDTH = 140;
 const POINTS_COL_WIDTH = 60;
-const GAME_COL_WIDTH = 80;
+const GAME_COL_WIDTH = 90;
+
+// logos SEM /public (Vite serve direto da raiz)
+const getLogo = (code) => `/logos/${code}.svg`;
 
 export default function Ranking() {
-  const navigate = useNavigate(); // 🔥 FIX PRINCIPAL
-
+  const navigate = useNavigate();
   const [modo, setModo] = useState("text");
 
   useEffect(() => {
     document.body.setAttribute("data-mode", modo);
   }, [modo]);
 
-  const getLogo = (time) => `/logos/${time}.svg`;
+  // 🔥 fallback inteligente por lado
+  const handleLogoError = (side) => (e) => {
+    e.target.onerror = null;
+    e.target.src =
+      side === "home"
+        ? "/logos/time-a.svg"
+        : "/logos/time-b.svg";
+  };
 
+  // 🧠 MOCK DOS JOGOS DA COPA
   const jogos = [
-    { mandante: "FLA", visitante: "VAS", resultado: "3X1" },
-    { mandante: "BOT", visitante: "FLU", resultado: "0X0" },
-    { mandante: "PAL", visitante: "COR", resultado: "2X1" },
-    { mandante: "SAN", visitante: "SAO", resultado: "1X0" },
-    { mandante: "GRE", visitante: "INT", resultado: "2X2" },
-    { mandante: "CRU", visitante: "CAM", resultado: "1X1" },
-    { mandante: "BAH", visitante: "VIT", resultado: "2X0" },
-    { mandante: "FOR", visitante: "CEA", resultado: "1X0" },
-    { mandante: "SPT", visitante: "NAU", resultado: "3X0" },
-    { mandante: "GOI", visitante: "VIL", resultado: "0X1" },
-    { mandante: "CAP", visitante: "CFC", resultado: "2X1" },
+    { mandante: "QAT", visitante: "SUI", resultado: "0X0" },
+    { mandante: "BRA", visitante: "MAR", resultado: "0X0" },
+    { mandante: "HTI", visitante: "SCO", resultado: "0X0" },
+    { mandante: "AUS", visitante: "TUR", resultado: "0X0" },
+    { mandante: "GER", visitante: "CUW", resultado: "0X0" },
+    { mandante: "NED", visitante: "JPN", resultado: "0X0" },
+    { mandante: "CIV", visitante: "ECU", resultado: "0X0" },
+    { mandante: "SWE", visitante: "TUN", resultado: "0X0" },
+    { mandante: "ESP", visitante: "CPV", resultado: "0X0" },
+    { mandante: "BEL", visitante: "EGY", resultado: "0X0" },
+    { mandante: "KSA", visitante: "URU", resultado: "0X0" },
   ];
 
   const jogadores = [
     {
       nome: "ZE BANGU",
-      pontos: 8,
-      palpites: [true, true, false, true, true, true, false, true, true, true, false],
+      pontos: 0,
+      palpites: Array(11).fill(null),
     },
     {
       nome: "JUCA BALA",
-      pontos: 7,
-      palpites: [true, false, true, false, true, true, true, false, true, false, true],
+      pontos: 0,
+      palpites: Array(11).fill(null),
     },
     {
-      nome: "AÇOG....NH74",
-      pontos: 6,
-      palpites: [false, true, false, true, false, true, true, true, false, true, false],
+      nome: "ALVA",
+      pontos: 0,
+      palpites: Array(11).fill(null),
     },
   ];
 
@@ -54,19 +64,19 @@ export default function Ranking() {
     <>
       <Header />
 
-      {/* 🔥 NAV CORRIGIDA */}
+      {/* NAV */}
       <div style={{ display: "flex", gap: 10, padding: 10 }}>
         <button onClick={() => navigate("/")}>🏠 Home</button>
         <button onClick={() => navigate(-1)}>🔙 Voltar</button>
       </div>
 
-      <main style={{ padding: "8px", paddingBottom: "90px" }}>
-        <h2 style={{ color: "#C1121F", fontSize: "14px", marginBottom: "10px" }}>
-          Classificação Geral
+      <main style={{ padding: 8, paddingBottom: 90 }}>
+        <h2 style={{ fontSize: 14, marginBottom: 10 }}>
+          Ranking do Bolão (MVP)
         </h2>
 
         {/* TOGGLE */}
-        <label style={{ fontSize: "12px", display: "block", marginBottom: "10px" }}>
+        <label style={{ fontSize: 12, display: "block", marginBottom: 10 }}>
           <input
             type="checkbox"
             checked={modo === "logo"}
@@ -86,37 +96,42 @@ export default function Ranking() {
                   <th key={idx} style={{ width: GAME_COL_WIDTH }}>
                     <div className="game-grid">
 
+                      {/* MANDANTE */}
                       <div className="team">
                         {modo === "text" ? (
                           <span>{jogo.mandante}</span>
                         ) : (
                           <img
-                            className="team-logo"
                             src={getLogo(jogo.mandante)}
-                            alt={jogo.mandante}
                             width="18"
                             height="18"
+                            onError={handleLogoError("home")}
+                            alt={jogo.mandante}
                           />
                         )}
                       </div>
 
                       <div>X</div>
 
+                      {/* VISITANTE */}
                       <div className="team">
                         {modo === "text" ? (
                           <span>{jogo.visitante}</span>
                         ) : (
                           <img
-                            className="team-logo"
                             src={getLogo(jogo.visitante)}
-                            alt={jogo.visitante}
                             width="18"
                             height="18"
+                            onError={handleLogoError("away")}
+                            alt={jogo.visitante}
                           />
                         )}
                       </div>
 
-                      <div>{jogo.resultado}</div>
+                      <div style={{ fontSize: 10 }}>
+                        {jogo.resultado}
+                      </div>
+
                     </div>
                   </th>
                 ))}
@@ -127,18 +142,19 @@ export default function Ranking() {
               {jogadores.map((jogador, idx) => (
                 <tr key={idx}>
                   <td>{jogador.nome}</td>
+
                   <td style={{ textAlign: "center", fontWeight: "bold" }}>
-                    {jogador.pontos}
+                    {jogador.pontos || "-"}
                   </td>
 
-                  {jogador.palpites.map((p, i) => (
+                  {jogos.map((_, i) => (
                     <td key={i} style={{ textAlign: "center" }}>
                       <div
                         style={{
                           width: 10,
                           height: 10,
                           borderRadius: "50%",
-                          background: p ? "#16a34a" : "#d1d5db",
+                          background: "#d1d5db",
                           margin: "0 auto",
                         }}
                       />
