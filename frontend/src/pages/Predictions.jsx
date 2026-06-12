@@ -193,44 +193,91 @@ SEUS PALPITES:
 
       {/* ================= FORM ================= */}
       {step === "form" && (
-        <div
-          style={{
-            marginTop: 15,
-            background: "#fff",
-            padding: 15,
-            borderRadius: 10,
-          }}
-        >
-          <h3>Identificação do Palpiteiro</h3>
+  <div
+    style={{
+      marginTop: 15,
+      background: "#fff",
+      padding: 15,
+      borderRadius: 10,
+      lineHeight: 1.4,
+    }}
+  >
+    {/* ================= TEXTO INTRO ================= */}
+    <h3>Bem-vindo ao CanGuess</h3>
 
-          <input
-            placeholder="Nome completo"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            style={inputStyle}
-          />
+    <p>
+      Seu ecossistema de palpites do <strong>Bolão do Zé Bangu</strong>.
+    </p>
 
-          <input
-            placeholder="Nome de usuário"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            style={inputStyle}
-          />
+    <p>
+      Você está acessando o <strong>Workspace Zé Bangu</strong>. Este é o
+      primeiro evento do sistema.
+    </p>
 
-          <input
-            placeholder="Telefone (DDD + número)"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            style={inputStyle}
-          />
+    <p>
+      Estamos em desenvolvimento. Caso encontre qualquer problema, entre em
+      contato:
+    </p>
 
-          <button style={btnStyle} onClick={validarUsuario}>
-            Validar e continuar
-          </button>
+    <p>
+      📞 Admin: +351 914 845 439 / +55 21 97234-1976 <br />
+      📞 Zé Luiz: (21) 96490-6217
+    </p>
 
-          <p style={{ fontSize: 12 }}>{msg}</p>
-        </div>
-      )}
+    <hr />
+
+    <p>
+      <strong>IMPORTANTE:</strong> Este formulário de cadastro é obrigatório
+      apenas na primeira vez.
+    </p>
+
+    <p>
+      Depois, basta usar apenas seu <strong>telefone</strong> para acessar o
+      sistema.
+    </p>
+
+    <p>
+      Formato: DDD + número (ex: 21972341965)
+    </p>
+
+    <hr />
+
+    <p>
+      Após validar, você poderá inserir seus palpites e revisar antes de
+      confirmar.
+    </p>
+
+    {/* ================= FORM ================= */}
+    <h4>Identificação do Palpiteiro</h4>
+
+    <input
+      placeholder="Nome completo"
+      value={fullName}
+      onChange={(e) => setFullName(e.target.value)}
+      style={inputStyle}
+    />
+
+    <input
+      placeholder="Nome de usuário (nickname)"
+      value={userName}
+      onChange={(e) => setUserName(e.target.value)}
+      style={inputStyle}
+    />
+
+    <input
+      placeholder="Telefone (DDD + número)"
+      value={phone}
+      onChange={(e) => setPhone(e.target.value)}
+      style={inputStyle}
+    />
+
+    <button style={btnStyle} onClick={validarUsuario}>
+      Validar e continuar
+    </button>
+
+    <p style={{ fontSize: 12 }}>{msg}</p>
+  </div>
+)}
 
       {/* ================= BETS ================= */}
       {step === "bets" && (
