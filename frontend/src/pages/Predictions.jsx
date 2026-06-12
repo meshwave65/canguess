@@ -294,7 +294,7 @@ SEUS PALPITES:
               <span style={{ fontSize: 12 }}>{j}</span>
 
               <div style={{ display: "flex", gap: 10 }}>
-                {["M", "E", "V"].map((v) => (
+                {["1", "X", "2"].map((v) => (
                   <label key={v} style={{ fontSize: 12 }}>
                     <input
                       type="radio"
