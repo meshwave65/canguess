@@ -154,7 +154,7 @@ SEUS PALPITES:
 
       const msgFinal = `${header}\n${body}`;
 
-      const whatsappUrl = `https://wa.me/5521972341965?text=${encodeURIComponent(
+      const whatsappUrl = `https://wa.me/5521964906217text=${encodeURIComponent(
         msgFinal
       )}`;
 
