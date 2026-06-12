@@ -6,6 +6,7 @@ import Predictions from "../pages/Predictions";
 import Ranking from "../pages/Ranking";
 import Admin from "../pages/Admin";
 
+
 import EventDashboard from "../pages/admin/EventDashboard";
 import CadastrosHome from "../pages/admin/CadastrosHome";
 import CadastrosTimes from "../pages/admin/CadastrosTimes";
@@ -67,6 +68,11 @@ export default function AppRoutes() {
         path="/admin/cadastros/rodadas"
         element={<CadastrosRodadas />}
       />
+
+      <Route 
+        path="/cadastro-parts" 
+        element={<CadastroParts />} 
+       />
 
       <Route
         path="/admin/cadastros/eventos/:eventId/estrutura"

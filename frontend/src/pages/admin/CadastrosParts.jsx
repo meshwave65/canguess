@@ -1,274 +1,195 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 
 export default function CadastroParts() {
-  const [events, setEvents] = useState([]);
+  const [searchParams] = useSearchParams();
 
-  const [selectedEvent, setSelectedEvent] = useState("");
-  const [phases, setPhases] = useState([]);
-  const [rounds, setRounds] = useState([]);
+  const roundId = searchParams.get("round");
+
+  const [event, setEvent] = useState(null);
+  const [phase, setPhase] = useState(null);
+  const [round, setRound] = useState(null);
+
   const [parts, setParts] = useState([]);
 
-  const [selectedPhase, setSelectedPhase] = useState("");
-  const [selectedRound, setSelectedRound] = useState("");
-
-  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadEvents();
-  }, []);
+    if (!roundId) return;
+    load();
+  }, [roundId]);
 
-  useEffect(() => {
-    if (selectedEvent) {
-      loadPhases(selectedEvent);
-      setSelectedPhase("");
-      setSelectedRound("");
-      setRounds([]);
-      setParts([]);
-    }
-  }, [selectedEvent]);
+  async function load() {
+    setLoading(true);
 
-  useEffect(() => {
-    if (selectedPhase) {
-      loadRounds(selectedPhase);
-      setSelectedRound("");
-      setParts([]);
-    }
-  }, [selectedPhase]);
-
-  useEffect(() => {
-    if (selectedRound) {
-      loadParts(selectedRound);
-    }
-  }, [selectedRound]);
-
-  function show(msg) {
-    setMessage(msg);
-    setTimeout(() => setMessage(""), 3000);
-  }
-
-  async function loadEvents() {
-    const { data } = await supabase
-      .from("events")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    setEvents(data || []);
-  }
-
-  async function loadPhases(eventId) {
-    const { data } = await supabase
-      .from("event_phases")
-      .select("*")
-      .eq("event_uuid", eventId)
-      .order("id");
-
-    setPhases(data || []);
-  }
-
-  async function loadRounds(phaseId) {
-    const { data } = await supabase
+    // ROUND
+    const { data: roundData, error: roundError } = await supabase
       .from("event_rounds")
       .select("*")
-      .eq("event_phase_uuid", phaseId)
-      .order("round_number");
+      .eq("id", roundId)
+      .single();
 
-    setRounds(data || []);
-  }
+    if (roundError) {
+      console.error(roundError);
+      return;
+    }
 
-  async function loadParts(roundId) {
-    const { data } = await supabase
+    setRound(roundData);
+
+    // PHASE
+    const { data: phaseData } = await supabase
+      .from("event_phases")
+      .select("*")
+      .eq("id", roundData.event_phase_uuid)
+      .single();
+
+    setPhase(phaseData);
+
+    // EVENT
+    const { data: eventData } = await supabase
+      .from("events")
+      .select("*")
+      .eq("id", phaseData.event_uuid)
+      .single();
+
+    setEvent(eventData);
+
+    // PARTS
+    const { data: partsData } = await supabase
       .from("event_parts")
       .select("*")
       .eq("round_uuid", roundId)
-      .order("part_number");
+      .order("created_at", { ascending: true });
 
-    setParts(data || []);
+    let finalParts = partsData || [];
+
+    // AUTO CREATE PARTS SE FALTANDO
+    const expected = roundData.event_parts_count || 1;
+
+    if (finalParts.length < expected) {
+      const inserts = [];
+
+      for (let i = finalParts.length + 1; i <= expected; i++) {
+        inserts.push({
+          round_uuid: roundId,
+          team_uuid: null, // ⚠️ obrigatório no schema atual
+          value: null
+        });
+      }
+
+      const { error: insertError } = await supabase
+        .from("event_parts")
+        .insert(inserts);
+
+      if (insertError) {
+        console.error(insertError);
+        return;
+      }
+
+      const { data: refreshed } = await supabase
+        .from("event_parts")
+        .select("*")
+        .eq("round_uuid", roundId)
+        .order("created_at", { ascending: true });
+
+      finalParts = refreshed || [];
+    }
+
+    setParts(finalParts);
+    setLoading(false);
   }
 
-  async function gerarPartsAutomaticamente() {
-    if (!selectedRound) return;
-
-    const round = rounds.find((r) => r.id === selectedRound);
-
-    if (!round) return;
-
-    const existing = parts.length;
-    const expected = round.event_parts_count || 1;
-
-    if (existing >= expected) {
-      return show("Parts já estão completos para este round");
-    }
-
-    const inserts = [];
-
-    for (let i = existing + 1; i <= expected; i++) {
-      inserts.push({
-        round_uuid: selectedRound,
-        part_number: i,
-        value: null,
-      });
-    }
-
-    const { error } = await supabase
-      .from("event_parts")
-      .insert(inserts);
-
-    if (error) return show(error.message);
-
-    show("Parts gerados com sucesso");
-    loadParts(selectedRound);
+  function updatePart(id, value) {
+    setParts((prev) =>
+      prev.map((p) =>
+        p.id === id ? { ...p, value } : p
+      )
+    );
   }
 
-  async function criarPartManual() {
-    if (!selectedRound) return;
-
-    const round = rounds.find((r) => r.id === selectedRound);
-    const nextNumber = parts.length + 1;
-
-    if (round && nextNumber > round.event_parts_count) {
-      return show("Limite de parts atingido para este round");
-    }
-
+  async function savePart(part) {
     const { error } = await supabase
       .from("event_parts")
-      .insert([
-        {
-          round_uuid: selectedRound,
-          part_number: nextNumber,
-          value: null,
-        },
-      ]);
+      .update({
+        value: part.value
+      })
+      .eq("id", part.id);
 
-    if (error) return show(error.message);
-
-    show("Part criada");
-    loadParts(selectedRound);
+    if (error) {
+      console.error(error);
+      alert("Erro ao salvar part");
+      return;
+    }
   }
 
   const s = {
     page: { padding: 20, background: "#f5f6fa", minHeight: "100vh" },
     card: {
       background: "#fff",
-      padding: 12,
+      padding: 15,
       borderRadius: 10,
-      marginBottom: 12,
-      boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+      marginBottom: 12
     },
-    select: {
+    row: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      marginBottom: 8
+    },
+    input: {
       padding: 8,
       border: "1px solid #ddd",
       borderRadius: 6,
-      marginRight: 8,
+      minWidth: 200
     },
     btn: {
       padding: "6px 10px",
       border: "1px solid #ddd",
       borderRadius: 6,
       cursor: "pointer",
-      background: "#fff",
-      fontSize: 12,
-      marginRight: 6,
-    },
-    row: {
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 8,
-      marginBottom: 10,
-    },
-    box: {
-      padding: 10,
-      border: "1px solid #eee",
-      borderRadius: 8,
-      marginTop: 10,
-    },
-    partItem: {
-      padding: 6,
-      borderBottom: "1px solid #eee",
-      fontSize: 13,
-    },
+      background: "#fff"
+    }
   };
+
+  if (loading) return <div style={s.page}>Carregando...</div>;
 
   return (
     <div style={s.page}>
-      <h2>Cadastro de Parts</h2>
 
-      {message && <div style={{ marginBottom: 10 }}>{message}</div>}
-
-      {/* SELECTS */}
+      {/* HEADER CONTEXTUAL */}
       <div style={s.card}>
-        <div style={s.row}>
-          <select
-            style={s.select}
-            value={selectedEvent}
-            onChange={(e) => setSelectedEvent(e.target.value)}
-          >
-            <option value="">Evento</option>
-            {events.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            style={s.select}
-            value={selectedPhase}
-            onChange={(e) => setSelectedPhase(e.target.value)}
-            disabled={!selectedEvent}
-          >
-            <option value="">Fase</option>
-            {phases.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.phase_name || "Fase"}
-              </option>
-            ))}
-          </select>
-
-          <select
-            style={s.select}
-            value={selectedRound}
-            onChange={(e) => setSelectedRound(e.target.value)}
-            disabled={!selectedPhase}
-          >
-            <option value="">Round</option>
-            {rounds.map((r) => (
-              <option key={r.id} value={r.id}>
-                Round {r.round_number}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <button style={s.btn} onClick={gerarPartsAutomaticamente}>
-            ⚡ Gerar Parts Automático
-          </button>
-
-          <button style={s.btn} onClick={criarPartManual}>
-            ➕ Criar Part
-          </button>
-        </div>
+        <h2>{event?.name}</h2>
+        <h3>{phase?.phase_name}</h3>
+        <h4>{round?.round_name}</h4>
       </div>
 
-      {/* PARTS LIST */}
-      {selectedRound && (
-        <div style={s.card}>
-          <h4>Parts do Round</h4>
+      {/* LISTA DE PARTS */}
+      <div style={s.card}>
+        {parts.map((p) => (
+          <div key={p.id} style={s.row}>
 
-          <div style={s.box}>
-            {parts.map((p) => (
-              <div key={p.id} style={s.partItem}>
-                Part {p.part_number} → {p.value || "sem valor"}
-              </div>
-            ))}
+            <span>Part {p.id.slice(0, 4)}</span>
 
-            {parts.length === 0 && (
-              <div>Nenhuma part criada ainda</div>
-            )}
+            <input
+              style={s.input}
+              value={p.value || ""}
+              onChange={(e) =>
+                updatePart(p.id, e.target.value)
+              }
+            />
+
+            <button
+              style={s.btn}
+              onClick={() => savePart(p)}
+            >
+              💾
+            </button>
+
           </div>
-        </div>
-      )}
+        ))}
+      </div>
+
     </div>
   );
 }

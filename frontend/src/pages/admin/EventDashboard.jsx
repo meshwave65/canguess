@@ -8,6 +8,8 @@ export default function EventDashboard() {
 
   const [event, setEvent] = useState(null);
   const [phases, setPhases] = useState([]);
+  const [rounds, setRounds] = useState([]);
+
   const [selectedPhaseId, setSelectedPhaseId] = useState(null);
   const [selectedRound, setSelectedRound] = useState(null);
   const [viewLevel, setViewLevel] = useState("phases");
@@ -38,8 +40,7 @@ export default function EventDashboard() {
     (p) => p.id === selectedPhaseId
   );
 
-  // atualiza estado local da fase
-  const updatePhaseField = (field, value) => {
+  function updatePhaseField(field, value) {
     setPhases((prev) =>
       prev.map((p) =>
         p.id === selectedPhaseId
@@ -47,9 +48,8 @@ export default function EventDashboard() {
           : p
       )
     );
-  };
+  }
 
-  // salva fase no supabase
   async function savePhase() {
     if (!selectedPhase) return;
 
@@ -63,83 +63,171 @@ export default function EventDashboard() {
       .eq("id", selectedPhase.id);
 
     if (error) {
+      console.error(error);
       alert("Erro ao salvar fase");
+      return;
+    }
+
+    alert("Fase salva");
+  }
+
+  async function loadRounds() {
+    if (!selectedPhase) return;
+
+    const { data, error } = await supabase
+      .from("event_rounds")
+      .select("*")
+      .eq("event_phase_uuid", selectedPhase.id)
+      .order("created_at", { ascending: true });
+
+    if (error) {
       console.error(error);
       return;
     }
 
-    alert("Fase salva com sucesso");
+    setRounds(data || []);
+  }
+
+  async function syncRounds() {
+    if (!selectedPhase) return;
+
+    const { count, error } = await supabase
+      .from("event_rounds")
+      .select("*", { count: "exact", head: true })
+      .eq("event_phase_uuid", selectedPhase.id);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const current_count = count || 0;
+    const new_rounds = Number(selectedPhase.num_rounds || 0);
+
+    if (new_rounds < current_count) {
+      alert("Não é permitido reduzir rounds pela interface.");
+      return;
+    }
+
+    if (new_rounds > current_count) {
+      const total = new_rounds - current_count;
+
+      for (let i = 0; i < total; i++) {
+        const { error } = await supabase
+          .from("event_rounds")
+          .insert({
+            event_phase_uuid: selectedPhase.id,
+            event_parts_count: 1
+          });
+
+        if (error) {
+          console.error(error);
+          alert("Erro ao criar round");
+          return;
+        }
+      }
+    }
+
+    await loadRounds();
+    setViewLevel("rounds");
+  }
+
+  function updateRoundField(id, field, value) {
+    setRounds((prev) =>
+      prev.map((r) =>
+        r.id === id
+          ? { ...r, [field]: value }
+          : r
+      )
+    );
+  }
+
+  async function saveRound(round) {
+    const { error } = await supabase
+      .from("event_rounds")
+      .update({
+        round_name: round.round_name,
+        round_date: round.round_date,
+        time_round: round.time_round,
+        local: round.local,
+        event_parts_count: Number(round.event_parts_count || 1)
+      })
+      .eq("id", round.id);
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao salvar round");
+      return;
+    }
+
+    alert("Round salvo");
+  }
+
+  async function deleteRound(round) {
+    const { error } = await supabase
+      .from("event_rounds")
+      .delete()
+      .eq("id", round.id);
+
+    if (error) {
+      console.error(error);
+      alert("Erro ao excluir round");
+      return;
+    }
+
+    loadRounds();
   }
 
   const s = {
     page: {
       padding: 20,
       background: "#f5f6fa",
-      minHeight: "100vh",
+      minHeight: "100vh"
     },
-
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
       marginBottom: 15,
       paddingBottom: 10,
-      borderBottom: "1px solid #e6e6e6",
+      borderBottom: "1px solid #ddd"
     },
-
-    title: {
-      fontSize: 22,
-      fontWeight: 700,
-    },
-
-    uuid: {
-      fontSize: 11,
-      color: "#888",
-      fontFamily: "monospace",
-    },
-
+    title: { fontSize: 22, fontWeight: 700 },
+    uuid: { fontSize: 11, color: "#888", fontFamily: "monospace" },
     card: {
       background: "#fff",
       padding: 15,
       borderRadius: 10,
-      marginBottom: 12,
-      boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+      marginBottom: 12
     },
-
     row: {
       display: "flex",
       gap: 10,
       flexWrap: "wrap",
-      alignItems: "center",
+      alignItems: "center"
     },
-
     btn: {
       padding: "8px 12px",
       border: "1px solid #ddd",
       borderRadius: 8,
       cursor: "pointer",
-      background: "#fff",
+      background: "#fff"
     },
-
+    input: {
+      padding: 8,
+      borderRadius: 8,
+      border: "1px solid #ddd"
+    },
     select: {
       padding: 8,
       borderRadius: 8,
       border: "1px solid #ddd",
-      minWidth: 260,
-    },
-
-    input: {
-      padding: 8,
-      borderRadius: 8,
-      border: "1px solid #ddd",
-      minWidth: 160,
-    },
+      minWidth: 260
+    }
   };
 
   return (
     <div style={s.page}>
-
-      {/* HEADER */}
       <div style={s.header}>
         <div>
           <div style={s.title}>
@@ -153,17 +241,10 @@ export default function EventDashboard() {
         </button>
       </div>
 
-      {/* FASES */}
       <div style={s.card}>
         <h3>Estrutura do Evento</h3>
 
-        <p>
-          Fases carregadas: <b>{phases.length}</b>
-        </p>
-
         <div style={s.row}>
-
-          {/* SELECT FASE */}
           <select
             style={s.select}
             value={selectedPhaseId || ""}
@@ -173,7 +254,6 @@ export default function EventDashboard() {
             }}
           >
             <option value="">Selecione uma fase</option>
-
             {phases.map((p) => (
               <option key={p.id} value={p.id}>
                 Fase {p.phase_number} - {p.phase_name}
@@ -181,7 +261,6 @@ export default function EventDashboard() {
             ))}
           </select>
 
-          {/* NOME FASE */}
           <input
             style={s.input}
             value={selectedPhase?.phase_name || ""}
@@ -190,89 +269,107 @@ export default function EventDashboard() {
             }
           />
 
-          {/* NUM ROUNDS */}
           <input
-            style={{ ...s.input, width: 90 }}
-            value={selectedPhase?.num_rounds || ""}
+            style={s.input}
+            type="number"
+            value={selectedPhase?.num_rounds || 0}
             onChange={(e) =>
-              updatePhaseField(
-                "num_rounds",
-                Number(e.target.value)
-              )
+              updatePhaseField("num_rounds", Number(e.target.value))
             }
           />
 
-          {/* ORDEM */}
           <input
-            style={{ ...s.input, width: 90 }}
-            value={selectedPhase?.phase_number || ""}
+            style={s.input}
+            type="number"
+            value={selectedPhase?.phase_number || 0}
             onChange={(e) =>
-              updatePhaseField(
-                "phase_number",
-                Number(e.target.value)
-              )
+              updatePhaseField("phase_number", Number(e.target.value))
             }
           />
 
-          {/* SALVAR FASE */}
-          <button style={s.btn} onClick={savePhase}>
-            💾
-          </button>
+          <button style={s.btn} onClick={savePhase}>💾</button>
 
-          {/* DELETE (visual apenas) */}
-          <button style={s.btn}>
-            🗑
-          </button>
-
-          {/* ROUNDS */}
-          <button
-            style={{
-              ...s.btn,
-              opacity: !selectedPhaseId ? 0.4 : 1,
-              pointerEvents: !selectedPhaseId ? "none" : "auto",
-            }}
-            onClick={() => setViewLevel("rounds")}
-          >
-            ⚽ Rounds
-          </button>
-
+          <button style={s.btn} onClick={syncRounds}>⚽ Rounds</button>
         </div>
       </div>
 
-      {/* ROUNDS (inalterado) */}
-      {viewLevel === "rounds" && selectedPhase && (
+      {viewLevel === "rounds" && (
         <div style={s.card}>
-          <h3>{selectedPhase.phase_name}</h3>
+          <h3>{selectedPhase?.phase_name}</h3>
 
-          <button
-            style={s.btn}
-            onClick={() => setViewLevel("phases")}
-          >
-            ⬅ Voltar Fases
+          <button style={s.btn} onClick={() => setViewLevel("phases")}>
+            ⬅ Voltar
           </button>
 
           <hr />
 
-          {Array.from(
-            { length: selectedPhase.num_rounds || 0 },
-            (_, i) => i + 1
-          ).map((r) => (
-            <div key={r} style={s.row}>
-              <span>
-                Round {r}/{selectedPhase.num_rounds} -{" "}
-                {selectedPhase.phase_name}
-              </span>
+          {rounds.map((round, index) => (
+            <div key={round.id} style={s.row}>
+              <span>Round {index + 1}/{rounds.length}</span>
 
-              <input style={s.input} placeholder="Nome do Round" />
-              <input style={s.input} placeholder="Data" />
-              <input style={s.input} placeholder="Hora" />
-              <input style={s.input} placeholder="Local" />
+              <input
+                style={s.input}
+                placeholder="Nome do Round"
+                value={round.round_name || ""}
+                onChange={(e) =>
+                  updateRoundField(round.id, "round_name", e.target.value)
+                }
+              />
+
+              <input
+                style={s.input}
+                type="date"
+                value={round.round_date || ""}
+                onChange={(e) =>
+                  updateRoundField(round.id, "round_date", e.target.value)
+                }
+              />
+
+              <input
+                style={s.input}
+                type="time"
+                value={round.time_round || ""}
+                onChange={(e) =>
+                  updateRoundField(round.id, "time_round", e.target.value)
+                }
+              />
+
+              <input
+                style={s.input}
+                placeholder="Local"
+                value={round.local || ""}
+                onChange={(e) =>
+                  updateRoundField(round.id, "local", e.target.value)
+                }
+              />
+
+              <input
+                style={s.input}
+                type="number"
+                min={1}
+                value={round.event_parts_count || 1}
+                onChange={(e) =>
+                  updateRoundField(
+                    round.id,
+                    "event_parts_count",
+                    Number(e.target.value)
+                  )
+                }
+              />
+
+              <button onClick={() => saveRound(round)} style={s.btn}>
+                💾
+              </button>
+
+              <button onClick={() => deleteRound(round)} style={s.btn}>
+                🗑
+              </button>
 
               <button
                 style={s.btn}
                 onClick={() => {
-                  setSelectedRound(r);
-                  setViewLevel("parts");
+                  setSelectedRound(round);
+                  navigate(`/cadastro-parts?event=${eventId}&round=${round.id}`);
                 }}
               >
                 🧩 Parts
@@ -282,39 +379,15 @@ export default function EventDashboard() {
         </div>
       )}
 
-      {/* PARTS (inalterado) */}
       {viewLevel === "parts" && selectedRound && (
         <div style={s.card}>
-          <h3>
-            Round {selectedRound}/{selectedPhase?.num_rounds} -{" "}
-            {selectedPhase?.phase_name}
-          </h3>
+          <h3>Parts do Round</h3>
 
-          <button
-            style={s.btn}
-            onClick={() => setViewLevel("rounds")}
-          >
+          <button style={s.btn} onClick={() => setViewLevel("rounds")}>
             ⬅ Voltar Rounds
           </button>
-
-          <hr />
-
-          {Array.from({ length: 2 }, (_, i) => i + 1).map((p) => (
-            <div key={p} style={s.row}>
-              <span>Part {p}/2</span>
-
-              <select style={s.input}>
-                <option>Brasil</option>
-                <option>Marrocos</option>
-                <option>França</option>
-              </select>
-
-              <button style={s.btn}>💾</button>
-            </div>
-          ))}
         </div>
       )}
-
     </div>
   );
 }

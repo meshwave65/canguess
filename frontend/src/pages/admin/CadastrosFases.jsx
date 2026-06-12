@@ -8,12 +8,16 @@ export default function CadastrosFases() {
 
   const [event, setEvent] = useState(null);
   const [phases, setPhases] = useState([]);
+  const [selectedPhase, setSelectedPhase] = useState(null);
+  const [rounds, setRounds] = useState([]);
 
   useEffect(() => {
     load();
   }, [eventId]);
 
+
   async function load() {
+
     const { data: ev } = await supabase
       .from("events")
       .select("*")
@@ -22,173 +26,551 @@ export default function CadastrosFases() {
 
     setEvent(ev);
 
+
     const { data: ph } = await supabase
       .from("event_phases")
       .select("*")
       .eq("event_uuid", eventId)
-      .order("id", { ascending: true });
+      .order("phase_number", { ascending: true });
+
 
     setPhases(
-      (ph || []).map((p) => {
-        const current_num_rounds = Number(p.num_rounds || 0);
+      (ph || []).map((p) => ({
+        ...p,
 
-        return {
-          ...p,
-          // valor editável da UI, inicia com o que está no banco ou 1 se for novo
-          newRounds: current_num_rounds === 0 ? 1 : current_num_rounds,
-        };
-      })
+        // snapshot do banco
+        current_count: Number(p.num_rounds || 0),
+
+        // campo editável
+        new_rounds: Number(p.num_rounds || 0),
+      }))
     );
   }
 
+
   function updatePhase(index, field, value) {
+
     const copy = [...phases];
     copy[index][field] = value;
     setPhases(copy);
+
   }
 
-  async function save() {
-    try {
-      for (const p of phases) {
-        const numRounds = Number(p.newRounds || 0);
 
-        if (p.id) {
-          // 1. Atualiza os dados da fase existente (sem tocar no event_uuid)
-          const { error: updateError } = await supabase
-            .from("event_phases")
-            .update({
-              phase_name: p.phase_name,
-              num_rounds: numRounds,
-            })
-            .eq("id", p.id);
 
-          if (updateError) {
-            console.error("Erro ao atualizar fase:", updateError);
-            continue;
-          }
+  async function savePhase(p) {
 
-          // 2. Chama a RPC simplificada (burra) para criar os rounds
-          const { data: rpcRes, error: rpcError } = await supabase.rpc("t_add_event_rounds", {
-            p_phase_id: p.id,
-            p_num_rounds: numRounds,
-          });
+    const { error } = await supabase
+      .from("event_phases")
+      .update({
+        phase_name: p.phase_name,
+        phase_number: p.phase_number,
+      })
+      .eq("id", p.id);
 
-          if (rpcError) {
-            console.error("Erro na RPC t_add_event_rounds:", rpcError);
-          } else {
-            console.log("Resultado RPC:", rpcRes);
-          }
 
-        } else {
-          // Inserção de nova fase (caso tenha clicado em "+ Adicionar fase")
-          const { data: inserted, error: insertError } = await supabase
-            .from("event_phases")
-            .insert({
-              event_uuid: eventId,
-              phase_name: p.phase_name || "",
-              num_rounds: numRounds,
-            })
-            .select()
-            .single();
+    if (error) {
+      console.error(error);
+      alert("Erro ao salvar fase");
+      return;
+    }
 
-          if (insertError) {
-            console.error("Erro ao inserir fase:", insertError);
-            continue;
-          }
 
-          // Chama a RPC simplificada (burra) para a nova fase criada
-          const { data: rpcRes, error: rpcError } = await supabase.rpc("t_add_event_rounds", {
-            p_phase_id: inserted.id,
-            p_num_rounds: numRounds,
-          });
+    alert("Fase salva");
+    load();
 
-          if (rpcError) {
-            console.error("Erro na RPC t_add_event_rounds (nova fase):", rpcError);
-          } else {
-            console.log("Resultado RPC (nova fase):", rpcRes);
-          }
-        }
+  }
+
+
+
+  async function syncRounds(p) {
+
+
+    const current_count = Number(p.current_count || 0);
+    const new_rounds = Number(p.new_rounds || 0);
+
+
+    console.log("CRIAR ROUNDS", {
+      event_phase_uuid: p.id,
+      current_count,
+      new_rounds
+    });
+
+
+
+    if (new_rounds === current_count) {
+
+      alert("Nada a fazer");
+      loadRounds(p);
+
+      return;
+    }
+
+
+
+    if (new_rounds < current_count) {
+
+      alert(
+        "Não é permitido reduzir rounds pela interface"
+      );
+
+      return;
+
+    }
+
+
+
+    const quantidadeCriar =
+      new_rounds - current_count;
+
+
+
+    for (let i = 0; i < quantidadeCriar; i++) {
+
+
+      const { error } = await supabase
+        .from("event_rounds")
+        .insert({
+
+          event_phase_uuid: p.id,
+
+          // campos opcionais
+          event_parts_count: 1
+
+        });
+
+
+
+      if (error) {
+
+        console.error(
+          "Erro criando round",
+          error
+        );
+
+        alert(error.message);
+        return;
+
       }
 
-      alert("Dados salvos com sucesso!");
-      load(); // Recarrega para sincronizar o estado
-    } catch (err) {
-      console.error("Erro geral no salvamento:", err);
-      alert("Ocorreu um erro ao salvar as alterações.");
     }
+
+
+
+    await supabase
+      .from("event_phases")
+      .update({
+        num_rounds: new_rounds
+      })
+      .eq("id", p.id);
+
+
+
+    alert(
+      `${quantidadeCriar} round(s) criado(s)`
+    );
+
+
+    loadRounds(p);
+    load();
+
   }
 
+
+
+  async function loadRounds(p) {
+
+
+    setSelectedPhase(p);
+
+
+
+    const { data, error } = await supabase
+      .from("event_rounds")
+      .select("*")
+      .eq("event_phase_uuid", p.id)
+      .order("round_date", {
+        ascending: true
+      });
+
+
+    if (error) {
+
+      console.error(error);
+      return;
+
+    }
+
+
+    setRounds(data || []);
+
+  }
+
+
+
+  async function saveRound(round) {
+
+
+    const { error } = await supabase
+      .from("event_rounds")
+      .update({
+
+        round_date: round.round_date,
+        time_round: round.time_round,
+        local: round.local,
+        event_parts_count:
+          Number(round.event_parts_count || 1)
+
+      })
+      .eq("id", round.id);
+
+
+
+    if(error){
+
+      console.error(error);
+      alert(error.message);
+      return;
+
+    }
+
+
+    alert("Round salvo");
+
+  }
+
+
+
+  async function deleteRound(id){
+
+
+    const { error } = await supabase
+      .from("event_rounds")
+      .delete()
+      .eq("id", id);
+
+
+
+    if(error){
+
+      console.error(error);
+      alert(error.message);
+      return;
+
+    }
+
+
+    setRounds(
+      rounds.filter(
+        r => r.id !== id
+      )
+    );
+
+  }
+
+
+
+
   const s = {
-    page: { padding: 20 },
-    header: { marginBottom: 20 },
-    row: { display: "flex", gap: 10, marginBottom: 10 },
-    input: { padding: 8, border: "1px solid #ccc", borderRadius: 6 },
-    btn: { padding: 10, cursor: "pointer" },
+
+    page:{
+      padding:20
+    },
+
+    row:{
+      display:"flex",
+      gap:10,
+      marginBottom:10,
+      alignItems:"center"
+    },
+
+    input:{
+      padding:8,
+      border:"1px solid #ccc",
+      borderRadius:6
+    },
+
+    btn:{
+      padding:10,
+      cursor:"pointer"
+    }
+
   };
 
+
+
   return (
+
     <div style={s.page}>
-      <div style={s.header}>
-        <h2>{event?.name}</h2>
-        <small>{eventId}</small>
-      </div>
 
-      <h3>Fases do Evento</h3>
 
-      {phases.map((p, i) => (
-        <div key={i} style={s.row}>
-          <span>Fase {i + 1}</span>
+      <h2>
+        {event?.name}
+      </h2>
+
+
+      <h3>
+        Fases do Evento
+      </h3>
+
+
+
+      {phases.map((p,i)=>(
+
+        <div key={p.id}>
+
+
+          <div style={s.row}>
+
+
+            <span>
+              Fase {i+1}
+            </span>
+
+
+            <input
+              style={s.input}
+              value={p.phase_name || ""}
+              onChange={(e)=>
+                updatePhase(
+                  i,
+                  "phase_name",
+                  e.target.value
+                )
+              }
+            />
+
+
+
+            <input
+              style={{
+                ...s.input,
+                width:80
+              }}
+              value={p.phase_number || ""}
+              onChange={(e)=>
+                updatePhase(
+                  i,
+                  "phase_number",
+                  e.target.value
+                )
+              }
+            />
+
+
+
+            <input
+              style={{
+                ...s.input,
+                width:80
+              }}
+              type="number"
+              value={p.new_rounds}
+              onChange={(e)=>
+                updatePhase(
+                  i,
+                  "new_rounds",
+                  e.target.value
+                )
+              }
+            />
+
+
+
+            <span>
+              Banco:{p.current_count}
+            </span>
+
+
+
+            <button
+              style={s.btn}
+              onClick={()=>
+                savePhase(p)
+              }
+            >
+              💾
+            </button>
+
+
+
+            <button
+              style={s.btn}
+              onClick={()=>
+                syncRounds(p)
+              }
+            >
+              ⚽ Rounds
+            </button>
+
+
+          </div>
+
+
+
+        </div>
+
+      ))}
+
+
+
+      <hr/>
+
+
+
+      {selectedPhase && rounds.map((r,index)=>(
+
+        <div
+          key={r.id}
+          style={s.row}
+        >
+
+          <span>
+            Round {index+1}
+          </span>
+
 
           <input
             style={s.input}
-            placeholder="Nome da fase"
-            value={p.phase_name || ""}
-            onChange={(e) =>
-              updatePhase(i, "phase_name", e.target.value)
+            type="date"
+            value={r.round_date || ""}
+            onChange={(e)=>
+              setRounds(
+                rounds.map(x =>
+                  x.id===r.id
+                  ?
+                  {
+                    ...x,
+                    round_date:e.target.value
+                  }
+                  :
+                  x
+                )
+              )
             }
           />
+
+
+          <input
+            style={s.input}
+            type="time"
+            value={r.time_round || ""}
+            onChange={(e)=>
+              setRounds(
+                rounds.map(x =>
+                  x.id===r.id
+                  ?
+                  {
+                    ...x,
+                    time_round:e.target.value
+                  }
+                  :
+                  x
+                )
+              )
+            }
+          />
+
+
+          <input
+            style={s.input}
+            placeholder="Local"
+            value={r.local || ""}
+            onChange={(e)=>
+              setRounds(
+                rounds.map(x =>
+                  x.id===r.id
+                  ?
+                  {
+                    ...x,
+                    local:e.target.value
+                  }
+                  :
+                  x
+                )
+              )
+            }
+          />
+
 
           <input
             style={s.input}
             type="number"
-            placeholder="Rounds"
-            value={p.newRounds || ""}
-            onChange={(e) =>
-              updatePhase(i, "newRounds", e.target.value)
+            value={r.event_parts_count || 1}
+            onChange={(e)=>
+              setRounds(
+                rounds.map(x =>
+                  x.id===r.id
+                  ?
+                  {
+                    ...x,
+                    event_parts_count:e.target.value
+                  }
+                  :
+                  x
+                )
+              )
             }
           />
+
+
+
+          <button
+            style={s.btn}
+            onClick={()=>
+              saveRound(r)
+            }
+          >
+            💾
+          </button>
+
+
+
+          <button
+            style={s.btn}
+            onClick={()=>
+              deleteRound(r.id)
+            }
+          >
+            🗑
+          </button>
+
+
+
+          <button style={s.btn}>
+            🧩 Parts
+          </button>
+
+
         </div>
+
+
       ))}
 
+
       <button
         style={s.btn}
-        onClick={() =>
-          setPhases([
-            ...phases,
-            {
-              phase_name: "",
-              newRounds: 1,
-            },
-          ])
-        }
+        onClick={load}
       >
-        + Adicionar fase
+        🔄 Recarregar
       </button>
 
-      <hr />
 
-      <button style={s.btn} onClick={save}>
-        💾 Salvar
-      </button>
 
       <button
         style={s.btn}
-        onClick={() =>
-          navigate(`/admin/cadastros/eventos/${eventId}/rounds`)
+        onClick={()=>
+          navigate(
+            `/admin/cadastros/eventos/${eventId}/rounds`
+          )
         }
       >
         ⚽ Ir para Rounds
       </button>
+
+
     </div>
+
   );
+
 }
