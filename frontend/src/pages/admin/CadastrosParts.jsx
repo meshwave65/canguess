@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 
 export default function CadastroParts() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const roundId = searchParams.get("round");
 
   const [event, setEvent] = useState(null);
   const [phase, setPhase] = useState(null);
   const [round, setRound] = useState(null);
-
   const [parts, setParts] = useState([]);
-
+  const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,6 +55,14 @@ export default function CadastroParts() {
 
     setEvent(eventData);
 
+    // TEAMS (dropdown source)
+    const { data: teamsData } = await supabase
+      .from("teams")
+      .select("*")
+      .order("name", { ascending: true });
+
+    setTeams(teamsData || []);
+
     // PARTS
     const { data: partsData } = await supabase
       .from("event_parts")
@@ -64,7 +72,6 @@ export default function CadastroParts() {
 
     let finalParts = partsData || [];
 
-    // AUTO CREATE PARTS SE FALTANDO
     const expected = roundData.event_parts_count || 1;
 
     if (finalParts.length < expected) {
@@ -73,19 +80,12 @@ export default function CadastroParts() {
       for (let i = finalParts.length + 1; i <= expected; i++) {
         inserts.push({
           round_uuid: roundId,
-          team_uuid: null, // ⚠️ obrigatório no schema atual
+          team_uuid: null,
           value: null
         });
       }
 
-      const { error: insertError } = await supabase
-        .from("event_parts")
-        .insert(inserts);
-
-      if (insertError) {
-        console.error(insertError);
-        return;
-      }
+      await supabase.from("event_parts").insert(inserts);
 
       const { data: refreshed } = await supabase
         .from("event_parts")
@@ -100,10 +100,16 @@ export default function CadastroParts() {
     setLoading(false);
   }
 
-  function updatePart(id, value) {
+  function updatePart(id, value, team_uuid) {
     setParts((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, value } : p
+        p.id === id
+          ? {
+              ...p,
+              value: value ?? p.value,
+              team_uuid: team_uuid ?? p.team_uuid
+            }
+          : p
       )
     );
   }
@@ -112,14 +118,14 @@ export default function CadastroParts() {
     const { error } = await supabase
       .from("event_parts")
       .update({
-        value: part.value
+        value: part.value,
+        team_uuid: part.team_uuid
       })
       .eq("id", part.id);
 
     if (error) {
       console.error(error);
       alert("Erro ao salvar part");
-      return;
     }
   }
 
@@ -131,6 +137,12 @@ export default function CadastroParts() {
       borderRadius: 10,
       marginBottom: 12
     },
+    headerBar: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 10
+    },
     row: {
       display: "flex",
       alignItems: "center",
@@ -141,7 +153,7 @@ export default function CadastroParts() {
       padding: 8,
       border: "1px solid #ddd",
       borderRadius: 6,
-      minWidth: 200
+      minWidth: 120
     },
     btn: {
       padding: "6px 10px",
@@ -157,32 +169,61 @@ export default function CadastroParts() {
   return (
     <div style={s.page}>
 
-      {/* HEADER CONTEXTUAL */}
+      {/* HEADER COM NAVEGAÇÃO */}
       <div style={s.card}>
-        <h2>{event?.name}</h2>
-        <h3>{phase?.phase_name}</h3>
-        <h4>{round?.round_name}</h4>
+        <div style={s.headerBar}>
+          <div>
+            <h2>{event?.name}</h2>
+            <h3>{phase?.phase_name}</h3>
+            <h4>{round?.round_name}</h4>
+          </div>
+
+          <div style={{ display: "flex", gap: 8 }}>
+            <button style={s.btn} onClick={() => navigate(-1)}>
+              ← Voltar
+            </button>
+
+            <button style={s.btn} onClick={() => navigate("/")}>
+              🏠 Home
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* LISTA DE PARTS */}
       <div style={s.card}>
-        {parts.map((p) => (
+        {parts.map((p, index) => (
           <div key={p.id} style={s.row}>
 
-            <span>Part {p.id.slice(0, 4)}</span>
+            <span>Part {index + 1}</span>
 
+            {/* DROPDOWN TEAMS */}
+            <select
+              style={s.input}
+              value={p.team_uuid || ""}
+              onChange={(e) =>
+                updatePart(p.id, null, e.target.value)
+              }
+            >
+              <option value="">Selecionar team</option>
+              {teams.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name} - {t.code}
+                </option>
+              ))}
+            </select>
+
+            {/* VALUE INPUT */}
             <input
               style={s.input}
               value={p.value || ""}
               onChange={(e) =>
                 updatePart(p.id, e.target.value)
               }
+              placeholder="value"
             />
 
-            <button
-              style={s.btn}
-              onClick={() => savePart(p)}
-            >
+            <button style={s.btn} onClick={() => savePart(p)}>
               💾
             </button>
 
