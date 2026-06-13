@@ -4,7 +4,10 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Predictions from "../pages/Predictions";
 import Ranking from "../pages/Ranking";
+
 import Admin from "../pages/Admin";
+import AdminLogin from "../pages/AdminLogin";
+import AdminGuard from "../components/AdminGuard";
 
 import EventDashboard from "../pages/admin/EventDashboard";
 import CadastrosHome from "../pages/admin/CadastrosHome";
@@ -14,58 +17,65 @@ import CadastrosFases from "../pages/admin/CadastrosFases";
 import CadastrosRodadas from "../pages/admin/CadastrosRodadas";
 import CadastroRounds from "../pages/admin/CadastrosRounds";
 import CadastroParts from "../pages/admin/CadastrosParts";
+import MapaPalpites from "../pages/admin/MapaPalpites";
 
-import AdminLogin from "../pages/AdminLogin";
-import AdminGuard from "../components/AdminGuard";
+import AdminLayout from "../pages/admin/AdminLayout";
 
 export default function AppRoutes() {
   return (
     <Routes>
+      {/* ================= PUBLIC ================= */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/palpites" element={<Predictions />} />
       <Route path="/ranking" element={<Ranking />} />
 
-      {/* 🔐 ADMIN LOGIN */}
+      {/* ================= ADMIN LOGIN ================= */}
       <Route path="/admin-login" element={<AdminLogin />} />
 
-      {/* 🔒 ADMIN PROTEGIDO (CORRETO) */}
+      {/* ================= ADMIN PROTECTED ================= */}
       <Route
-        path="/admin"
+        path="/admin/*"
         element={
           <AdminGuard>
-            <Admin />
+            <AdminLayout />
           </AdminGuard>
         }
-      />
+      >
+        {/* DASHBOARD PRINCIPAL */}
+        <Route index element={<Admin />} />
 
-      <Route path="/admin/resultados" element={<div>Resultados</div>} />
-      <Route path="/admin/usuarios" element={<div>Usuários</div>} />
-      <Route path="/admin/consultas" element={<div>Consultas</div>} />
+        {/* PAINÉIS */}
+        <Route path="resultados" element={<div>Resultados</div>} />
+        <Route path="usuarios" element={<div>Usuários</div>} />
+        <Route path="consultas" element={<div>Consultas</div>} />
 
-      {/* CADASTROS */}
-      <Route path="/admin/cadastros" element={<CadastrosHome />} />
-      <Route path="/admin/cadastros/times" element={<CadastrosTimes />} />
-      <Route path="/admin/cadastros/eventos" element={<CadastrosEventos />} />
-      <Route path="/admin/cadastros/fases" element={<CadastrosFases />} />
-      <Route path="/admin/cadastros/rodadas" element={<CadastrosRodadas />} />
+        {/* MAPA DE PALPITES */}
+        <Route path="palpites" element={<MapaPalpites />} />
 
-      <Route path="/cadastro-parts" element={<CadastroParts />} />
+        {/* CADASTROS */}
+        <Route path="cadastros" element={<CadastrosHome />} />
+        <Route path="cadastros/times" element={<CadastrosTimes />} />
+        <Route path="cadastros/eventos" element={<CadastrosEventos />} />
+        <Route path="cadastros/fases" element={<CadastrosFases />} />
+        <Route path="cadastros/rodadas" element={<CadastrosRodadas />} />
 
-      <Route
-        path="/admin/cadastros/eventos/:eventId/estrutura"
-        element={<EventDashboard />}
-      />
+        {/* EVENTOS AVANÇADO */}
+        <Route
+          path="cadastros/eventos/:eventId/estrutura"
+          element={<EventDashboard />}
+        />
 
-      <Route
-        path="/admin/cadastros/eventos/:eventId/rounds"
-        element={<CadastroRounds />}
-      />
+        <Route
+          path="cadastros/eventos/:eventId/rounds"
+          element={<CadastroRounds />}
+        />
 
-      <Route
-        path="/admin/cadastros/eventos/:eventId/parts"
-        element={<CadastroParts />}
-      />
+        <Route
+          path="cadastros/eventos/:eventId/parts"
+          element={<CadastroParts />}
+        />
+      </Route>
     </Routes>
   );
 }

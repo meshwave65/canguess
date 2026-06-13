@@ -51,7 +51,7 @@ export default function BottomNav() {
       </Link>
 
       <Link
-        to="/admin"
+        to="/admin-login"
         style={{
           color: "#fff",
           textDecoration: "none",

@@ -1,173 +1,200 @@
-import Header from "../components/Header";
-import BottomNav from "../components/BottomNav";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-const PLAYER_COL_WIDTH = 140;
-const POINTS_COL_WIDTH = 60;
-const GAME_COL_WIDTH = 90;
-
-// logos SEM /public (Vite serve direto da raiz)
-const getLogo = (code) => `/logos/${code}.svg`;
+import { useEffect, useState } from "react";
+import { supabase } from "./admin/lib/supabase";
 
 export default function Ranking() {
-  const navigate = useNavigate();
-  const [modo, setModo] = useState("text");
+  const [dados, setDados] = useState([]);
+  const [evento, setEvento] = useState(null);
+
+  const jogos = [
+    { a: "BRA", b: "MAR", result: "-" },
+    { a: "QAT", b: "SUI", result: "-" },
+    { a: "GER", b: "JPN", result: "-" },
+    { a: "ESP", b: "CPV", result: "-" },
+    { a: "BEL", b: "EGY", result: "-" },
+    { a: "URU", b: "KSA", result: "-" },
+    { a: "CIV", b: "ECU", result: "-" },
+    { a: "SWE", b: "TUN", result: "-" },
+    { a: "AUS", b: "TUR", result: "-" },
+    { a: "NED", b: "JPN", result: "-" },
+    { a: "HAI", b: "SCO", result: "-" },
+  ];
+
+  const TOTAL = jogos.length;
+
+  async function load() {
+    const [{ data: bolao }, { data: users }] =
+      await Promise.all([
+        supabase.from("bolao").select("*"),
+        supabase.from("users").select("id, user_name"),
+      ]);
+
+    if (!bolao || bolao.length === 0) {
+      setDados([]);
+      return;
+    }
+
+    // 👇 pega event_id a partir do bolão
+    const eventId = bolao[0].event_id;
+
+    // 👇 event_phases → event_uuid
+    const { data: phase } = await supabase
+      .from("event_phases")
+      .select("event_uuid")
+      .eq("id", eventId)
+      .single();
+
+    // 👇 events → name
+    const { data: eventData } = await supabase
+      .from("events")
+      .select("name")
+      .eq("id", phase?.event_uuid)
+      .single();
+
+    setEvento(eventData);
+
+    const userMap = Object.fromEntries(
+      (users || []).map((u) => [u.id, u.user_name])
+    );
+
+    const grouped = {};
+
+    (bolao || []).forEach((item) => {
+      if (!grouped[item.user_id]) {
+        grouped[item.user_id] = {
+          user_id: item.user_id,
+          user_name: userMap[item.user_id] || "-",
+          palpites: Array(TOTAL).fill(""),
+          pontos: 0,
+        };
+      }
+
+      grouped[item.user_id].palpites[item.game_index - 1] =
+        item.prediction;
+
+      if (item.prediction === jogos[item.game_index - 1]?.result) {
+        grouped[item.user_id].pontos += 1;
+      }
+    });
+
+    const arr = Object.values(grouped);
+
+    // 🏆 ranking correto
+    arr.sort((a, b) => {
+      if (a.pontos !== b.pontos) return b.pontos - a.pontos;
+      return a.user_name.localeCompare(b.user_name, "pt-BR");
+    });
+
+    setDados(arr);
+  }
 
   useEffect(() => {
-    document.body.setAttribute("data-mode", modo);
-  }, [modo]);
-
-  // 🔥 fallback inteligente por lado
-  const handleLogoError = (side) => (e) => {
-    e.target.onerror = null;
-    e.target.src =
-      side === "home"
-        ? "/logos/time-a.svg"
-        : "/logos/time-b.svg";
-  };
-
-  // 🧠 MOCK DOS JOGOS DA COPA
-  const jogos = [
-    { mandante: "QAT", visitante: "SUI", resultado: "0X0" },
-    { mandante: "BRA", visitante: "MAR", resultado: "0X0" },
-    { mandante: "HTI", visitante: "SCO", resultado: "0X0" },
-    { mandante: "AUS", visitante: "TUR", resultado: "0X0" },
-    { mandante: "GER", visitante: "CUW", resultado: "0X0" },
-    { mandante: "NED", visitante: "JPN", resultado: "0X0" },
-    { mandante: "CIV", visitante: "ECU", resultado: "0X0" },
-    { mandante: "SWE", visitante: "TUN", resultado: "0X0" },
-    { mandante: "ESP", visitante: "CPV", resultado: "0X0" },
-    { mandante: "BEL", visitante: "EGY", resultado: "0X0" },
-    { mandante: "KSA", visitante: "URU", resultado: "0X0" },
-  ];
-
-  const jogadores = [
-    {
-      nome: "ZE BANGU",
-      pontos: 0,
-      palpites: Array(11).fill(null),
-    },
-    {
-      nome: "JUCA BALA",
-      pontos: 0,
-      palpites: Array(11).fill(null),
-    },
-    {
-      nome: "ALVA",
-      pontos: 0,
-      palpites: Array(11).fill(null),
-    },
-  ];
+    load();
+  }, []);
 
   return (
-    <>
-      <Header />
+    <div style={{ padding: 10 }}>
 
-      {/* NAV */}
-      <div style={{ display: "flex", gap: 10, padding: 10 }}>
-        <button onClick={() => navigate("/")}>🏠 Home</button>
-        <button onClick={() => navigate(-1)}>🔙 Voltar</button>
-      </div>
+      {/* 🏟️ EVENTO */}
+      <h2 style={{ marginBottom: 4 }}>
+        {evento?.name || "BOLÃO DO ZÉ COPA 2026"}
+      </h2>
 
-      <main style={{ padding: 8, paddingBottom: 90 }}>
-        <h2 style={{ fontSize: 14, marginBottom: 10 }}>
-          Ranking do Bolão (MVP)
-        </h2>
+      <h4 style={{ marginTop: 0 }}>
+        🏆 Ranking
+      </h4>
 
-        {/* TOGGLE */}
-        <label style={{ fontSize: 12, display: "block", marginBottom: 10 }}>
-          <input
-            type="checkbox"
-            checked={modo === "logo"}
-            onChange={(e) => setModo(e.target.checked ? "logo" : "text")}
-          />
-          {" "}Modo Escudos
-        </label>
+      <div style={{ overflowX: "auto" }}>
+        <table
+          style={{
+            borderCollapse: "collapse",
+            width: "100%",
+            fontSize: 12,
+          }}
+        >
+          <thead>
+            <tr>
+              <th rowSpan={4} style={th}>USUÁRIO</th>
+              <th rowSpan={4} style={th}>PTS</th>
 
-        <div className="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th style={{ width: PLAYER_COL_WIDTH }}>JOGADOR</th>
-                <th style={{ width: POINTS_COL_WIDTH }}>PTS</th>
-
-                {jogos.map((jogo, idx) => (
-                  <th key={idx} style={{ width: GAME_COL_WIDTH }}>
-                    <div className="game-grid">
-
-                      {/* MANDANTE */}
-                      <div className="team">
-                        {modo === "text" ? (
-                          <span>{jogo.mandante}</span>
-                        ) : (
-                          <img
-                            src={getLogo(jogo.mandante)}
-                            width="18"
-                            height="18"
-                            onError={handleLogoError("home")}
-                            alt={jogo.mandante}
-                          />
-                        )}
-                      </div>
-
-                      <div>X</div>
-
-                      {/* VISITANTE */}
-                      <div className="team">
-                        {modo === "text" ? (
-                          <span>{jogo.visitante}</span>
-                        ) : (
-                          <img
-                            src={getLogo(jogo.visitante)}
-                            width="18"
-                            height="18"
-                            onError={handleLogoError("away")}
-                            alt={jogo.visitante}
-                          />
-                        )}
-                      </div>
-
-                      <div style={{ fontSize: 10 }}>
-                        {jogo.resultado}
-                      </div>
-
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              {jogadores.map((jogador, idx) => (
-                <tr key={idx}>
-                  <td>{jogador.nome}</td>
-
-                  <td style={{ textAlign: "center", fontWeight: "bold" }}>
-                    {jogador.pontos || "-"}
-                  </td>
-
-                  {jogos.map((_, i) => (
-                    <td key={i} style={{ textAlign: "center" }}>
-                      <div
-                        style={{
-                          width: 10,
-                          height: 10,
-                          borderRadius: "50%",
-                          background: "#d1d5db",
-                          margin: "0 auto",
-                        }}
-                      />
-                    </td>
-                  ))}
-                </tr>
+              {jogos.map((j, i) => (
+                <th key={i} style={th}>{j.a}</th>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
+            </tr>
 
-      <BottomNav />
-    </>
+            <tr>
+              {jogos.map((_, i) => (
+                <th key={i} style={th}>vs</th>
+              ))}
+            </tr>
+
+            <tr>
+              {jogos.map((j, i) => (
+                <th key={i} style={th}>{j.b}</th>
+              ))}
+            </tr>
+
+            <tr>
+              {jogos.map((j, i) => (
+                <th key={i} style={{ ...th, fontWeight: "bold" }}>
+                  {j.result}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {dados.map((user) => (
+              <tr key={user.user_id}>
+
+                <td style={td}>
+                  {user.user_name}
+                </td>
+
+                <td style={tdCenter}>
+                  <b>{user.pontos}</b>
+                </td>
+
+                {jogos.map((j, i) => {
+                  const pick = user.palpites[i];
+                  const ok = pick === j.result;
+
+                  return (
+                    <td
+                      key={i}
+                      style={{
+                        textAlign: "center",
+                        border: "1px solid #ddd",
+                        fontSize: 14,
+                      }}
+                    >
+                      {ok ? "⚽" : pick}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
   );
 }
+
+const th = {
+  border: "1px solid #ddd",
+  padding: 6,
+  background: "#f3f4f6",
+  textAlign: "center",
+};
+
+const td = {
+  border: "1px solid #ddd",
+  padding: 6,
+};
+
+const tdCenter = {
+  border: "1px solid #ddd",
+  padding: 6,
+  textAlign: "center",
+};

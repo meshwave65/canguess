@@ -368,12 +368,13 @@ export default function EventDashboard() {
               <button
                 style={s.btn}
                 onClick={() => {
-                  setSelectedRound(round);
-                  navigate(`/cadastro-parts?event=${eventId}&round=${round.id}`);
+                    setSelectedRound(round);
+                    navigate(`/admin/cadastros/eventos/${eventId}/parts?round=${round.id}`);
                 }}
               >
                 🧩 Parts
               </button>
+
             </div>
           ))}
         </div>
