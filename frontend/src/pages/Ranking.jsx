@@ -6,17 +6,17 @@ export default function Ranking() {
   const [evento, setEvento] = useState(null);
 
   const jogos = [
-    { a: "BRA", b: "MAR", result: "-" },
     { a: "QAT", b: "SUI", result: "-" },
-    { a: "GER", b: "JPN", result: "-" },
-    { a: "ESP", b: "CPV", result: "-" },
-    { a: "BEL", b: "EGY", result: "-" },
-    { a: "URU", b: "KSA", result: "-" },
+    { a: "BRA", b: "MAR", result: "-" },
+    { a: "HAI", b: "SCO", result: "-" },
+    { a: "AUS", b: "TUR", result: "-" },
+    { a: "GER", b: "CUR", result: "-" },
+    { a: "NED", b: "JPN", result: "-" },
     { a: "CIV", b: "ECU", result: "-" },
     { a: "SWE", b: "TUN", result: "-" },
-    { a: "AUS", b: "TUR", result: "-" },
-    { a: "NED", b: "JPN", result: "-" },
-    { a: "HAI", b: "SCO", result: "-" },
+    { a: "ESP", b: "CPV", result: "-" },
+    { a: "BEL", b: "EGY", result: "-" },
+    { a: "KSA", b: "URU", result: "-" },
   ];
 
   const TOTAL = jogos.length;
