@@ -6,7 +6,7 @@ export default function Ranking() {
   const [evento, setEvento] = useState(null);
 
   const jogos = [
-    { a: "QAT", b: "SUI", result: "-" },
+    { a: "QAT", b: "SUI", result: "X" },
     { a: "BRA", b: "MAR", result: "-" },
     { a: "HAI", b: "SCO", result: "-" },
     { a: "AUS", b: "TUR", result: "-" },
