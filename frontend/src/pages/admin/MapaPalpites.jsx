@@ -1,123 +1,157 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 
 export default function MapaPalpites() {
-  const navigate = useNavigate();
-
   const [dados, setDados] = useState([]);
   const [statusMap, setStatusMap] = useState({});
-
-  const jogos = [
-    { a: "QAT", b: "SUI", result: "X" },
-    { a: "BRA", b: "MAR", result: "-" },
-    { a: "HAI", b: "SCO", result: "-" },
-    { a: "AUS", b: "TUR", result: "-" },
-    { a: "GER", b: "CUR", result: "-" },
-    { a: "NED", b: "JPN", result: "-" },
-    { a: "CIV", b: "ECU", result: "-" },
-    { a: "SWE", b: "TUN", result: "-" },
-    { a: "ESP", b: "CPV", result: "-" },
-    { a: "BEL", b: "EGY", result: "-" },
-    { a: "KSA", b: "URU", result: "-" },
-  ];
-
-  const TOTAL = jogos.length;
+  const [engine, setEngine] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   async function load() {
-    const { data: bolao } = await supabase.from("bolao").select("*");
+    setLoading(true);
 
-    const { data: users } = await supabase
-      .from("users")
-      .select("id, user_name");
+    try {
+      const bolaoJson = await fetch("/data/bolao.json").then(r => r.json());
 
-    const userMap = Object.fromEntries(
-      (users || []).map((u) => [u.id, u.user_name])
-    );
+      setEngine(bolaoJson);
 
-    const grouped = {};
+      const rounds = bolaoJson.rounds || [];
+      const TOTAL = rounds.length;
 
-    (bolao || []).forEach((item) => {
-      if (!grouped[item.user_id]) {
-        grouped[item.user_id] = {
-          user_id: item.user_id,
-          user_name: userMap[item.user_id] || "-",
-          status: item.status || "Em validação",
-          palpites: Array(TOTAL).fill("-"),
-          pontos: 0,
-        };
-      }
+      const { data: bolao } = await supabase.from("bolao").select("*");
 
-      grouped[item.user_id].palpites[item.game_index - 1] =
-        item.prediction;
+      const { data: users } = await supabase
+        .from("users")
+        .select("id, user_name");
 
-      if (item.prediction === jogos[item.game_index - 1]?.result) {
-        grouped[item.user_id].pontos += 1;
-      }
-    });
+      const userMap = Object.fromEntries(
+        (users || []).map(u => [u.id, u.user_name])
+      );
 
-    const arr = Object.values(grouped);
+      const grouped = {};
 
-    setDados(arr);
+      (bolao || []).forEach((item) => {
+        if (!grouped[item.user_id]) {
+          grouped[item.user_id] = {
+            user_id: item.user_id,
+            user_name: userMap[item.user_id] || "-",
+            status: item.status || "Em validação",
+            palpites: Array(TOTAL).fill("-"),
+            pontos: 0,
+          };
+        }
 
-    setStatusMap(
-      Object.fromEntries(arr.map((u) => [u.user_id, u.status]))
-    );
+        const i = item.game_index - 1;
+        grouped[item.user_id].palpites[i] = item.prediction;
+
+        const round = rounds[i];
+
+        const a = round?.parts?.[0]?.value;
+        const b = round?.parts?.[1]?.value;
+
+        let result = "-";
+
+        if (a != null && b != null) {
+          if (a > b) result = "A";
+          else if (a < b) result = "B";
+          else result = "X";
+        }
+
+        if (item.prediction === result) {
+          grouped[item.user_id].pontos += 1;
+        }
+      });
+
+      const arr = Object.values(grouped);
+
+      setDados(arr);
+
+      setStatusMap(
+        Object.fromEntries(arr.map(u => [u.user_id, u.status]))
+      );
+
+    } catch (err) {
+      console.error("Erro ao carregar bolao.json:", err);
+    }
+
+    setLoading(false);
   }
 
   useEffect(() => {
     load();
   }, []);
 
-  async function updateStatus(user_id) {
-    const status = statusMap[user_id];
+  const th = {
+    border: "1px solid #ddd",
+    padding: 6,
+    background: "#f3f4f6",
+    textAlign: "center",
+  };
 
-    await supabase
-      .from("bolao")
-      .update({ status })
-      .eq("user_id", user_id);
+  const td = {
+    border: "1px solid #ddd",
+    padding: 6,
+    verticalAlign: "top",
+  };
 
-    load();
-  }
+  const tdCenter = {
+    border: "1px solid #ddd",
+    padding: 6,
+    textAlign: "center",
+  };
 
-  async function remove(user_id) {
-    await supabase.from("bolao").delete().eq("user_id", user_id);
-    load();
-  }
+  if (loading) return <div style={{ padding: 10 }}>Carregando...</div>;
+
+  const rounds = engine?.rounds || [];
 
   return (
     <div style={{ padding: 10 }}>
-      <h3>📊 Evento</h3>
-      <h4>Mapa de Palpites</h4>
+
+      <h2>{engine?.event_name || "Evento"}</h2>
+      <h4>📊 Mapa de Palpites</h4>
 
       <div style={{ overflowX: "auto" }}>
         <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 12 }}>
+
           <thead>
             <tr>
-              <th rowSpan={4} style={th}>USUÁRIO</th>
-              <th rowSpan={4} style={th}>PTS</th>
+              <th style={th}>USUÁRIO</th>
+              <th style={th}>PTS</th>
 
-              {jogos.map((j, i) => (
-                <th key={i} style={th}>{j.a}</th>
+              {rounds.map((r, i) => (
+                <th key={i} style={th}>
+                  {r.parts?.[0]?.team_code}
+                </th>
               ))}
             </tr>
 
             <tr>
-              {jogos.map((_, i) => (
+              <th style={th}></th>
+              <th style={th}></th>
+
+              {rounds.map((_, i) => (
                 <th key={i} style={th}>vs</th>
               ))}
             </tr>
 
             <tr>
-              {jogos.map((j, i) => (
-                <th key={i} style={th}>{j.b}</th>
+              <th style={th}></th>
+              <th style={th}></th>
+
+              {rounds.map((r, i) => (
+                <th key={i} style={th}>
+                  {r.parts?.[1]?.team_code}
+                </th>
               ))}
             </tr>
 
             <tr>
-              {jogos.map((j, i) => (
+              <th style={th}></th>
+              <th style={th}></th>
+
+              {rounds.map((r, i) => (
                 <th key={i} style={{ ...th, fontWeight: "bold" }}>
-                  {j.result}
+                  {r.score || "-"}
                 </th>
               ))}
             </tr>
@@ -126,6 +160,7 @@ export default function MapaPalpites() {
           <tbody>
             {dados.map((user) => (
               <tr key={user.user_id}>
+
                 <td style={td}>
                   <div>{user.user_name}</div>
 
@@ -137,7 +172,6 @@ export default function MapaPalpites() {
                         [user.user_id]: e.target.value,
                       }))
                     }
-                    style={{ fontSize: 11 }}
                   >
                     <option>Em validação</option>
                     <option>Validado</option>
@@ -147,9 +181,21 @@ export default function MapaPalpites() {
 
                 <td style={tdCenter}>{user.pontos}</td>
 
-                {jogos.map((j, i) => {
+                {rounds.map((r, i) => {
                   const pick = user.palpites[i];
-                  const ok = pick === j.result;
+
+                  const a = r?.parts?.[0]?.value;
+                  const b = r?.parts?.[1]?.value;
+
+                  let result = "-";
+
+                  if (a != null && b != null) {
+                    if (a > b) result = "A";
+                    else if (a < b) result = "B";
+                    else result = "X";
+                  }
+
+                  const ok = pick === result;
 
                   return (
                     <td
@@ -167,34 +213,12 @@ export default function MapaPalpites() {
                   );
                 })}
 
-                <td style={tdCenter}>
-                  <button onClick={() => updateStatus(user.user_id)}>💾</button>
-                  <button onClick={() => remove(user.user_id)}>🗑️</button>
-                </td>
               </tr>
             ))}
           </tbody>
+
         </table>
       </div>
     </div>
   );
 }
-
-const th = {
-  border: "1px solid #ddd",
-  padding: 6,
-  background: "#f3f4f6",
-  textAlign: "center",
-};
-
-const td = {
-  border: "1px solid #ddd",
-  padding: 6,
-  verticalAlign: "top",
-};
-
-const tdCenter = {
-  border: "1px solid #ddd",
-  padding: 6,
-  textAlign: "center",
-};

@@ -55,7 +55,7 @@ export default function CadastroParts() {
 
     setEvent(eventData);
 
-    // TEAMS (dropdown source)
+    // TEAMS
     const { data: teamsData } = await supabase
       .from("teams")
       .select("*")
@@ -68,7 +68,7 @@ export default function CadastroParts() {
       .from("event_parts")
       .select("*")
       .eq("round_uuid", roundId)
-      .order("created_at", { ascending: true });
+      .order("sequence_part", { ascending: true });
 
     let finalParts = partsData || [];
 
@@ -81,17 +81,20 @@ export default function CadastroParts() {
         inserts.push({
           round_uuid: roundId,
           team_uuid: null,
-          value: null
+          value: null,
+          sequence_part: i
         });
       }
 
-      await supabase.from("event_parts").insert(inserts);
+      await supabase
+        .from("event_parts")
+        .insert(inserts);
 
       const { data: refreshed } = await supabase
         .from("event_parts")
         .select("*")
         .eq("round_uuid", roundId)
-        .order("created_at", { ascending: true });
+        .order("sequence_part", { ascending: true });
 
       finalParts = refreshed || [];
     }
@@ -100,26 +103,36 @@ export default function CadastroParts() {
     setLoading(false);
   }
 
-  function updatePart(id, value, team_uuid) {
+
+  function updatePart(
+    id,
+    value,
+    team_uuid,
+    sequence_part
+  ) {
     setParts((prev) =>
       prev.map((p) =>
         p.id === id
           ? {
               ...p,
               value: value ?? p.value,
-              team_uuid: team_uuid ?? p.team_uuid
+              team_uuid: team_uuid ?? p.team_uuid,
+              sequence_part:
+                sequence_part ?? p.sequence_part
             }
           : p
       )
     );
   }
 
+
   async function savePart(part) {
     const { error } = await supabase
       .from("event_parts")
       .update({
         value: part.value,
-        team_uuid: part.team_uuid
+        team_uuid: part.team_uuid,
+        sequence_part: part.sequence_part
       })
       .eq("id", part.id);
 
@@ -129,32 +142,42 @@ export default function CadastroParts() {
     }
   }
 
+
   const s = {
-    page: { padding: 20, background: "#f5f6fa", minHeight: "100vh" },
+    page: {
+      padding: 20,
+      background: "#f5f6fa",
+      minHeight: "100vh"
+    },
+
     card: {
       background: "#fff",
       padding: 15,
       borderRadius: 10,
       marginBottom: 12
     },
+
     headerBar: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
       marginBottom: 10
     },
+
     row: {
       display: "flex",
       alignItems: "center",
       gap: 10,
       marginBottom: 8
     },
+
     input: {
       padding: 8,
       border: "1px solid #ddd",
       borderRadius: 6,
       minWidth: 120
     },
+
     btn: {
       padding: "6px 10px",
       border: "1px solid #ddd",
@@ -164,72 +187,149 @@ export default function CadastroParts() {
     }
   };
 
-  if (loading) return <div style={s.page}>Carregando...</div>;
+
+  if (loading)
+    return <div style={s.page}>Carregando...</div>;
+
 
   return (
     <div style={s.page}>
 
-      {/* HEADER COM NAVEGAÇÃO */}
+      {/* HEADER */}
       <div style={s.card}>
+
         <div style={s.headerBar}>
+
           <div>
             <h2>{event?.name}</h2>
             <h3>{phase?.phase_name}</h3>
             <h4>{round?.round_name}</h4>
           </div>
 
+
           <div style={{ display: "flex", gap: 8 }}>
-            <button style={s.btn} onClick={() => navigate(-1)}>
+
+            <button
+              style={s.btn}
+              onClick={() => navigate(-1)}
+            >
               ← Voltar
             </button>
 
-            <button style={s.btn} onClick={() => navigate("/")}>
+
+            <button
+              style={s.btn}
+              onClick={() => navigate("/")}
+            >
               🏠 Home
             </button>
+
           </div>
+
         </div>
+
       </div>
 
-      {/* LISTA DE PARTS */}
+
+      {/* PARTS */}
       <div style={s.card}>
+
         {parts.map((p, index) => (
+
           <div key={p.id} style={s.row}>
 
-            <span>Part {index + 1}</span>
 
-            {/* DROPDOWN TEAMS */}
+            <span>
+              Part {index + 1}
+            </span>
+
+
+            {/* SEQUENCE PART */}
+
+            <input
+              style={{
+                ...s.input,
+                minWidth: 60
+              }}
+              type="number"
+              value={p.sequence_part || ""}
+              onChange={(e) =>
+                updatePart(
+                  p.id,
+                  null,
+                  null,
+                  Number(e.target.value)
+                )
+              }
+              placeholder="Seq"
+            />
+
+
+            {/* TEAM */}
+
             <select
               style={s.input}
               value={p.team_uuid || ""}
               onChange={(e) =>
-                updatePart(p.id, null, e.target.value)
+                updatePart(
+                  p.id,
+                  null,
+                  e.target.value,
+                  null
+                )
               }
             >
-              <option value="">Selecionar team</option>
+
+              <option value="">
+                Selecionar team
+              </option>
+
+
               {teams.map((t) => (
-                <option key={t.id} value={t.id}>
+
+                <option
+                  key={t.id}
+                  value={t.id}
+                >
                   {t.name} - {t.code}
                 </option>
+
               ))}
+
             </select>
 
-            {/* VALUE INPUT */}
+
+            {/* VALUE */}
+
             <input
               style={s.input}
               value={p.value || ""}
               onChange={(e) =>
-                updatePart(p.id, e.target.value)
+                updatePart(
+                  p.id,
+                  e.target.value,
+                  null,
+                  null
+                )
               }
               placeholder="value"
             />
 
-            <button style={s.btn} onClick={() => savePart(p)}>
+
+            <button
+              style={s.btn}
+              onClick={() => savePart(p)}
+            >
               💾
             </button>
 
+
           </div>
+
         ))}
+
       </div>
+
 
     </div>
   );
