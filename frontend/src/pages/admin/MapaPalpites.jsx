@@ -9,17 +9,17 @@ export default function MapaPalpites() {
   const [statusMap, setStatusMap] = useState({});
 
   const jogos = [
-    { a: "BRA", b: "MAR", result: "1" },
     { a: "QAT", b: "SUI", result: "X" },
-    { a: "GER", b: "JPN", result: "2" },
-    { a: "ESP", b: "CPV", result: "1" },
-    { a: "BEL", b: "EGY", result: "2" },
-    { a: "URU", b: "KSA", result: "1" },
-    { a: "CIV", b: "ECU", result: "X" },
-    { a: "SWE", b: "TUN", result: "2" },
-    { a: "AUS", b: "TUR", result: "1" },
-    { a: "NED", b: "JPN", result: "X" },
-    { a: "HAI", b: "SCO", result: "2" },
+    { a: "BRA", b: "MAR", result: "-" },
+    { a: "HAI", b: "SCO", result: "-" },
+    { a: "AUS", b: "TUR", result: "-" },
+    { a: "GER", b: "CUR", result: "-" },
+    { a: "NED", b: "JPN", result: "-" },
+    { a: "CIV", b: "ECU", result: "-" },
+    { a: "SWE", b: "TUN", result: "-" },
+    { a: "ESP", b: "CPV", result: "-" },
+    { a: "BEL", b: "EGY", result: "-" },
+    { a: "KSA", b: "URU", result: "-" },
   ];
 
   const TOTAL = jogos.length;

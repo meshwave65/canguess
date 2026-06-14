@@ -1,0 +1,161 @@
+import os
+import json
+import time
+import requests
+from datetime import datetime, timezone
+from dotenv import load_dotenv
+
+
+load_dotenv("/mnt/hd1tb/projetos/.env")
+
+
+SUPABASE_URL = os.getenv("VITE_SUPABASE_URL")
+SUPABASE_KEY = os.getenv("VITE_SUPABASE_ANON_KEY")
+
+
+TABLE = "games"
+
+
+OUTPUT_FILE = (
+    "/mnt/hd1tb/projetos/sofia-engines/output/games.json"
+)
+
+STATE_FILE = (
+    "/mnt/hd1tb/projetos/sofia-engines/output/.last_state.json"
+)
+
+
+HEADERS = {
+    "apikey": SUPABASE_KEY,
+    "Authorization": f"Bearer {SUPABASE_KEY}",
+    "Content-Type": "application/json"
+}
+
+
+
+def load_last_state():
+
+    if not os.path.exists(STATE_FILE):
+        return None
+
+    with open(STATE_FILE, "r") as f:
+        return json.load(f)
+
+
+
+def save_state(data):
+
+    with open(STATE_FILE, "w") as f:
+        json.dump(data, f)
+
+
+
+def fetch_games():
+
+    url = (
+        f"{SUPABASE_URL}/rest/v1/{TABLE}"
+        "?select=*"
+    )
+
+    r = requests.get(
+        url,
+        headers=HEADERS,
+        timeout=10
+    )
+
+    r.raise_for_status()
+
+    return r.json()
+
+
+
+def generate_json(games):
+
+    payload = {
+
+        "generated_at":
+            datetime.now(timezone.utc).isoformat(),
+
+        "total_games":
+            len(games),
+
+        "games":
+            games
+    }
+
+
+    os.makedirs(
+        os.path.dirname(OUTPUT_FILE),
+        exist_ok=True
+    )
+
+
+    with open(
+        OUTPUT_FILE,
+        "w"
+    ) as f:
+
+        json.dump(
+            payload,
+            f,
+            indent=2,
+            ensure_ascii=False
+        )
+
+
+
+def run():
+
+    print("ENGINE ONLINE")
+
+
+    while True:
+
+        try:
+
+            games = fetch_games()
+
+
+            state = json.dumps(
+                games,
+                sort_keys=True
+            )
+
+
+            old = load_last_state()
+
+
+            if state != old:
+
+                print(
+                    "ALTERAÇÃO DETECTADA"
+                )
+
+
+                generate_json(games)
+
+
+                save_state(state)
+
+
+                print(
+                    "JSON ATUALIZADO"
+                )
+
+
+            time.sleep(10)
+
+
+        except Exception as e:
+
+            print(
+                "ERRO:",
+                e
+            )
+
+            time.sleep(10)
+
+
+
+if __name__ == "__main__":
+    run()

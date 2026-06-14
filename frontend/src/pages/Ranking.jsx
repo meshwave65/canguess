@@ -7,7 +7,7 @@ export default function Ranking() {
 
   const jogos = [
     { a: "QAT", b: "SUI", result: "X" },
-    { a: "BRA", b: "MAR", result: "-" },
+    { a: "BRA", b: "MAR", result: "X" },
     { a: "HAI", b: "SCO", result: "-" },
     { a: "AUS", b: "TUR", result: "-" },
     { a: "GER", b: "CUR", result: "-" },
