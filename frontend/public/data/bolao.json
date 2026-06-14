@@ -125,20 +125,20 @@
       "round_date": "2026-06-14",
       "time_round": "17:00:00",
       "local": "Dallas (EUA)",
-      "score": null,
-      "result": null,
+      "score": "2-2,
+      "result": "X",
       "parts": [
         {
           "sequence_part": 1,
           "team_code": "NED",
           "team_name": "Holanda",
-          "value": null
+          "value": "2"
         },
         {
           "sequence_part": 2,
           "team_code": "JPN",
           "team_name": "Japão",
-          "value": null
+          "value": "2"
         }
       ]
     },
