@@ -1,29 +1,16 @@
 import os
-import json
-import time
 import requests
+import json
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
-
 load_dotenv("/mnt/hd1tb/projetos/.env")
 
+SUPABASE_URL = os.getenv("VITE_BOLAO_SUPABASE_URL")
+SUPABASE_KEY = os.getenv("VITE_BOLAO_SUPABASE_ANON_KEY")
 
-SUPABASE_URL = os.getenv("VITE_SUPABASE_URL")
-SUPABASE_KEY = os.getenv("VITE_SUPABASE_ANON_KEY")
-
-
-TABLE = "games"
-
-
-OUTPUT_FILE = (
-    "/mnt/hd1tb/projetos/sofia-engines/output/games.json"
-)
-
-STATE_FILE = (
-    "/mnt/hd1tb/projetos/sofia-engines/output/.last_state.json"
-)
-
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise Exception("ENV VITE_BOLAO_SUPABASE_URL ou VITE_BOLAO_SUPABASE_ANON_KEY não definido")
 
 HEADERS = {
     "apikey": SUPABASE_KEY,
@@ -31,131 +18,144 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
+OUTPUT_FILE = "/mnt/hd1tb/projetos/canguess/frontend/public/data/bolao.json"
 
 
-def load_last_state():
-
-    if not os.path.exists(STATE_FILE):
-        return None
-
-    with open(STATE_FILE, "r") as f:
-        return json.load(f)
-
-
-
-def save_state(data):
-
-    with open(STATE_FILE, "w") as f:
-        json.dump(data, f)
-
-
-
-def fetch_games():
-
-    url = (
-        f"{SUPABASE_URL}/rest/v1/{TABLE}"
-        "?select=*"
-    )
-
-    r = requests.get(
-        url,
-        headers=HEADERS,
-        timeout=10
-    )
-
+# -----------------------------
+# HELPERS
+# -----------------------------
+def fetch_event(event_uuid):
+    url = f"{SUPABASE_URL}/rest/v1/events?id=eq.{event_uuid}&select=name"
+    r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
+    data = r.json()
+    return data[0]["name"] if data else None
 
+
+def fetch_rounds(phase_uuid):
+    url = (
+        f"{SUPABASE_URL}/rest/v1/event_rounds"
+        f"?select=*"
+        f"&event_phase_uuid=eq.{phase_uuid}"
+        f"&order=created_at"
+    )
+
+    r = requests.get(url, headers=HEADERS)
+    r.raise_for_status()
     return r.json()
 
 
-
-def generate_json(games):
-
-    payload = {
-
-        "generated_at":
-            datetime.now(timezone.utc).isoformat(),
-
-        "total_games":
-            len(games),
-
-        "games":
-            games
-    }
-
-
-    os.makedirs(
-        os.path.dirname(OUTPUT_FILE),
-        exist_ok=True
+def fetch_parts(round_uuid):
+    url = (
+        f"{SUPABASE_URL}/rest/v1/event_parts"
+        f"?select=id,sequence_part,value,team_uuid,teams(code,name)"
+        f"&round_uuid=eq.{round_uuid}"
+        f"&order=sequence_part"
     )
 
-
-    with open(
-        OUTPUT_FILE,
-        "w"
-    ) as f:
-
-        json.dump(
-            payload,
-            f,
-            indent=2,
-            ensure_ascii=False
-        )
+    r = requests.get(url, headers=HEADERS)
+    r.raise_for_status()
+    return r.json()
 
 
+# -----------------------------
+# SCORE BASE
+# -----------------------------
+def build_score(parts):
+    try:
+        parts_sorted = sorted(parts, key=lambda x: x["sequence_part"])
 
-def run():
+        if len(parts_sorted) < 2:
+            return None
 
+        home = parts_sorted[0].get("value")
+        away = parts_sorted[1].get("value")
+
+        if home is None or away is None:
+            return None
+
+        return f"{home}-{away}"
+    except:
+        return None
+
+
+# -----------------------------
+# RESULT (NOVA PEÇA)
+# -----------------------------
+def calc_result(score):
+    if not score:
+        return None
+
+    try:
+        home, away = score.split("-")
+        home = int(home)
+        away = int(away)
+
+        if home > away:
+            return "1"
+        elif home < away:
+            return "2"
+        else:
+            return "X"
+    except:
+        return None
+
+
+# -----------------------------
+# ENGINE CORE
+# -----------------------------
+def run_engine(event_uuid, phase_uuid):
     print("ENGINE ONLINE")
 
+    event_name = fetch_event(event_uuid)
+    rounds = fetch_rounds(phase_uuid)
 
-    while True:
+    output_rounds = []
 
-        try:
+    for r in rounds:
+        parts = fetch_parts(r["id"])
 
-            games = fetch_games()
+        normalized_parts = []
 
+        for p in parts:
+            if not p.get("sequence_part") or not p.get("teams"):
+                continue
 
-            state = json.dumps(
-                games,
-                sort_keys=True
-            )
+            normalized_parts.append({
+                "sequence_part": p.get("sequence_part"),
+                "team_code": p["teams"]["code"],
+                "team_name": p["teams"]["name"],
+                "value": p.get("value")
+            })
 
+        score = build_score(normalized_parts)
 
-            old = load_last_state()
+        output_rounds.append({
+            "round_uuid": r["id"],
+            "round_name": r.get("round_name"),
+            "score": score,
+            "result": calc_result(score),   # 🔥 AQUI ESTÁ A CORREÇÃO
+            "parts": normalized_parts
+        })
 
+    output = {
+        "event_uuid": event_uuid,
+        "event_name": event_name,
+        "phase_uuid": phase_uuid,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "rounds": output_rounds
+    }
 
-            if state != old:
+    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
 
-                print(
-                    "ALTERAÇÃO DETECTADA"
-                )
+    with open(OUTPUT_FILE, "w") as f:
+        json.dump(output, f, indent=2, ensure_ascii=False)
 
-
-                generate_json(games)
-
-
-                save_state(state)
-
-
-                print(
-                    "JSON ATUALIZADO"
-                )
-
-
-            time.sleep(10)
-
-
-        except Exception as e:
-
-            print(
-                "ERRO:",
-                e
-            )
-
-            time.sleep(10)
-
+    print(f"JSON atualizado: {len(output_rounds)} rounds")
 
 
 if __name__ == "__main__":
-    run()
+    EVENT_UUID = "dc0631b5-c7aa-4294-92e6-6d2fcc78f082"
+    PHASE_UUID = "4fc838a9-5785-443f-b074-21dde132a2f0"
+
+    run_engine(EVENT_UUID, PHASE_UUID)

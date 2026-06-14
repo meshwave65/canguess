@@ -1,0 +1,217 @@
+{
+  "event_uuid": "dc0631b5-c7aa-4294-92e6-6d2fcc78f082",
+  "phase_uuid": "4fc838a9-5785-443f-b074-21dde132a2f0",
+  "generated_at": "2026-06-14T02:08:53.214863+00:00",
+  "rounds": [
+    {
+      "round_uuid": "2feb34c4-06fe-4f8f-b051-1459395ea8e7",
+      "round_name": "QATAR vs SUIÇA",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "QAT",
+          "team_name": "Catar",
+          "value": "1"
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "SUI",
+          "team_name": "Suíça",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "round_uuid": "c0275b0a-9082-42f3-865a-512d0b2f2865",
+      "round_name": "BRASIL vs MARROCOS",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "BRA",
+          "team_name": "Brasil",
+          "value": "1"
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "MAR",
+          "team_name": "Marrocos",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "round_uuid": "3a9959ef-b4c6-429e-85c1-e11bfb727992",
+      "round_name": "HAITI vs ESCOCIA",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "HAI",
+          "team_name": "Haiti",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "SCO",
+          "team_name": "Escócia",
+          "value": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "91564d20-9df1-451a-bfe2-4b0f7a54c474",
+      "round_name": "AUSTRALIA vs TURQUIA",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "AUS",
+          "team_name": "Austrália",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "TUR",
+          "team_name": "Turquia",
+          "value": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "f1a94c0b-aaf3-4eb5-b17c-bd2672de8dea",
+      "round_name": "ALEMANHA vs CURAÇAO",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "GER",
+          "team_name": "Alemanha",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "CUÇ",
+          "team_name": "Curaçao",
+          "value": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "72b19a8d-aea3-402b-bed7-34fc57a53966",
+      "round_name": "HOLANDA vs JAPAO",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "NED",
+          "team_name": "Holanda",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "JPN",
+          "team_name": "Japão",
+          "value": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "d879495c-2377-4b3e-8a6a-4e4092e8fa8c",
+      "round_name": "C.MARFIM vs EQUADOR",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "CIV",
+          "team_name": "Costa do Marfim",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "ECU",
+          "team_name": "Equador",
+          "value": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "b7f64ea5-8198-4f41-9f85-3445b7cac321",
+      "round_name": "SUECIA vs TUNISIA",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "SWD",
+          "team_name": "Suécia",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "TUN",
+          "team_name": "Tunísia",
+          "value": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "b6564a95-ce7c-4e8c-aede-ead834aadde5",
+      "round_name": "ESPANHA vs CABO VERDE",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "ESP",
+          "team_name": "Espanha",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "CPV",
+          "team_name": "Cabo Verde",
+          "value": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "4b362a37-84ed-422a-99cb-7652c110c244",
+      "round_name": "BELGICA vs EGITO",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "BEL",
+          "team_name": "Bélgica",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "EGY",
+          "team_name": "Egito",
+          "value": null
+        },
+        {
+          "sequence_part": null,
+          "team_code": null,
+          "team_name": null,
+          "value": null
+        },
+        {
+          "sequence_part": null,
+          "team_code": null,
+          "team_name": null,
+          "value": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "d3550688-6ca3-422a-a94b-498fb8f15a8e",
+      "round_name": "ARABIA SAUDITA vs UIGUAI",
+      "parts": [
+        {
+          "sequence_part": 1,
+          "team_code": "KSA",
+          "team_name": "Arábia Saudita",
+          "value": null
+        },
+        {
+          "sequence_part": 2,
+          "team_code": "URU",
+          "team_name": "Uruguai",
+          "value": null
+        }
+      ]
+    }
+  ]
+}
