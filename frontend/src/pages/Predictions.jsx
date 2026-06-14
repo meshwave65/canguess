@@ -156,7 +156,7 @@ SEUS PALPITES:
 
       const encodedMsg = encodeURIComponent(msgFinal);
 
-      const phoneAdmin = "5521972341965";
+      const phoneAdmin = "351914845439";
 
       const appUrl = `whatsapp://send?phone=${phoneAdmin}&text=${encodedMsg}`;
       const webUrl = `https://wa.me/${phoneAdmin}?text=${encodedMsg}`;
