@@ -2,7 +2,7 @@
   "event_uuid": "dc0631b5-c7aa-4294-92e6-6d2fcc78f082",
   "event_name": "BOLÃO DO ZÉ COPA 2026 - UI",
   "phase_uuid": "4fc838a9-5785-443f-b074-21dde132a2f0",
-  "generated_at": "2026-06-14T04:38:08.593698+00:00",
+  "generated_at": "2026-06-14T11:41:01.565355+00:00",
   "rounds": [
     {
       "round_uuid": "2feb34c4-06fe-4f8f-b051-1459395ea8e7",
@@ -67,20 +67,20 @@
     {
       "round_uuid": "91564d20-9df1-451a-bfe2-4b0f7a54c474",
       "round_name": "AUSTRALIA vs TURQUIA",
-      "score": null,
-      "result": null,
+      "score": "2-0",
+      "result": "1",
       "parts": [
         {
           "sequence_part": 1,
           "team_code": "AUS",
           "team_name": "Austrália",
-          "value": null
+          "value": "2"
         },
         {
           "sequence_part": 2,
           "team_code": "TUR",
           "team_name": "Turquia",
-          "value": null
+          "value": "0"
         }
       ]
     },
