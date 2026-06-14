@@ -48,24 +48,14 @@ export default function Ranking() {
 
         grouped[item.user_id].palpites[index] = item.prediction;
 
-        // 🔥 resultado já vem pronto do engine
-        const result = round?.result || round?.score
-          ? getResult(round.score)
-          : null;
+        const result = round?.result;
 
         if (result && item.prediction === result) {
           grouped[item.user_id].pontos += 1;
         }
       }
 
-      const arr = Object.values(grouped);
-
-      arr.sort((a, b) => {
-        if (a.pontos !== b.pontos) return b.pontos - a.pontos;
-        return a.user_name.localeCompare(b.user_name, "pt-BR");
-      });
-
-      setDados(arr);
+      setDados(Object.values(grouped));
     } catch (err) {
       console.error("Erro ranking:", err);
     }
@@ -75,26 +65,58 @@ export default function Ranking() {
     load();
   }, []);
 
-  // 🔥 função única de inferência (caso score exista)
-  function getResult(score) {
-    if (!score) return null;
-
-    const [a, b] = score.split("-").map(Number);
-
-    if (isNaN(a) || isNaN(b)) return null;
-
-    if (a > b) return "1";
-    if (a < b) return "2";
-    return "X";
-  }
-
   return (
     <div style={{ padding: 10 }}>
+
+      {/* EVENTO */}
       <h2>{evento?.name}</h2>
       <h4>🏆 Ranking</h4>
 
+      {/* ======================= */}
+      {/* JOGOS DA RODADA */}
+      {/* ======================= */}
+
+      <h3 style={{ marginTop: 20 }}>JOGOS DA RODADA</h3>
+
       <div style={{ overflowX: "auto" }}>
         <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 12 }}>
+
+          <thead>
+            <tr>
+              <th style={th}>JOGO</th>
+              <th style={th}>DATA</th>
+              <th style={th}>HORA</th>
+              <th style={th}>LOCAL</th>
+              <th style={th}>PLACAR</th>
+              <th style={th}>RESULT</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {rounds.map((r, i) => (
+              <tr key={i}>
+                <td style={td}>{r.round_name}</td>
+                <td style={tdCenter}>{r.round_date || "-"}</td>
+                <td style={tdCenter}>{r.time_round || "-"}</td>
+                <td style={td}>{r.local || "-"}</td>
+                <td style={tdCenter}>{r.score || "-"}</td>
+                <td style={tdCenter}><b>{r.result || "-"}</b></td>
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
+      </div>
+
+      {/* ======================= */}
+      {/* RANKING USUÁRIOS */}
+      {/* ======================= */}
+
+      <h3 style={{ marginTop: 30 }}>RANKING</h3>
+
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 12 }}>
+
           <thead>
             <tr>
               <th style={th}>USUÁRIO</th>
@@ -130,26 +152,18 @@ export default function Ranking() {
 
                 {rounds.map((r, i) => {
                   const pick = user.palpites[i];
-
-                  const result = getResult(r.score);
-                  const ok = pick === result;
+                  const ok = pick === r.result;
 
                   return (
-                    <td
-                      key={i}
-                      style={{
-                        textAlign: "center",
-                        border: "1px solid #ddd",
-                        fontSize: 16,
-                      }}
-                    >
-                      {ok ? "⚽" : pick}
+                    <td key={i} style={{ ...tdCenter, fontSize: 18 }}>
+                      {ok ? "⚽" : ""}
                     </td>
                   );
                 })}
               </tr>
             ))}
           </tbody>
+
         </table>
       </div>
     </div>

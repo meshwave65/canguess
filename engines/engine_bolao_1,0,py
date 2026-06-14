@@ -62,25 +62,22 @@ def fetch_parts(round_uuid):
 # SCORE BASE
 # -----------------------------
 def build_score(parts):
-    try:
-        parts_sorted = sorted(parts, key=lambda x: x["sequence_part"])
+    parts_sorted = sorted(parts, key=lambda x: x.get("sequence_part") or 0)
 
-        if len(parts_sorted) < 2:
-            return None
-
-        home = parts_sorted[0].get("value")
-        away = parts_sorted[1].get("value")
-
-        if home is None or away is None:
-            return None
-
-        return f"{home}-{away}"
-    except:
+    if len(parts_sorted) < 2:
         return None
+
+    home = parts_sorted[0].get("value")
+    away = parts_sorted[1].get("value")
+
+    if home is None or away is None:
+        return None
+
+    return f"{home}-{away}"
 
 
 # -----------------------------
-# RESULT (NOVA PEÇA)
+# RESULT (1 X 2)
 # -----------------------------
 def calc_result(score):
     if not score:
@@ -116,15 +113,14 @@ def run_engine(event_uuid, phase_uuid):
         parts = fetch_parts(r["id"])
 
         normalized_parts = []
-
         for p in parts:
-            if not p.get("sequence_part") or not p.get("teams"):
+            if not p.get("sequence_part"):
                 continue
 
             normalized_parts.append({
                 "sequence_part": p.get("sequence_part"),
-                "team_code": p["teams"]["code"],
-                "team_name": p["teams"]["name"],
+                "team_code": p["teams"]["code"] if p.get("teams") else None,
+                "team_name": p["teams"]["name"] if p.get("teams") else None,
                 "value": p.get("value")
             })
 
@@ -133,8 +129,16 @@ def run_engine(event_uuid, phase_uuid):
         output_rounds.append({
             "round_uuid": r["id"],
             "round_name": r.get("round_name"),
+
+            # 🆕 CAMPOS EXTRAS (tabela do ranking/lista)
+            "round_date": r.get("round_date"),
+            "time_round": r.get("time_round"),
+            "local": r.get("local"),
+
+            # 🎯 CORE
             "score": score,
-            "result": calc_result(score),   # 🔥 AQUI ESTÁ A CORREÇÃO
+            "result": calc_result(score),
+
             "parts": normalized_parts
         })
 

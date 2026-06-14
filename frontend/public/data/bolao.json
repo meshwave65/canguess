@@ -2,11 +2,14 @@
   "event_uuid": "dc0631b5-c7aa-4294-92e6-6d2fcc78f082",
   "event_name": "BOLÃO DO ZÉ COPA 2026 - UI",
   "phase_uuid": "4fc838a9-5785-443f-b074-21dde132a2f0",
-  "generated_at": "2026-06-14T11:41:01.565355+00:00",
+  "generated_at": "2026-06-14T12:57:21.976509+00:00",
   "rounds": [
     {
       "round_uuid": "2feb34c4-06fe-4f8f-b051-1459395ea8e7",
-      "round_name": "QATAR vs SUIÇA",
+      "round_name": "QATAR X SUIÇA",
+      "round_date": "2026-06-13",
+      "time_round": "16:00:00",
+      "local": "San Francisco (EUA)",
       "score": "1-1",
       "result": "X",
       "parts": [
@@ -26,7 +29,10 @@
     },
     {
       "round_uuid": "c0275b0a-9082-42f3-865a-512d0b2f2865",
-      "round_name": "BRASIL vs MARROCOS",
+      "round_name": "BRASIL X MARROCOS",
+      "round_date": "2026-06-13",
+      "time_round": "19:00:00",
+      "local": "Nova York (EUA)",
       "score": "1-1",
       "result": "X",
       "parts": [
@@ -46,7 +52,10 @@
     },
     {
       "round_uuid": "3a9959ef-b4c6-429e-85c1-e11bfb727992",
-      "round_name": "HAITI vs ESCOCIA",
+      "round_name": "HAITI X ESCOCIA",
+      "round_date": "2026-06-13",
+      "time_round": "22:00:00",
+      "local": "Boston (EUA)",
       "score": "0-1",
       "result": "2",
       "parts": [
@@ -66,7 +75,10 @@
     },
     {
       "round_uuid": "91564d20-9df1-451a-bfe2-4b0f7a54c474",
-      "round_name": "AUSTRALIA vs TURQUIA",
+      "round_name": "AUSTRALIA X TURQUIA",
+      "round_date": "2026-06-13",
+      "time_round": "01:00:00",
+      "local": "Vancouver (Canadá)",
       "score": "2-0",
       "result": "1",
       "parts": [
@@ -86,7 +98,10 @@
     },
     {
       "round_uuid": "f1a94c0b-aaf3-4eb5-b17c-bd2672de8dea",
-      "round_name": "ALEMANHA vs CURAÇAO",
+      "round_name": "ALEMANHA X CURAÇAO",
+      "round_date": "2026-06-14",
+      "time_round": "14:00:00",
+      "local": "Houston (EUA)",
       "score": null,
       "result": null,
       "parts": [
@@ -106,7 +121,10 @@
     },
     {
       "round_uuid": "72b19a8d-aea3-402b-bed7-34fc57a53966",
-      "round_name": "HOLANDA vs JAPAO",
+      "round_name": "HOLANDA X JAPAO",
+      "round_date": "2026-06-14",
+      "time_round": "17:00:00",
+      "local": "Dallas (EUA)",
       "score": null,
       "result": null,
       "parts": [
@@ -126,7 +144,10 @@
     },
     {
       "round_uuid": "d879495c-2377-4b3e-8a6a-4e4092e8fa8c",
-      "round_name": "C.MARFIM vs EQUADOR",
+      "round_name": "COSTA DO MARFIM x EQUADOR",
+      "round_date": "2026-06-14",
+      "time_round": "20:00:00",
+      "local": "Filadélfia (EUA)",
       "score": null,
       "result": null,
       "parts": [
@@ -146,7 +167,10 @@
     },
     {
       "round_uuid": "b7f64ea5-8198-4f41-9f85-3445b7cac321",
-      "round_name": "SUECIA vs TUNISIA",
+      "round_name": "SUECIA X TUNISIA",
+      "round_date": "2026-06-14",
+      "time_round": "23:00:00",
+      "local": "Monterrey (México)",
       "score": null,
       "result": null,
       "parts": [
@@ -166,7 +190,10 @@
     },
     {
       "round_uuid": "b6564a95-ce7c-4e8c-aede-ead834aadde5",
-      "round_name": "ESPANHA vs CABO VERDE",
+      "round_name": "ESPANHA X CABO VERDE",
+      "round_date": "2026-06-15",
+      "time_round": "13:00:00",
+      "local": "Atlanta (EUA)",
       "score": null,
       "result": null,
       "parts": [
@@ -186,7 +213,10 @@
     },
     {
       "round_uuid": "4b362a37-84ed-422a-99cb-7652c110c244",
-      "round_name": "BELGICA vs EGITO",
+      "round_name": "BELGICA X EGITO",
+      "round_date": "2026-06-15",
+      "time_round": "16:00:00",
+      "local": "Seattle (EUA)",
       "score": null,
       "result": null,
       "parts": [
@@ -206,7 +236,10 @@
     },
     {
       "round_uuid": "d3550688-6ca3-422a-a94b-498fb8f15a8e",
-      "round_name": "ARABIA SAUDITA vs UIGUAI",
+      "round_name": "ARABIA SAUDITA x URUGUAI",
+      "round_date": "2026-06-15",
+      "time_round": "19:00:00",
+      "local": "Miami (EUA)",
       "score": null,
       "result": null,
       "parts": [
