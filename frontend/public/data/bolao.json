@@ -102,20 +102,20 @@
       "round_date": "2026-06-14",
       "time_round": "14:00:00",
       "local": "Houston (EUA)",
-      "score": null,
-      "result": null,
+      "score": "7-1",
+      "result": "1",
       "parts": [
         {
           "sequence_part": 1,
           "team_code": "GER",
           "team_name": "Alemanha",
-          "value": null
+          "value": "7"
         },
         {
           "sequence_part": 2,
           "team_code": "CUÇ",
           "team_name": "Curaçao",
-          "value": null
+          "value": "1"
         }
       ]
     },
