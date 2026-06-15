@@ -41,12 +41,12 @@ export default function Ranking() {
           grouped[item.user_uuid] = {
             user_uuid: item.user_uuid,
             user_name: userMap[item.user_uuid] || "-",
-            palpites: Array(engineRounds.length).fill(""),
+            predictions: Array(engineRounds.length).fill(""),
             pontos: 0,
           };
         }
 
-        grouped[item.user_uuid].palpites[index] = item.prediction;
+        grouped[item.user_uuid].predictions[index] = item.prediction;
 
         const result = round?.result;
 
@@ -165,7 +165,7 @@ export default function Ranking() {
 
                 {rounds.map((r, i) => {
 
-                  const pick = user.palpites[i];
+                  const pick = user.predictions[i];
                   const ok = pick === r.result;
 
                   return (
