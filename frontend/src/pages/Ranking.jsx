@@ -55,7 +55,9 @@ export default function Ranking() {
         }
       }
 
-      setDados(Object.values(grouped));
+      setDados(
+        Object.values(grouped).sort((a, b) => b.pontos - a.pontos)
+);
     } catch (err) {
       console.error("Erro ranking:", err);
     }
