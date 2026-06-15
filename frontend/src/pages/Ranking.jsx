@@ -169,13 +169,13 @@ export default function Ranking() {
                   const ok = pick === r.result;
 
                   return (
-                    <td
-                      key={i}
-                      style={{ ...tdCenter, fontSize: 18 }}
-                    >
-                      {ok ? "⚽" : ""}
-                    </td>
-                  );
+                      <td
+                         key={i}
+                         style={{ ...tdCenter, fontSize: 18 }}
+                       >
+                          {! 
+                            </td>
+                    );
 
                 })}
 
