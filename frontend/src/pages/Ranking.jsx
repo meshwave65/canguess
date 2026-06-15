@@ -39,7 +39,7 @@ export default function Ranking() {
 
         if (!grouped[item.user_uuid]) {
           grouped[item.user_uuid] = {
-            user_id: item.user_uuid,
+            user_uuid: item.user_uuid,
             user_name: userMap[item.user_uuid] || "-",
             palpites: Array(engineRounds.length).fill(""),
             pontos: 0,
@@ -56,8 +56,8 @@ export default function Ranking() {
       }
 
       setDados(
-        Object.values(grouped).sort((a, b) => b.pontos - a.pontos)
-);
+      Object.values(grouped).sort((a, b) => b.pontos - a.pontos)
+      );
     } catch (err) {
       console.error("Erro ranking:", err);
     }
