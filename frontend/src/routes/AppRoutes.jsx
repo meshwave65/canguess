@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
+import AppShell from "../layout/AppShell";
+
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Predictions from "../pages/Predictions";
@@ -25,10 +27,12 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* ================= PUBLIC ================= */}
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/palpites" element={<Predictions />} />
-      <Route path="/ranking" element={<Ranking />} />
+        <Route element={<AppShell />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/palpites" element={<Predictions />} />
+        <Route path="/ranking" element={<Ranking />} />
+    </Route>
 
       {/* ================= ADMIN LOGIN ================= */}
       <Route path="/admin-login" element={<AdminLogin />} />

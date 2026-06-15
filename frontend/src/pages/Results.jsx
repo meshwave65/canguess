@@ -1,5 +1,4 @@
-import Header from "../components/Header";
-import BottomNav from "../components/BottomNav";
+
 import { useNavigate } from "react-router-dom";
 
 export default function Results() {

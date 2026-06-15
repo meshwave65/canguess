@@ -2,7 +2,7 @@
   "event_uuid": "dc0631b5-c7aa-4294-92e6-6d2fcc78f082",
   "event_name": "BOLÃO DO ZÉ COPA 2026 - UI",
   "phase_uuid": "4fc838a9-5785-443f-b074-21dde132a2f0",
-  "generated_at": "2026-06-14T12:57:21.976509+00:00",
+  "generated_at": "2026-06-15T18:02:28.418920+00:00",
   "rounds": [
     {
       "round_uuid": "2feb34c4-06fe-4f8f-b051-1459395ea8e7",
@@ -194,20 +194,20 @@
       "round_date": "2026-06-15",
       "time_round": "13:00:00",
       "local": "Atlanta (EUA)",
-      "score": null,
-      "result": null,
+      "score": "0-0",
+      "result": "X",
       "parts": [
         {
           "sequence_part": 1,
           "team_code": "ESP",
           "team_name": "Espanha",
-          "value": null
+          "value": "0"
         },
         {
           "sequence_part": 2,
           "team_code": "CPV",
           "team_name": "Cabo Verde",
-          "value": null
+          "value": "0"
         }
       ]
     },

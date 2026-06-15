@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function BottomNav() {
+  const navigate = useNavigate();
+
   return (
     <nav
       style={{
@@ -8,58 +10,51 @@ export default function BottomNav() {
         bottom: 0,
         left: 0,
         right: 0,
-        background: "#0B3C49", // azul petróleo
-        borderTop: "3px solid #FF6A00", // laranja intenso
+        background: "#0B3C49",
+        borderTop: "3px solid #FF6A00",
         display: "flex",
-        justifyContent: "space-around",
-        padding: "12px",
+        justifyContent: "space-between",
+        padding: "10px 14px",
         color: "#fff",
         boxShadow: "0 -2px 8px rgba(0,0,0,0.15)",
       }}
     >
-      <Link
-        to="/"
-        style={{
-          color: "#fff",
-          textDecoration: "none",
-          fontWeight: 500,
-        }}
-      >
-        🏠 Home
-      </Link>
+      {/* LEFT - NAV CONTEXTUAL (LEGADO) */}
+      <div style={{ display: "flex", gap: "14px" }}>
+        <Link to="/" style={{ color: "#fff" }}>🏠 Home</Link>
+        <Link to="/palpites" style={{ color: "#fff" }}>⚽ Palpites</Link>
+        <Link to="/ranking" style={{ color: "#fff" }}>🏆 Ranking</Link>
+        <Link to="/admin-login" style={{ color: "#fff" }}>⚙️ Admin</Link>
+      </div>
 
-      <Link
-        to="/palpites"
-        style={{
-          color: "#fff",
-          textDecoration: "none",
-          fontWeight: 500,
-        }}
-      >
-        ⚽ Palpites
-      </Link>
+      {/* RIGHT - FIXO GLOBAL */}
+      <div style={{ display: "flex", gap: "10px" }}>
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#fff",
+            cursor: "pointer",
+            fontSize: "18px",
+          }}
+        >
+          ⬅️
+        </button>
 
-      <Link
-        to="/ranking"
-        style={{
-          color: "#fff",
-          textDecoration: "none",
-          fontWeight: 500,
-        }}
-      >
-        🏆 Ranking
-      </Link>
-
-      <Link
-        to="/admin-login"
-        style={{
-          color: "#fff",
-          textDecoration: "none",
-          fontWeight: 500,
-        }}
-      >
-        ⚙️ Admin
-      </Link>
+        <button
+          onClick={() => navigate("/")}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#fff",
+            cursor: "pointer",
+            fontSize: "18px",
+          }}
+        >
+          🏠
+        </button>
+      </div>
     </nav>
   );
 }
