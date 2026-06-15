@@ -217,20 +217,20 @@
       "round_date": "2026-06-15",
       "time_round": "16:00:00",
       "local": "Seattle (EUA)",
-      "score": null,
-      "result": null,
+      "score": "1-1",
+      "result": "1",
       "parts": [
         {
           "sequence_part": 1,
           "team_code": "BEL",
           "team_name": "Bélgica",
-          "value": null
+          "value": "1"
         },
         {
           "sequence_part": 2,
           "team_code": "EGY",
           "team_name": "Egito",
-          "value": null
+          "value": "1"
         }
       ]
     },
