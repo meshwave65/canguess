@@ -37,10 +37,10 @@ export default function Ranking() {
         const index = item.game_index - 1;
         const round = engineRounds[index];
 
-        if (!grouped[item.user_id]) {
-          grouped[item.user_id] = {
-            user_id: item.user_id,
-            user_name: userMap[item.user_id] || "-",
+        if (!grouped[item.user_uuid]) {
+          grouped[item.user_uuid] = {
+            user_id: item.user_uuid,
+            user_name: userMap[item.user_uuid] || "-",
             palpites: Array(engineRounds.length).fill(""),
             pontos: 0,
           };
