@@ -1,0 +1,75 @@
+# 📡 FLOW MAPPER OPS ROOM — CANGUESS
+
+## 🎯 Objetivo
+
+Este diretório é a **sala de comando do sistema Canguess Flow Mapper**.
+
+Ele existe para manter uma visão viva, contínua e evolutiva do sistema como um **grafo de fluxos de navegação, dependências e comportamento de UI**.
+
+---
+
+## 🧭 O que este sistema faz
+
+O Flow Mapper analisa o repositório e constrói:
+
+- Grafo de rotas (React Router)
+- Fluxos de navegação (navigate, links)
+- Dependências entre páginas e componentes
+- Layout bindings (AppShell, AdminLayout)
+- Identificação de drift arquitetural
+
+---
+
+## 📁 Estrutura do diretório
+
+- `/core/` → motores de análise e parsing
+- `/output/` → dados estruturados (JSON do grafo)
+- `/reports/` → relatórios humanos (SYSTEM_FLOW_REPORT.md)
+- `/state/` → estado atual da análise (última execução)
+- `/history/` → snapshots históricos de execuções
+
+---
+
+## 🔁 Regra de continuidade entre agentes
+
+Qualquer agente que assumir esta missão deve:
+
+1. Ler primeiro:
+   - `/reports/SYSTEM_FLOW_REPORT.md`
+   - `/state/state.json` (se existir)
+
+2. Nunca reiniciar a análise do zero.
+
+3. Sempre continuar incrementalmente a partir do último estado registrado.
+
+---
+
+## ⚠️ Regra de verdade do sistema
+
+- O código do repositório é a fonte primária
+- O grafo é uma representação derivada
+- O relatório é memória interpretada
+
+---
+
+## 🧠 Responsabilidade dos agentes
+
+Os agentes têm autonomia para:
+
+- criar novos subdiretórios dentro de `ops/flow-mapper/`
+- reorganizar módulos internos do sistema de análise
+- evoluir estrutura de parsing e output
+
+desde que:
+
+> não modifiquem o código da aplicação principal sem justificativa explícita no relatório
+
+---
+
+## 📌 Objetivo final
+
+Transformar o sistema Canguess em um **sistema auto-observável**, onde qualquer agente consiga:
+
+- entender o fluxo completo do sistema
+- identificar drift arquitetural
+- continuar evolução sem perda de contexto
