@@ -18,7 +18,7 @@ export default function Ranking() {
 
       const [{ data: bolao }, { data: users }] = await Promise.all([
         supabase.from("bolao").select("*"),
-        supabase.from("users").select("uuid, user_name"),
+        supabase.from("users").select("user_uuid, user_name"),
       ]);
 
       if (!bolao) return;
