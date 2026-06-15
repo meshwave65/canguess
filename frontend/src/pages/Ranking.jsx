@@ -18,7 +18,7 @@ export default function Ranking() {
 
       const [{ data: bolao }, { data: users }] = await Promise.all([
         supabase.from("bolao").select("*"),
-        supabase.from("users").select("id, user_name"),
+        supabase.from("users").select("uuid, user_name"),
       ]);
 
       if (!bolao) return;
@@ -28,7 +28,7 @@ export default function Ranking() {
       });
 
       const userMap = Object.fromEntries(
-        (users || []).map((u) => [u.id, u.user_name])
+        (users || []).map((u) => [u.uuid, u.user_name])
       );
 
       const grouped = {};
@@ -46,18 +46,25 @@ export default function Ranking() {
           };
         }
 
-        grouped[item.user_id].palpites[index] = item.prediction;
+        grouped[item.user_uuid].palpites[index] = item.prediction;
 
         const result = round?.result;
 
         if (result && item.prediction === result) {
-          grouped[item.user_id].pontos += 1;
+          grouped[item.user_uuid].pontos += 1;
         }
       }
 
       setDados(
-      Object.values(grouped).sort((a, b) => b.pontos - a.pontos)
+        Object.values(grouped).sort((a, b) => {
+          if (b.pontos !== a.pontos) {
+            return b.pontos - a.pontos;
+          }
+
+          return a.user_name.localeCompare(b.user_name);
+        })
       );
+
     } catch (err) {
       console.error("Erro ranking:", err);
     }
@@ -74,9 +81,8 @@ export default function Ranking() {
       <h2>{evento?.name}</h2>
       <h4>🏆 Ranking</h4>
 
-      {/* ======================= */}
+
       {/* JOGOS DA RODADA */}
-      {/* ======================= */}
 
       <h3 style={{ marginTop: 20 }}>JOGOS DA RODADA</h3>
 
@@ -102,7 +108,9 @@ export default function Ranking() {
                 <td style={tdCenter}>{r.time_round || "-"}</td>
                 <td style={td}>{r.local || "-"}</td>
                 <td style={tdCenter}>{r.score || "-"}</td>
-                <td style={tdCenter}><b>{r.result || "-"}</b></td>
+                <td style={tdCenter}>
+                  <b>{r.result || "-"}</b>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -110,9 +118,8 @@ export default function Ranking() {
         </table>
       </div>
 
-      {/* ======================= */}
+
       {/* RANKING USUÁRIOS */}
-      {/* ======================= */}
 
       <h3 style={{ marginTop: 30 }}>RANKING</h3>
 
@@ -143,34 +150,46 @@ export default function Ranking() {
             </tr>
           </thead>
 
+
           <tbody>
             {dados.map((user) => (
-              <tr key={user.user_id}>
-                <td style={td}>{user.user_name}</td>
+              <tr key={user.user_uuid}>
+
+                <td style={td}>
+                  {user.user_name}
+                </td>
 
                 <td style={tdCenter}>
                   <b>{user.pontos}</b>
                 </td>
 
                 {rounds.map((r, i) => {
+
                   const pick = user.palpites[i];
                   const ok = pick === r.result;
 
                   return (
-                    <td key={i} style={{ ...tdCenter, fontSize: 18 }}>
+                    <td
+                      key={i}
+                      style={{ ...tdCenter, fontSize: 18 }}
+                    >
                       {ok ? "⚽" : ""}
                     </td>
                   );
+
                 })}
+
               </tr>
             ))}
           </tbody>
 
         </table>
       </div>
+
     </div>
   );
 }
+
 
 const th = {
   border: "1px solid #ddd",
@@ -179,10 +198,12 @@ const th = {
   textAlign: "center",
 };
 
+
 const td = {
   border: "1px solid #ddd",
   padding: 6,
 };
+
 
 const tdCenter = {
   border: "1px solid #ddd",
