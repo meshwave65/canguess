@@ -148,20 +148,20 @@
       "round_date": "2026-06-14",
       "time_round": "20:00:00",
       "local": "Filadélfia (EUA)",
-      "score": null,
-      "result": null,
+      "score": "2-1",
+      "result": "1",
       "parts": [
         {
           "sequence_part": 1,
           "team_code": "CIV",
           "team_name": "Costa do Marfim",
-          "value": null
+          "value": "1"
         },
         {
           "sequence_part": 2,
           "team_code": "ECU",
           "team_name": "Equador",
-          "value": null
+          "value": "0"
         }
       ]
     },
@@ -171,20 +171,20 @@
       "round_date": "2026-06-14",
       "time_round": "23:00:00",
       "local": "Monterrey (México)",
-      "score": null,
-      "result": null,
+      "score": "5-1",
+      "result": "1",
       "parts": [
         {
           "sequence_part": 1,
           "team_code": "SWD",
           "team_name": "Suécia",
-          "value": null
+          "value": "5"
         },
         {
           "sequence_part": 2,
           "team_code": "TUN",
           "team_name": "Tunísia",
-          "value": null
+          "value": "1"
         }
       ]
     },
