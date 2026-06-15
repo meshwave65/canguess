@@ -18,7 +18,7 @@ export default function Ranking() {
 
       const [{ data: bolao }, { data: users }] = await Promise.all([
         supabase.from("bolao").select("*"),
-        supabase.from("users").select("user_id, user_name"),
+        supabase.from("users").select("user_uuid, user_name"),
       ]);
 
       if (!bolao) return;
@@ -28,7 +28,7 @@ export default function Ranking() {
       });
 
       const userMap = Object.fromEntries(
-        (users || []).map((u) => [u.user_id, u.user_name])
+        (users || []).map((u) => [u.user_uuid, u.user_name])
       );
 
       const grouped = {};
@@ -37,21 +37,21 @@ export default function Ranking() {
         const index = item.game_index - 1;
         const round = engineRounds[index];
 
-        if (!grouped[item.user_id]) {
-          grouped[item.user_id] = {
-            user_id: item.user_id,
-            user_name: userMap[item.user_id] || "-",
+        if (!grouped[item.user_uuid]) {
+          grouped[item.user_uuid] = {
+            user_uuid: item.user_uuid,
+            user_name: userMap[item.user_uuid] || "-",
             predictions: Array(engineRounds.length).fill(""),
             pontos: 0,
           };
         }
 
-        grouped[item.user_id].predictions[index] = item.prediction;
+        grouped[item.user_uuid].predictions[index] = item.prediction;
 
         const result = round?.result;
 
         if (result && item.prediction === result) {
-          grouped[item.user_id].pontos += 1;
+          grouped[item.user_uuid].pontos += 1;
         }
       }
 
@@ -153,7 +153,7 @@ export default function Ranking() {
 
           <tbody>
             {dados.map((user) => (
-              <tr key={user.user_id}>
+              <tr key={user.user_uuid}>
 
                 <td style={td}>
                   {user.user_name}
