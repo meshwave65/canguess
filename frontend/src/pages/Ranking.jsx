@@ -28,7 +28,7 @@ export default function Ranking() {
       });
 
       const userMap = Object.fromEntries(
-        (users || []).map((u) => [u.uuid, u.user_name])
+        (users || []).map((u) => [u.user_id, u.user_name])
       );
 
       const grouped = {};
