@@ -26,8 +26,6 @@ export default function Home() {
 
   return (
     <>
-      <Header />
-
       {/* ========================= */}
       {/* BANNER FIXO NO TOPO */}
       {/* ========================= */}
@@ -81,8 +79,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-
-      <BottomNav />
     </>
   );
 }
