@@ -1,0 +1,12 @@
+{
+  "last_execution": "2026-06-16",
+  "version": "1.0.0",
+  "status": "initialized",
+  "analyzed_files": [
+    "frontend/src/routes/AppRoutes.jsx",
+    "frontend/src/layout/AppShell.jsx",
+    "frontend/src/pages/admin/AdminLayout.jsx",
+    "frontend/src/components/BottomNav.jsx",
+    "frontend/src/components/Header.jsx"
+  ]
+}
