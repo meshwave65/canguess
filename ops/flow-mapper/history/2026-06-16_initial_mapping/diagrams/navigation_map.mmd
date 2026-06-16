@@ -1,0 +1,26 @@
+graph TD
+    subgraph Public_Area
+        Home["Home (/)"] --> Ranking["Ranking (/ranking)"]
+        Home --> Palpites["Palpites (/palpites)"]
+        Home --> Login["Login (/login)"]
+        Header --> Events["Events (/events)"]:::drift
+    end
+
+    subgraph Admin_Auth
+        AdminLogin["Admin Login (/admin-login)"] --> Guard{AdminGuard}
+    end
+
+    subgraph Admin_Area
+        Guard --> AdminDash["Admin Dashboard (/admin)"]
+        AdminDash --> Usuarios["Usuários (/admin/usuarios)"]
+        AdminDash --> PalpitesAdmin["Palpites (/admin/palpites)"]
+        AdminDash --> Cadastros["Cadastros (/admin/cadastros)"]
+        
+        Cadastros --> Times["Times (/admin/cadastros/times)"]
+        Cadastros --> Eventos["Eventos (/admin/cadastros/eventos)"]
+        Cadastros --> Rodadas["Rodadas (/admin/cadastros/rodadas)"]
+        Cadastros --> Fases["Fases (/admin/cadastros/fases)"]:::orphan
+    end
+
+    classDef drift fill:#f96,stroke:#333,stroke-width:2px;
+    classDef orphan fill:#fff,stroke:#f66,stroke-dasharray: 5 5;
