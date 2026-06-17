@@ -11,6 +11,9 @@ import EventPage from "../pages/EventPage"; // ✅ AQUI ESTÁ O FIX
 
 import Admin from "../pages/Admin";
 import AdminLogin from "../pages/AdminLogin";
+
+import Register from "../pages/Register";
+
 import AdminGuard from "../components/AdminGuard";
 
 import EventDashboard from "../pages/admin/EventDashboard";
@@ -41,6 +44,11 @@ export default function AppRoutes() {
 
       {/* ================= ADMIN LOGIN ================= */}
       <Route path="/admin-login" element={<AdminLogin />} />
+
+
+      {/* ================= REGISTER ================= */}
+      <Route path="/register" element={<Register />} />
+
 
       {/* ================= ADMIN PROTECTED ================= */}
       <Route

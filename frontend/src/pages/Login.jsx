@@ -1,91 +1,90 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../pages/admin/lib/supabase";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
 
+  const { login } = useAuth();
+
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function handleLogin() {
+  async function handleLogin(e) {
+    if (e) e.preventDefault();
+
     setMsg("");
+    setLoading(true);
 
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("user_name", userName)
-      .maybeSingle();
+    const identifier = userName.trim();
 
-    if (error || !data) {
-      setMsg("Usuário não encontrado");
-      return;
+    try {
+      console.log("🔐 Login attempt:", { identifier });
+
+      await login(identifier, password);
+
+      setMsg("✔ Login realizado com sucesso");
+
+      // pequena pausa UX (sensação de sistema vivo)
+      setTimeout(() => {
+        navigate("/");
+      }, 300);
+
+    } catch (err) {
+      console.error(err);
+      setMsg(err.message || "Erro ao fazer login");
     }
 
-    if (data.password !== password) {
-      setMsg("Senha inválida");
-      return;
-    }
-
-    localStorage.setItem(
-      "canguess_user",
-      JSON.stringify({
-        id: data.id,
-        fullName: data.full_name,
-        userName: data.user_name,
-        phone: data.phone,
-        email: data.email,
-        role: data.role || "user",
-      })
-    );
-
-    navigate("/");
+    setLoading(false);
   }
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-
-        {/* BOLA / ICON */}
         <div style={styles.ball}>⚽</div>
 
-        {/* TITLE */}
         <h1 style={styles.title}>CanGuess</h1>
         <p style={styles.subtitle}>
           Eventos Preditivos Inteligentes
         </p>
 
-        {/* INPUTS */}
-        <input
-          placeholder="User Name"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-          style={styles.input}
-        />
+        <form onSubmit={handleLogin}>
+          <input
+            placeholder="User Name / Email / Telefone"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            style={styles.input}
+            disabled={loading}
+          />
 
-        <input
-          placeholder="Senha"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
-        />
+          <input
+            placeholder="Senha"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={styles.input}
+            disabled={loading}
+          />
 
-        {/* BUTTON PRIMARY (laranja do header/busca) */}
-        <button onClick={handleLogin} style={styles.primaryBtn}>
-          ENTRAR
-        </button>
+          <button
+            type="submit"
+            style={styles.primaryBtn}
+            disabled={loading}
+          >
+            {loading ? "ENTRANDO..." : "ENTRAR"}
+          </button>
+        </form>
 
-        {/* SECONDARY */}
         <button
           onClick={() => navigate("/register")}
           style={styles.secondaryBtn}
+          disabled={loading}
         >
           CRIAR CONTA
         </button>
 
-        {/* MSG */}
         {msg && <p style={styles.msg}>{msg}</p>}
       </div>
     </div>
@@ -93,7 +92,7 @@ export default function Login() {
 }
 
 /* =========================
-   STYLE SYSTEM CANGUESS
+   ESTILO PRESERVADO 100%
 ========================= */
 
 const styles = {
@@ -102,7 +101,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "#0B3C49", // azul petróleo (bottom/nav)
+    background: "#0B3C49",
   },
 
   card: {
@@ -146,7 +145,7 @@ const styles = {
   primaryBtn: {
     width: "100%",
     padding: 12,
-    background: "#f97316", // LARANJA oficial CanGuess
+    background: "#f97316", // 🔥 mantém CanGuess laranja
     color: "#fff",
     border: "none",
     borderRadius: 10,
