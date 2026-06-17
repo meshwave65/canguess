@@ -2,8 +2,10 @@
   "event_uuid": "e6a5c1df-2a11-4d03-9456-45e71706b3f1",
   "event_name": "BOLÃO DA COPA 009",
   "workspace_name": "Zé Bangu",
+  "is_open": false,
+  "event_status": "true",
   "phase_uuid": "73cc0474-726e-454e-b0c4-20ca7f9c28e6",
-  "generated_at": "2026-06-17T00:14:54.768745+00:00",
+  "generated_at": "2026-06-17T04:27:12.850245+00:00",
   "rounds": [
     {
       "round_uuid": "c4d0fd93-1b5e-4a03-a6af-def331e490f5",
@@ -11,6 +13,7 @@
       "round_date": "2026-06-19",
       "time_round": "00:00:00",
       "local": "San Francisco - EUA",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -34,6 +37,7 @@
       "round_date": "2026-06-20",
       "time_round": "14:00:00",
       "local": "Houston - EUA",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -57,6 +61,7 @@
       "round_date": "2026-06-20",
       "time_round": "17:00:00",
       "local": "Toronto - Canadá",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -80,6 +85,7 @@
       "round_date": "2026-06-20",
       "time_round": "21:00:00",
       "local": "Kansas City - EUA",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -103,6 +109,7 @@
       "round_date": "2026-06-20",
       "time_round": "01:00:00",
       "local": "Monterrey - México",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -126,6 +133,7 @@
       "round_date": "2026-06-21",
       "time_round": "13:00:00",
       "local": "Atlanta - EUA",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -149,6 +157,7 @@
       "round_date": "2026-06-21",
       "time_round": "16:00:00",
       "local": "Los Angelis - EUA",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -172,6 +181,7 @@
       "round_date": "2026-06-21",
       "time_round": "19:00:00",
       "local": "Miami - EUA",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -195,6 +205,7 @@
       "round_date": "2026-06-21",
       "time_round": "22:00:00",
       "local": "Vancouver - Canadá",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -218,6 +229,7 @@
       "round_date": "2026-06-22",
       "time_round": "14:00:00",
       "local": "Dallas - EUA",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [
@@ -241,6 +253,7 @@
       "round_date": "2026-06-22",
       "time_round": "18:00:00",
       "local": "Philadelphia - EUA",
+      "status": "confirmado",
       "score": null,
       "result": null,
       "parts": [

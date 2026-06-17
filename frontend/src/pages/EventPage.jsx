@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "./admin/lib/supabase";
+import { supabase } from "../pages/admin/lib/supabase";
 
 export default function EventPage() {
   const [senha, setSenha] = useState("");
@@ -76,7 +76,7 @@ export default function EventPage() {
 
     await supabase.from("guesses").insert([
       {
-        user_uuid: "anonymous", // depois você liga ao auth real
+        user_uuid: "anonymous", // depois liga ao auth real
         event_round_id: roundId,
         event_guess: value,
         event_uuid: pass.event_uuid,
@@ -87,7 +87,7 @@ export default function EventPage() {
   }
 
   // =========================
-  // RENDER ROUND (GENÉRICO MVP)
+  // RENDER ROUNDS
   // =========================
   function renderRounds() {
     if (!rounds.length) return <p>Nenhum round encontrado</p>;
@@ -106,19 +106,17 @@ export default function EventPage() {
           <strong>Round {r.round_order ?? index + 1}</strong>
         </div>
 
-        {/* Futebol (MVP inicial) */}
+        {/* Futebol */}
         {event?.event_type === "team_vs_team" && (
-          <>
-            <input
-              placeholder="Palpite (ex: 1x0, M/E/V etc)"
-              onBlur={(e) => salvarGuess(r.id, e.target.value)}
-              style={{
-                padding: 8,
-                width: "100%",
-                marginBottom: 6,
-              }}
-            />
-          </>
+          <input
+            placeholder="Palpite (ex: 1x0, M/E/V etc)"
+            onBlur={(e) => salvarGuess(r.id, e.target.value)}
+            style={{
+              padding: 8,
+              width: "100%",
+              marginBottom: 6,
+            }}
+          />
         )}
 
         {/* Individual */}
@@ -126,7 +124,10 @@ export default function EventPage() {
           <input
             placeholder="Escolha do vencedor"
             onBlur={(e) => salvarGuess(r.id, e.target.value)}
-            style={{ padding: 8, width: "100%" }}
+            style={{
+              padding: 8,
+              width: "100%",
+            }}
           />
         )}
 
@@ -136,7 +137,10 @@ export default function EventPage() {
             type="number"
             placeholder="Valor estimado"
             onBlur={(e) => salvarGuess(r.id, e.target.value)}
-            style={{ padding: 8, width: "100%" }}
+            style={{
+              padding: 8,
+              width: "100%",
+            }}
           />
         )}
       </div>

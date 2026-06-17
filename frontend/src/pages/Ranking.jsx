@@ -16,8 +16,15 @@ export default function Ranking() {
       setEngine(data);
       setRounds(data.rounds || []);
 
+      const eventId = data.event_uuid || data.id;
+
       const [{ data: bolao }, { data: users }] = await Promise.all([
-        supabase.from("bolao").select("*"),
+        supabase
+          .from("predicts")
+          .select("*")
+          .eq("event_uuid", eventId)
+          .eq("status", "validado"),
+
         supabase.from("users").select("id, user_name"),
       ]);
 
@@ -30,33 +37,40 @@ export default function Ranking() {
       const grouped = {};
 
       for (const item of bolao) {
-        const index = item.game_index - 1;
+        const index = item.round_index - 1;
+
         const round = data.rounds?.[index];
 
-        if (!grouped[item.user_id]) {
-          grouped[item.user_id] = {
-            user_id: item.user_id,
-            user_name: userMap[item.user_id] || "-",
+        const isFinished =
+          round?.status === "encerrado" ||
+          round?.status === "disputa penaltis";
+
+        if (!grouped[item.user_uuid]) {
+          grouped[item.user_uuid] = {
+            user_uuid: item.user_uuid,
+            user_name: userMap[item.user_uuid] || "-",
             predictions: Array(data.rounds.length).fill(""),
             pontos: 0,
           };
         }
 
-        grouped[item.user_id].predictions[index] = item.prediction;
+        grouped[item.user_uuid].predictions[index] = item.prediction;
 
-        const result = round?.result;
-
-        if (result && item.prediction === result) {
-          grouped[item.user_id].pontos += 1;
+        if (
+          isFinished &&
+          round?.result &&
+          item.prediction === round.result
+        ) {
+          grouped[item.user_uuid].pontos += 1;
         }
       }
 
-      setDados(
-        Object.values(grouped).sort((a, b) => {
-          if (b.pontos !== a.pontos) return b.pontos - a.pontos;
-          return a.user_name.localeCompare(b.user_name);
-        })
-      );
+      const ranking = Object.values(grouped).sort((a, b) => {
+        if (b.pontos !== a.pontos) return b.pontos - a.pontos;
+        return a.user_name.localeCompare(b.user_name);
+      });
+
+      setDados(ranking);
 
     } catch (err) {
       console.error("Erro ranking:", err);
@@ -67,17 +81,26 @@ export default function Ranking() {
     load();
   }, []);
 
+  // 🔒 BLOQUEIO DO RANKING
+  if (engine && engine.is_open === true) {
+    return (
+      <div style={{ padding: 20, textAlign: "center", color: "#666" }}>
+        🔒 Ranking ainda não disponível. Ele será liberado após o encerramento das apostas.
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: 10 }}>
 
-      {/* 🟡 HEADER EVENTO + WORKSPACE */}
+      {/* HEADER */}
       <div style={headerBox}>
         <div style={{ fontSize: 20, fontWeight: "bold" }}>
           {engine?.event_name || "EVENTO"}
         </div>
 
         <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
-            Workspace {engine?.workspace_name || "-"}
+          Workspace {engine?.workspace_name || "-"}
         </div>
       </div>
 
@@ -119,8 +142,6 @@ export default function Ranking() {
         <table style={tableStyle}>
 
           <thead>
-
-            {/* linha 1 */}
             <tr>
               <th rowSpan={4} style={th}>USUÁRIO</th>
               <th rowSpan={4} style={th}>PTS</th>
@@ -132,14 +153,12 @@ export default function Ranking() {
               ))}
             </tr>
 
-            {/* linha 2 */}
             <tr>
               {rounds.map((_, i) => (
                 <th key={i} style={th}>vs</th>
               ))}
             </tr>
 
-            {/* linha 3 */}
             <tr>
               {rounds.map((r, i) => (
                 <th key={i} style={th}>
@@ -148,7 +167,6 @@ export default function Ranking() {
               ))}
             </tr>
 
-            {/* linha 4 */}
             <tr>
               {rounds.map((r, i) => (
                 <th key={i} style={th}>
@@ -161,7 +179,7 @@ export default function Ranking() {
 
           <tbody>
             {dados.map((user) => (
-              <tr key={user.user_id}>
+              <tr key={user.user_uuid}>
                 <td style={td}>{user.user_name}</td>
                 <td style={tdCenter}><b>{user.pontos}</b></td>
 

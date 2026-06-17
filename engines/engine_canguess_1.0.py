@@ -25,7 +25,11 @@ OUTPUT_FILE = "/mnt/hd1tb/projetos/canguess/frontend/public/data/bolao.json"
 # HELPERS
 # -----------------------------
 def fetch_event(event_uuid):
-    url = f"{SUPABASE_URL}/rest/v1/events?id=eq.{event_uuid}&select=name,workspace_uuid"
+    url = (
+        f"{SUPABASE_URL}/rest/v1/events"
+        f"?id=eq.{event_uuid}"
+        f"&select=name,workspace_uuid,is_open,status"
+    )
     r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
     data = r.json()
@@ -113,8 +117,13 @@ def run_engine(event_uuid, phase_uuid):
     print("ENGINE ONLINE")
 
     event = fetch_event(event_uuid)
+
     event_name = event["name"] if event else None
     workspace_name = None
+
+    # 🔥 NOVO: controle de visibilidade
+    is_open = event.get("is_open", False) if event else False
+    event_status = event.get("status") if event else None
 
     if event and event.get("workspace_uuid"):
         workspace_name = fetch_workspace(event["workspace_uuid"])
@@ -147,6 +156,9 @@ def run_engine(event_uuid, phase_uuid):
             "time_round": r.get("time_round"),
             "local": r.get("local"),
 
+            # jogos (status do round continua separado)
+            "status": r.get("status"),
+
             "score": score,
             "result": calc_result(score),
 
@@ -157,8 +169,14 @@ def run_engine(event_uuid, phase_uuid):
         "event_uuid": event_uuid,
         "event_name": event_name,
         "workspace_name": workspace_name,
+
+        # 🔥 NOVO BLOCO IMPORTANTE
+        "is_open": is_open,
+        "event_status": event_status,
+
         "phase_uuid": phase_uuid,
         "generated_at": datetime.now(timezone.utc).isoformat(),
+
         "rounds": output_rounds
     }
 

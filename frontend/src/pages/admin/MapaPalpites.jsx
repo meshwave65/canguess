@@ -7,58 +7,81 @@ export default function MapaPalpites() {
   const [engine, setEngine] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  function calcResult(a, b) {
+    if (a == null || b == null) return "-";
+    if (a > b) return "A";
+    if (a < b) return "B";
+    return "X";
+  }
+
+  async function updateStatus(user_id, status) {
+    try {
+      await supabase
+        .from("predicts")
+        .update({ status })
+        .eq("user_uuid", user_id);
+    } catch (err) {
+      console.error("Erro ao atualizar status:", err);
+    }
+  }
+
   async function load() {
     setLoading(true);
 
     try {
-      const bolaoJson = await fetch("/data/bolao.json").then(r => r.json());
+      const bolaoJson = await fetch("/data/bolao.json").then((r) =>
+        r.json()
+      );
 
       setEngine(bolaoJson);
 
       const rounds = bolaoJson.rounds || [];
       const TOTAL = rounds.length;
 
-      const { data: bolao } = await supabase.from("bolao").select("*");
+      const { data: bolao } = await supabase
+        .from("predicts")
+        .select("*")
+        .eq("event_uuid", bolaoJson.event_uuid);
 
       const { data: users } = await supabase
         .from("users")
         .select("id, user_name");
 
       const userMap = Object.fromEntries(
-        (users || []).map(u => [u.id, u.user_name])
+        (users || []).map((u) => [u.id, u.user_name])
       );
 
       const grouped = {};
 
       (bolao || []).forEach((item) => {
-        if (!grouped[item.user_id]) {
-          grouped[item.user_id] = {
-            user_id: item.user_id,
-            user_name: userMap[item.user_id] || "-",
-            status: item.status || "Em validação",
+        const userId = item.user_id || item.user_uuid;
+
+        if (!grouped[userId]) {
+          grouped[userId] = {
+            user_id: userId,
+            user_name: userMap[userId] || "-",
+            status: "Em validação",
             palpites: Array(TOTAL).fill("-"),
             pontos: 0,
           };
         }
 
-        const i = item.game_index - 1;
-        grouped[item.user_id].palpites[i] = item.prediction;
+        const i = item.round_index - 1;
+        grouped[userId].palpites[i] = item.prediction;
 
         const round = rounds[i];
 
         const a = round?.parts?.[0]?.value;
         const b = round?.parts?.[1]?.value;
 
-        let result = "-";
+        const result = calcResult(a, b);
 
-        if (a != null && b != null) {
-          if (a > b) result = "A";
-          else if (a < b) result = "B";
-          else result = "X";
+        if (item.prediction === result && item.status === "Validado") {
+          grouped[userId].pontos += 1;
         }
 
-        if (item.prediction === result) {
-          grouped[item.user_id].pontos += 1;
+        if (item.status === "Validado") {
+          grouped[userId].status = "Validado";
         }
       });
 
@@ -67,9 +90,8 @@ export default function MapaPalpites() {
       setDados(arr);
 
       setStatusMap(
-        Object.fromEntries(arr.map(u => [u.user_id, u.status]))
+        Object.fromEntries(arr.map((u) => [u.user_id, u.status]))
       );
-
     } catch (err) {
       console.error("Erro ao carregar bolao.json:", err);
     }
@@ -91,7 +113,6 @@ export default function MapaPalpites() {
   const td = {
     border: "1px solid #ddd",
     padding: 6,
-    verticalAlign: "top",
   };
 
   const tdCenter = {
@@ -100,19 +121,26 @@ export default function MapaPalpites() {
     textAlign: "center",
   };
 
-  if (loading) return <div style={{ padding: 10 }}>Carregando...</div>;
+  if (loading) {
+    return <div style={{ padding: 10 }}>Carregando...</div>;
+  }
 
   const rounds = engine?.rounds || [];
 
   return (
     <div style={{ padding: 10 }}>
-
+      {/* HEADER */}
       <h2>{engine?.event_name || "Evento"}</h2>
-      <h4>📊 Mapa de Palpites</h4>
+      <h4>Tela de Validação de Apostas</h4>
 
       <div style={{ overflowX: "auto" }}>
-        <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 12 }}>
-
+        <table
+          style={{
+            borderCollapse: "collapse",
+            width: "100%",
+            fontSize: 12,
+          }}
+        >
           <thead>
             <tr>
               <th style={th}>USUÁRIO</th>
@@ -120,7 +148,7 @@ export default function MapaPalpites() {
 
               {rounds.map((r, i) => (
                 <th key={i} style={th}>
-                  {r.parts?.[0]?.team_code}
+                  {r.parts?.[0]?.team_code || "-"}
                 </th>
               ))}
             </tr>
@@ -130,7 +158,9 @@ export default function MapaPalpites() {
               <th style={th}></th>
 
               {rounds.map((_, i) => (
-                <th key={i} style={th}>vs</th>
+                <th key={i} style={th}>
+                  vs
+                </th>
               ))}
             </tr>
 
@@ -140,7 +170,7 @@ export default function MapaPalpites() {
 
               {rounds.map((r, i) => (
                 <th key={i} style={th}>
-                  {r.parts?.[1]?.team_code}
+                  {r.parts?.[1]?.team_code || "-"}
                 </th>
               ))}
             </tr>
@@ -160,18 +190,25 @@ export default function MapaPalpites() {
           <tbody>
             {dados.map((user) => (
               <tr key={user.user_id}>
-
                 <td style={td}>
                   <div>{user.user_name}</div>
 
+                  {/* 🔥 AUTO-SAVE AQUI */}
                   <select
                     value={statusMap[user.user_id]}
-                    onChange={(e) =>
+                    onChange={async (e) => {
+                      const newStatus = e.target.value;
+
                       setStatusMap((prev) => ({
                         ...prev,
-                        [user.user_id]: e.target.value,
-                      }))
-                    }
+                        [user.user_id]: newStatus,
+                      }));
+
+                      await updateStatus(user.user_id, newStatus);
+
+                      // 🔥 recarrega para atualizar ranking e rounds
+                      load();
+                    }}
                   >
                     <option>Em validação</option>
                     <option>Validado</option>
@@ -179,44 +216,22 @@ export default function MapaPalpites() {
                   </select>
                 </td>
 
-                <td style={tdCenter}>{user.pontos}</td>
+                <td style={tdCenter}>
+                  <b>{user.pontos}</b>
+                </td>
 
                 {rounds.map((r, i) => {
                   const pick = user.palpites[i];
 
-                  const a = r?.parts?.[0]?.value;
-                  const b = r?.parts?.[1]?.value;
-
-                  let result = "-";
-
-                  if (a != null && b != null) {
-                    if (a > b) result = "A";
-                    else if (a < b) result = "B";
-                    else result = "X";
-                  }
-
-                  const ok = pick === result;
-
                   return (
-                    <td
-                      key={i}
-                      style={{
-                        textAlign: "center",
-                        border: "1px solid #eee",
-                        background: ok ? "#22c55e" : "",
-                        color: ok ? "#fff" : "#000",
-                        fontWeight: ok ? "bold" : "normal",
-                      }}
-                    >
-                      {pick}
+                    <td key={i} style={tdCenter}>
+                      {pick || "-"}
                     </td>
                   );
                 })}
-
               </tr>
             ))}
           </tbody>
-
         </table>
       </div>
     </div>

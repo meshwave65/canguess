@@ -7,6 +7,8 @@ import Login from "../pages/Login";
 import Predictions from "../pages/Predictions";
 import Ranking from "../pages/Ranking";
 
+import EventPage from "../pages/EventPage"; // ✅ AQUI ESTÁ O FIX
+
 import Admin from "../pages/Admin";
 import AdminLogin from "../pages/AdminLogin";
 import AdminGuard from "../components/AdminGuard";
@@ -27,12 +29,15 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* ================= PUBLIC ================= */}
-        <Route element={<AppShell />}>
+      <Route element={<AppShell />}>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/palpites" element={<Predictions />} />
         <Route path="/ranking" element={<Ranking />} />
-    </Route>
+
+        {/* ✅ FIX PRINCIPAL */}
+        <Route path="/events" element={<EventPage />} />
+      </Route>
 
       {/* ================= ADMIN LOGIN ================= */}
       <Route path="/admin-login" element={<AdminLogin />} />
@@ -46,25 +51,20 @@ export default function AppRoutes() {
           </AdminGuard>
         }
       >
-        {/* DASHBOARD PRINCIPAL */}
         <Route index element={<Admin />} />
 
-        {/* PAINÉIS */}
         <Route path="resultados" element={<div>Resultados</div>} />
         <Route path="usuarios" element={<div>Usuários</div>} />
         <Route path="consultas" element={<div>Consultas</div>} />
 
-        {/* MAPA DE PALPITES */}
         <Route path="palpites" element={<MapaPalpites />} />
 
-        {/* CADASTROS */}
         <Route path="cadastros" element={<CadastrosHome />} />
         <Route path="cadastros/times" element={<CadastrosTimes />} />
         <Route path="cadastros/eventos" element={<CadastrosEventos />} />
         <Route path="cadastros/fases" element={<CadastrosFases />} />
         <Route path="cadastros/rodadas" element={<CadastrosRodadas />} />
 
-        {/* EVENTOS AVANÇADO */}
         <Route
           path="cadastros/eventos/:eventId/estrutura"
           element={<EventDashboard />}
