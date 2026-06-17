@@ -459,3 +459,507 @@ onde cada mudança futura vira um capítulo com:
 
 Isso deixa o projeto com uma memória quase “viva mesmo”, tipo engenharia com consciência histórica.
 
+
+
+
+
+##10. A NOVA DESCOBERTA — O SISTEMA COMO CONTEXTO DINÂMICO
+
+# Versão 0.4 — A Descoberta do Contexto como Elemento Central do Sistema
+
+(novo capítulo)
+
+adição proposta ao invésde criar a versão v0.4
+
+Entendi perfeitamente a evolução que você quer registrar. A versão 0.4 não deve ser apenas uma atualização técnica; ela deve registrar uma **mudança de paradigma do Canguess**.
+
+A versão 0.3 termina em um ponto em que o sistema está consolidando a arquitetura interna:
+
+* eventos como entidade central;
+* engine como fonte de verdade;
+* frontend como camada de experiência.
+
+A nova descoberta é outra:
+
+> O Canguess deixa de ser uma aplicação orientada a páginas e passa a ser uma aplicação orientada a contexto.
+
+Abaixo está o capítulo que eu adicionaria como **Versão 0.4**. mas que foi adicionado a versão atual para manter a consistencia por enquanto
+
+
+Durante a evolução inicial do Canguess, a arquitetura de navegação foi naturalmente construída seguindo o modelo tradicional de aplicações web:
+
+```
+Home
+ ├── Palpites
+ ├── Ranking
+ ├── Login
+ └── Admin
+```
+
+Nesse modelo, cada página era vista como uma unidade independente.
+
+O usuário navegava entre telas.
+
+Cada tela recebia suas próprias informações e tomava decisões baseada no seu próprio estado.
+
+Este modelo funcionava enquanto o sistema possuía uma única realidade operacional:
+
+> um único conjunto de eventos.
+
+---
+
+# ⚠️ 10.1 O PROBLEMA QUE COMEÇOU A EMERGIR
+
+Com a evolução do conceito de múltiplos workspaces, uma nova questão apareceu.
+
+O evento deixou de existir isoladamente.
+
+Um mesmo tipo de evento poderia existir dentro de diferentes ambientes:
+
+* workspace pessoal;
+* workspace empresarial;
+* workspace público;
+* workspace esportivo;
+* workspace temático.
+
+O sistema deixou de perguntar:
+
+> "Qual evento o usuário está vendo?"
+
+e passou a precisar responder:
+
+> "Dentro de qual contexto este evento existe?"
+
+---
+
+# 🧠 10.2 A DESCOBERTA FUNDAMENTAL
+
+A navegação tradicional considera que:
+
+```
+Página → Dados
+```
+
+Porém, o novo modelo revelou uma relação diferente:
+
+```
+Contexto → Página → Dados
+```
+
+A página não determina mais a realidade.
+
+Ela apenas apresenta uma realidade previamente definida pelo contexto ativo.
+
+---
+
+# 🌎 11. O NASCIMENTO DO WORKSPACE COMO CONTEXTO SUPERIOR
+
+O conceito de workspace passa a representar uma camada superior de organização.
+
+Antes:
+
+```
+Evento
+ ├── Jogos
+ ├── Rodadas
+ └── Ranking
+```
+
+Depois:
+
+```
+Workspace
+ └── Eventos
+      ├── Jogos
+      ├── Rodadas
+      └── Ranking
+```
+
+O workspace passa a responder:
+
+> "Qual universo de eventos estamos explorando?"
+
+---
+
+# 🔎 11.1 A PÁGINA DE BUSCA DEIXA DE SER UMA LISTAGEM
+
+Um dos maiores impactos dessa mudança acontece na página anteriormente chamada simplesmente de "buscar eventos".
+
+Ela deixa de ser uma tela operacional.
+
+Ela passa a ser:
+
+> o mecanismo de definição de contexto da aplicação.
+
+---
+
+A busca passa a selecionar:
+
+* workspace;
+* esporte;
+* país;
+* competição;
+* período;
+* filtros adicionais.
+
+O resultado não é apenas uma lista.
+
+O resultado é uma definição de realidade.
+
+---
+
+Exemplo:
+
+Usuário escolhe:
+
+```
+Workspace:
+Zé Bolões
+
+Esporte:
+Futebol
+
+Competição:
+Copa do Mundo
+```
+
+O sistema passa a possuir:
+
+```
+Contexto Atual:
+
+workspace = ze_boloes
+sport = futebol
+competition = copa_mundo
+```
+
+A partir desse momento:
+
+```
+Ranking
+```
+
+não significa mais:
+
+> mostrar rankings.
+
+Significa:
+
+> mostrar o ranking deste contexto.
+
+---
+
+# 🔄 12. SESSION COMO ESTADO DE CONTEXTO
+
+A sessão deixa de ser apenas uma autenticação.
+
+Ela passa a carregar a posição atual do usuário dentro do sistema.
+
+---
+
+Antes:
+
+```
+SESSION
+
+usuario:
+Diogenes
+
+login:
+true
+```
+
+---
+
+Novo modelo:
+
+```
+SESSION
+
+usuario:
+Diogenes
+
+login:
+true
+
+workspace:
+ze_boloes
+
+evento:
+copa_2026
+
+context:
+ativo
+```
+
+---
+
+A sessão passa a responder:
+
+> "Onde o usuário está dentro da realidade do sistema?"
+
+---
+
+# 🧩 13. PÁGINAS DINÂMICAS POR CONTEXTO
+
+Importante:
+
+O sistema continua possuindo páginas.
+
+A mudança não é uma eliminação de rotas.
+
+A mudança é que:
+
+> páginas passam a ser instanciadas dentro de um contexto.
+
+---
+
+Exemplo:
+
+Usuário acessa:
+
+```
+/ranking
+```
+
+Sem contexto:
+
+Sistema responde:
+
+```
+Não existe evento ativo para apresentar Ranking.
+
+Selecione um evento através do botão:
+
+BUSCAR EVENTOS
+```
+
+---
+
+Usuário escolhe:
+
+```
+Copa do Mundo 2026
+Workspace Zé
+```
+
+Agora:
+
+```
+/ranking
+```
+
+representa:
+
+```
+Ranking
+da Copa do Mundo 2026
+no Workspace Zé
+```
+
+---
+
+A mesma rota possui comportamentos diferentes conforme o contexto ativo.
+
+---
+
+# 🔐 14. ADMIN TAMBÉM PASSA A SER CONTEXTUAL
+
+Antes:
+
+```
+Admin
+```
+
+era uma área genérica.
+
+Agora:
+
+```
+Admin
+```
+
+é uma área pertencente ao usuário e ao seu ambiente.
+
+---
+
+Exemplo:
+
+Usuário:
+
+```
+Diogenes
+```
+
+acessa:
+
+```
+Admin
+```
+
+O sistema entende:
+
+```
+Admin do Workspace Diogenes
+```
+
+Outro usuário:
+
+```
+José
+```
+
+terá:
+
+```
+Admin do Workspace José
+```
+
+---
+
+# 🌐 15. O CONCEITO DE WORKSPACE GLOBAL
+
+O sistema também precisa permitir ausência de restrição.
+
+Portanto:
+
+```
+workspace = ALL
+```
+
+representa uma visão agregada.
+
+Nesse modo:
+
+Usuário pode aplicar filtros:
+
+```
+workspace:
+ALL
+
+esporte:
+Futebol
+
+país:
+Brasil
+```
+
+Resultado:
+
+```
+Todos eventos de futebol
+de todos os workspaces
+relacionados ao Brasil
+```
+
+---
+
+# 🧠 16. CONSEQUÊNCIA ARQUITETURAL
+
+Esta descoberta altera a forma como novas funcionalidades devem ser pensadas.
+
+Antes de criar uma página, a pergunta era:
+
+> "Qual tela precisamos?"
+
+Agora a pergunta passa a ser:
+
+> "Qual contexto esta tela representa?"
+
+---
+
+# 📐 17. NOVO PRINCÍPIO DO SISTEMA
+
+A partir desta versão fica estabelecido:
+
+> Nenhuma funcionalidade operacional deve existir sem considerar o contexto ativo.
+
+---
+
+Isso significa:
+
+Ranking depende de:
+
+```
+Evento
+Workspace
+Filtros
+```
+
+Palpites depende de:
+
+```
+Evento
+Workspace
+Regras
+```
+
+Admin depende de:
+
+```
+Usuário
+Permissões
+Workspace
+```
+
+---
+
+# 🔭 18. ESTADO ATUAL DA EVOLUÇÃO
+
+O Canguess passa então a possuir quatro camadas conceituais:
+
+---
+
+## 1. Camada de Dados
+
+Eventos, rounds, parts, resultados.
+
+---
+
+## 2. Camada de Inteligência
+
+Engines e regras.
+
+---
+
+## 3. Camada de Contexto
+
+Workspace, sessão, filtros e seleção ativa.
+
+---
+
+## 4. Camada de Experiência
+
+Páginas, componentes, PWA e interface.
+
+---
+
+# 🧠 CONCLUSÃO DA VERSÃO 0.4
+
+O Canguess começou como:
+
+> uma aplicação de bolão.
+
+Depois tornou-se:
+
+> uma plataforma de interpretação de eventos.
+
+Agora evolui para:
+
+> uma plataforma contextual de experiências sobre eventos.
+
+A grande mudança desta fase não é uma nova página.
+
+É uma nova forma de entender o sistema:
+
+O usuário não navega apenas por telas.
+
+Ele navega por realidades.
+
+As telas apenas revelam a realidade atualmente selecionada.
+
+---
+
+Eu colocaria esta versão 0.4 antes de qualquer refatoração de código. Ela muda a forma de pensar o AppShell, Session, Busca de Eventos e praticamente todas as páginas operacionais.
+
+

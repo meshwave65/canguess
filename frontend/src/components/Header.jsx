@@ -3,12 +3,20 @@ import { useNavigate } from "react-router-dom";
 export default function Header() {
   const navigate = useNavigate();
 
-  const isLogged = false;
-  const userName = "Guest User";
+  const userName =
+    localStorage.getItem("cg_user_name") || "Guest User";
+
+  const isLogged = userName !== "Guest User";
 
   return (
     <header
       style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+
         backgroundColor: "#0B3C49",
         color: "#fff",
         padding: "12px 16px",
@@ -19,7 +27,6 @@ export default function Header() {
         borderBottom: "4px solid #FF6A00",
       }}
     >
-      {/* LEFT - LOGO */}
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <img
           src="/canguess-logo-1024.png"
@@ -37,10 +44,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* RIGHT - GROUPED ACTIONS */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-
-        {/* BUSCAR EVENTOS */}
         <button
           onClick={() => navigate("/events")}
           style={{
@@ -56,7 +60,6 @@ export default function Header() {
           🔎 Buscar eventos
         </button>
 
-        {/* LOGIN */}
         <button
           onClick={() => navigate("/login")}
           style={{
@@ -71,11 +74,9 @@ export default function Header() {
           Login
         </button>
 
-        {/* USER */}
         <span style={{ fontSize: "0.9rem", opacity: 0.9 }}>
           {isLogged ? userName : "Guest User"}
         </span>
-
       </div>
     </header>
   );

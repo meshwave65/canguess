@@ -25,7 +25,15 @@ OUTPUT_FILE = "/mnt/hd1tb/projetos/canguess/frontend/public/data/bolao.json"
 # HELPERS
 # -----------------------------
 def fetch_event(event_uuid):
-    url = f"{SUPABASE_URL}/rest/v1/events?id=eq.{event_uuid}&select=name"
+    url = f"{SUPABASE_URL}/rest/v1/events?id=eq.{event_uuid}&select=name,workspace_uuid"
+    r = requests.get(url, headers=HEADERS)
+    r.raise_for_status()
+    data = r.json()
+    return data[0] if data else None
+
+
+def fetch_workspace(workspace_uuid):
+    url = f"{SUPABASE_URL}/rest/v1/workspaces?id=eq.{workspace_uuid}&select=name"
     r = requests.get(url, headers=HEADERS)
     r.raise_for_status()
     data = r.json()
@@ -104,9 +112,14 @@ def calc_result(score):
 def run_engine(event_uuid, phase_uuid):
     print("ENGINE ONLINE")
 
-    event_name = fetch_event(event_uuid)
-    rounds = fetch_rounds(phase_uuid)
+    event = fetch_event(event_uuid)
+    event_name = event["name"] if event else None
+    workspace_name = None
 
+    if event and event.get("workspace_uuid"):
+        workspace_name = fetch_workspace(event["workspace_uuid"])
+
+    rounds = fetch_rounds(phase_uuid)
     output_rounds = []
 
     for r in rounds:
@@ -130,12 +143,10 @@ def run_engine(event_uuid, phase_uuid):
             "round_uuid": r["id"],
             "round_name": r.get("round_name"),
 
-            # 🆕 CAMPOS EXTRAS (tabela do ranking/lista)
             "round_date": r.get("round_date"),
             "time_round": r.get("time_round"),
             "local": r.get("local"),
 
-            # 🎯 CORE
             "score": score,
             "result": calc_result(score),
 
@@ -145,6 +156,7 @@ def run_engine(event_uuid, phase_uuid):
     output = {
         "event_uuid": event_uuid,
         "event_name": event_name,
+        "workspace_name": workspace_name,
         "phase_uuid": phase_uuid,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "rounds": output_rounds
@@ -159,7 +171,7 @@ def run_engine(event_uuid, phase_uuid):
 
 
 if __name__ == "__main__":
-    EVENT_UUID = "dc0631b5-c7aa-4294-92e6-6d2fcc78f082"
-    PHASE_UUID = "4fc838a9-5785-443f-b074-21dde132a2f0"
+    EVENT_UUID = "e6a5c1df-2a11-4d03-9456-45e71706b3f1"
+    PHASE_UUID = "73cc0474-726e-454e-b0c4-20ca7f9c28e6"
 
     run_engine(EVENT_UUID, PHASE_UUID)
