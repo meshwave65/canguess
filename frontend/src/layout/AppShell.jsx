@@ -4,14 +4,21 @@ import { Outlet } from "react-router-dom";
 
 export default function AppShell() {
   return (
-    <>
+    <div style={{ minHeight: "100vh" }}>
       <Header />
 
-      <div style={{ paddingTop: 80, paddingBottom: 80 }}>
+      <main
+        style={{
+          paddingTop: 80,
+          paddingBottom: 80,
+          minHeight: "100vh",
+          background: "#f5f6fa",
+        }}
+      >
         <Outlet />
-      </div>
+      </main>
 
       <BottomNav />
-    </>
+    </div>
   );
 }

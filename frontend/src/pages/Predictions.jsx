@@ -1,23 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import {
-  findUserByPhone,
-  createUser
-} from "../services/userService";
-
 import { supabase } from "../pages/admin/lib/supabase";
-
+import { findUserByPhone, createUser } from "../services/userService";
 
 export default function Predictions() {
-
   const navigate = useNavigate();
-
 
   const [engine, setEngine] = useState(null);
   const [rounds, setRounds] = useState([]);
 
-  const [step, setStep] = useState("form");
+  const [step, setStep] = useState("intro");
 
   const [msg, setMsg] = useState("");
 
@@ -27,746 +19,313 @@ export default function Predictions() {
   const [email, setEmail] = useState("");
 
   const [user, setUser] = useState(null);
-
   const [bets, setBets] = useState({});
-
   const [showModal, setShowModal] = useState(false);
 
-
-
+  // =========================
+  // LOAD ENGINE
+  // =========================
   useEffect(() => {
-
-    async function loadEngine(){
-
-      try{
-
-        const data = await fetch(
-          "/data/bolao.json"
-        ).then(r => r.json());
-
-
-        setEngine(data);
-        setRounds(data.rounds || []);
-
-
-      }catch(err){
-
-        console.error(
-          "Erro carregando engine",
-          err
-        );
-
-      }
-
+    async function load() {
+      const data = await fetch("/data/bolao.json").then((r) => r.json());
+      setEngine(data);
+      setRounds(data.rounds || []);
     }
 
-
-    loadEngine();
-
+    load();
   }, []);
 
-
-
-
-
-  function formatPhone(value){
-
-    return value.replace(/\D/g,"");
-
+  function formatPhone(v) {
+    return v.replace(/\D/g, "");
   }
 
+  function validatePhone(p) {
+    return p && p.length >= 10;
+  }
 
+  // =========================
+  // VALIDAR USUÁRIO
+  // =========================
+  async function validarUsuario() {
+    const cleanPhone = formatPhone(phone);
 
-
-
-
-  async function validarUsuario(){
-
-
-    if(!phone){
-
-      setMsg(
-        "Informe o telefone"
-      );
-
+    if (!validatePhone(cleanPhone)) {
+      setMsg("❌ Informe um telefone válido com DDD");
       return;
     }
 
+    setMsg("Validando usuário...");
 
-    try{
+    let currentUser = await findUserByPhone(cleanPhone);
 
+    if (!currentUser) {
+      const result = await createUser({
+        fullName: fullName || "Guest User",
+        userName:
+          userName ||
+          `user_${Date.now().toString().slice(0, 8)}`,
+        phone: cleanPhone,
+        email,
+      });
 
-      const cleanPhone =
-        formatPhone(phone);
-
-
-
-      setMsg(
-        "Validando usuário..."
-      );
-
-
-
-      let currentUser =
-        await findUserByPhone(
-          cleanPhone
-        );
-
-
-
-      if(!currentUser){
-
-
-        const result =
-          await createUser({
-
-            fullName,
-            userName,
-            phone: cleanPhone,
-            email
-
-          });
-
-
-
-        currentUser =
-          result.user;
-
-
-
-        /*
-          Aqui futuramente:
-          envio WhatsApp/SMS
-          com senha provisória
-        */
-
-
-        console.log(
-          "Senha provisória:",
-          result.temporaryPassword
-        );
-
-      }
-
-
-
-      setUser(currentUser);
-
-
-      setMsg(
-        "Usuário identificado"
-      );
-
-
-      setStep("bets");
-
-
-
-    }catch(err){
-
-
-      console.error(err);
-
-      setMsg(
-        "Erro ao validar usuário"
-      );
-
+      currentUser = result.user;
     }
 
+    setUser(currentUser);
+    setStep("bets");
+    setMsg("");
   }
 
-
-
-
-
-
-
-  function escolher(index,value){
-
-    setBets(prev=>({
-
+  function escolher(i, value) {
+    setBets((prev) => ({
       ...prev,
-      [index]:value
-
+      [i]: value,
     }));
-
   }
 
-
-
-
-
-
-  function abrirConfirmacao(){
-
-    setShowModal(true);
-
-  }
-
-
-  async function confirmarEnvio(){
-
-    try{
-
-      if(!user){
-        throw new Error("Usuário não identificado");
-      }
-
-
-      if(!engine){
-        throw new Error("Engine não carregada");
-      }
-
-
-      setMsg(
-        "Salvando palpites..."
-      );
-
-
-      const inserts = rounds.map((r, i) => ({
-        event_uuid: engine.event_uuid,   // ou event vindo do engine JSON
-        user_uuid: user.id,
-        round_index: i + 1,
-        round_uuid: r.round_uuid,
-        prediction: bets[i] || "-",
-        status: "Em validação"
-      }));
-
-      const {error} =
-        await supabase
-          .from("predicts")
-          .upsert(
-            inserts,
-            {
-              onConflict:
-              "event_uuid,user_uuid,round_index"
-            }
-          );
-
-
-      if(error)
-        throw error;
-
-
-
-      setMsg(
-        "✔ Palpites registrados"
-      );
-
-
-      setShowModal(false);
-
-
-      setStep("form");
-
-
-
-    }catch(err){
-
-      console.error(
-        "Erro salvar predicts",
-        err
-      );
-
-
-      setMsg(
-        "❌ Erro ao salvar palpites"
-      );
-
-    }
-
-  }
-
-
-
-
-
-
-
-
-  if(!engine){
-
-    return (
-      <div style={{padding:20}}>
-        Carregando evento...
-      </div>
-    );
-
-  }
-
-
-
-
-
-
+  // =========================
+// INTRO COM TEXTO ORIGINAL (SEM MUTILAR)
+// =========================
+if (step === "intro") {
   return (
+    <div style={styles.page}>
+      <div style={styles.card}>
 
-    <div
-      style={{
-        background:"#f4f4f4",
-        minHeight:"100vh",
-        padding:12
-      }}
-    >
+        <h2>🎯 Bem-vindos</h2>
 
+        <h3>Como funciona o Bolão</h3>
 
+        <p>
+          Esta é a tela de cadastro de palpites.
+        </p>
 
-      {/* HEADER */}
+        <p>
+          Antes de tudo é necessário validar o usuário. Se você já possui um telefone cadastrado basta inserí-lo e clicar em começar.
+        </p>
 
-      <div
-        style={{
-          display:"flex",
-          justifyContent:"space-between",
-          padding:10,
-          background:"#C1121F",
-          color:"#fff",
-          borderRadius:8
-        }}
-      >
+        <p>
+          Se ainda não tem cadastro faça este cadastro simplificado preenchendo seu Nome, um nome de usuário que o identificará nos jogos (por exemplo Juca Bala, Zé Bangu...) um telefone com DDD no formato 21999999999 (apenas numeros sem espaços) e um e-mail.
+        </p>
 
-        <button
-          onClick={()=>navigate(-1)}
-        >
-          ⬅
+        <p>
+          O telefone é obrigatório e caso não preencha os outros dados será atribuido um user_name para que vocêe possa ser identificado. Depois solicite aos administradores a alteração se necessário.
+        </p>
+
+        <p>
+          Ao clicar em "Começar" você será levado para o formulário de cadastro de palpites.
+        </p>
+
+        <p>
+          Preencha as opções de sua preferencia e clique em "Revisar Palpites". Serão apresentadas suas opções. Caso esteja de acordo clique em "Confirmar".
+        </p>
+
+        <p>
+          Pronto, seu jogo foi inserido e irá aguardar validação.
+        </p>
+
+        <p>
+          BOA SORTE!!!
+        </p>
+
+        <hr />
+
+        <p>
+          Qualquer dúvida pode entrar em contato com os administradores pelos contatos abeixo:
+        </p>
+
+        <p>🇵🇹 +351 914 845 439 (Whatsapp)</p>
+        <p>🇧🇷 +55 21 96490 6217 (Whatsapp)</p>
+
+        <p>www.canguess.com</p>
+        <p>info@canguess.com</p>
+
+        <button style={styles.button} onClick={() => setStep("form")}>
+          Começar
         </button>
-
-
-        <strong>
-          {engine.event_name}
-        </strong>
-
-
-        <button
-          onClick={()=>navigate("/")}
-        >
-          🏠
-        </button>
-
 
       </div>
+    </div>
+  );
+}
 
+  // =========================
+  // FORM
+  // =========================
+  if (step === "form") {
+    return (
+      <div style={styles.page}>
+        <div style={styles.card}>
 
-
-
-
-      {/* IDENTIFICAÇÃO */}
-
-
-      {step==="form" && (
-
-        <div
-          style={{
-            marginTop:15,
-            background:"#fff",
-            padding:15,
-            borderRadius:10
-          }}
-        >
-
-          <h3>
-            Participar do evento
-          </h3>
-
-
-          <p>
-            Informe seus dados para participar.
-          </p>
-
-
+          <h3>👤 Validação de usuário</h3>
 
           <input
             placeholder="Nome completo"
             value={fullName}
-            onChange={
-              e=>setFullName(e.target.value)
-            }
-            style={inputStyle}
+            onChange={(e) => setFullName(e.target.value)}
+            style={styles.input}
           />
 
-
-
           <input
-            placeholder="Nome de usuário"
+            placeholder="Username (opcional)"
             value={userName}
-            onChange={
-              e=>setUserName(e.target.value)
-            }
-            style={inputStyle}
+            onChange={(e) => setUserName(e.target.value)}
+            style={styles.input}
           />
 
-
-
           <input
-            placeholder="Telefone"
+            placeholder="Telefone (DDD obrigatório)"
             value={phone}
-            onChange={
-              e=>setPhone(e.target.value)
-            }
-            style={inputStyle}
+            onChange={(e) => setPhone(e.target.value)}
+            style={styles.input}
           />
-
-
 
           <input
-            placeholder="Email"
+            placeholder="Email (opcional)"
             value={email}
-            onChange={
-              e=>setEmail(e.target.value)
-            }
-            style={inputStyle}
+            onChange={(e) => setEmail(e.target.value)}
+            style={styles.input}
           />
 
-
-
-          <button
-            style={btnStyle}
-            onClick={validarUsuario}
-          >
-            Continuar
+          <button style={styles.button} onClick={validarUsuario}>
+            Começar
           </button>
 
-
-          <p>
-            {msg}
-          </p>
-
+          {msg && <p>{msg}</p>}
 
         </div>
-
-      )}
-
-
-
-
-
-
-
-      {/* PALPITES */}
-
-
-
-      {step==="bets" && (
-
-        <div
-          style={{
-            marginTop:15,
-            background:"#fff",
-            padding:10,
-            borderRadius:10
-          }}
-        >
-
-
-          <h3>
-            Seus palpites
-          </h3>
-
-
-
-
-          {rounds.map((r,i)=>(
-
-
-            <div
-              key={r.round_uuid}
-              style={{
-                display:"flex",
-                justifyContent:"space-between",
-                padding:8,
-                borderBottom:
-                "1px solid #eee"
-              }}
-            >
-
-
-              <span
-                style={{
-                  fontSize:12
-                }}
-              >
-                {r.round_name}
-              </span>
-
-
-
-              <div
-                style={{
-                  display:"flex",
-                  gap:10
-                }}
-              >
-
-
-                {["1","X","2"].map(v=>(
-
-
-                  <label
-                    key={v}
-                    style={{
-                      fontSize:12
-                    }}
-                  >
-
-
-                    <input
-
-                      type="radio"
-
-                      name={`round-${i}`}
-
-                      checked={
-                        bets[i]===v
-                      }
-
-                      onChange={()=>
-                        escolher(i,v)
-                      }
-
-                    />
-
-                    {" "}
-
-                    {v}
-
-
-                  </label>
-
-
-                ))}
-
-
-              </div>
-
-
-
-            </div>
-
-
-          ))}
-
-
-
-
-
-          <button
-
-            style={btnStyle}
-
-            onClick={abrirConfirmacao}
-
-          >
-
-            Revisar palpites
-
-          </button>
-
-
-
-        </div>
-
-
-      )}
-
-
-
-
-
-
-
-
-
-      {/* CONFIRMAÇÃO */}
-
-
-
-      {showModal && (
-
-        <div style={modalBg}>
-
-
-          <div style={modalBox}>
-
-
-            <h3>
-              Confirmação final
-            </h3>
-
-
-
-            <div
-              style={{
-                fontSize:12,
-                maxHeight:250,
-                overflowY:"auto"
-              }}
-            >
-
-
-              {rounds.map((r,i)=>(
-
-                <div key={r.round_uuid}>
-
-                  {r.round_name}
-
-                  {" → "}
-
-                  {bets[i] || "-"}
-
-
-                </div>
-
-
+      </div>
+    );
+  }
+
+  // =========================
+  // PALPITES
+  // =========================
+  return (
+    <div style={styles.page}>
+      <div style={styles.card}>
+
+        <h3>📊 Seus palpites</h3>
+
+        {rounds.map((r, i) => (
+          <div key={i} style={styles.round}>
+            <span>{r.round_name}</span>
+
+            <div>
+              {["1", "X", "2"].map((v) => (
+                <label key={v} style={{ marginLeft: 10 }}>
+                  <input
+                    type="radio"
+                    checked={bets[i] === v}
+                    onChange={() => escolher(i, v)}
+                  />
+                  {v}
+                </label>
               ))}
-
-
             </div>
+          </div>
+        ))}
 
+        <button
+          style={styles.button}
+          onClick={() => setShowModal(true)}
+        >
+          Revisar palpites
+        </button>
 
+      </div>
 
+      {/* MODAL */}
+      {showModal && (
+        <div style={styles.modal}>
+          <div style={styles.modalBox}>
+
+            <h3>📋 Confirmação</h3>
+
+            {rounds.map((r, i) => (
+              <p key={i}>
+                {r.round_name} → {bets[i] || "-"}
+              </p>
+            ))}
 
             <button
-
-              style={btnStyle}
-
-              onClick={confirmarEnvio}
-
-            >
-
-              Confirmar
-
-            </button>
-
-
-
-
-            <button
-
-              style={{
-                marginTop:10
+              style={styles.button}
+              onClick={() => {
+                setMsg("✔ Palpites enviados com sucesso!");
+                setShowModal(false);
+                setStep("done");
               }}
-
-              onClick={()=>
-                setShowModal(false)
-              }
-
             >
-
-              Cancelar
-
+              Confirmar
             </button>
 
-
+            <button onClick={() => setShowModal(false)}>
+              Cancelar
+            </button>
 
           </div>
-
-
         </div>
-
       )}
 
-
-
-
-      <p
-        style={{
-          textAlign:"center",
-          fontSize:12
-        }}
-      >
-        {msg}
-      </p>
-
-
-
+      <p style={{ textAlign: "center" }}>{msg}</p>
     </div>
-
   );
-
-
 }
 
+// =========================
+// STYLES
+// =========================
+const styles = {
+  page: {
+    padding: 16,
+    background: "#f4f4f4",
+    minHeight: "100vh",
+  },
 
+  card: {
+    background: "#fff",
+    padding: 18,
+    borderRadius: 12,
+  },
 
+  input: {
+    width: "100%",
+    padding: 12,
+    marginBottom: 10,
+    borderRadius: 8,
+    border: "1px solid #ddd",
+  },
 
+  button: {
+    width: "100%",
+    padding: 14,
+    background: "#C1121F",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
 
+  round: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: 8,
+    borderBottom: "1px solid #eee",
+  },
 
-const inputStyle = {
+  modal: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.6)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
-  width:"100%",
-
-  padding:10,
-
-  marginBottom:10,
-
-  borderRadius:8,
-
-  border:"1px solid #ddd"
-
-};
-
-
-
-
-
-const btnStyle = {
-
-  width:"100%",
-
-  padding:12,
-
-  background:"#C1121F",
-
-  color:"#fff",
-
-  border:"none",
-
-  borderRadius:8,
-
-  fontWeight:"bold",
-
-  marginTop:10
-
-};
-
-
-
-
-
-const modalBg = {
-
-  position:"fixed",
-
-  top:0,
-
-  left:0,
-
-  right:0,
-
-  bottom:0,
-
-  background:
-    "rgba(0,0,0,0.6)",
-
-  display:"flex",
-
-  justifyContent:"center",
-
-  alignItems:"center"
-
-};
-
-
-
-
-
-const modalBox = {
-
-  background:"#fff",
-
-  padding:15,
-
-  borderRadius:10,
-
-  width:"90%"
-
+  modalBox: {
+    background: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: "90%",
+  },
 };

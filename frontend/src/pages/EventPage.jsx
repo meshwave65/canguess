@@ -6,38 +6,42 @@ export default function EventPage() {
   const [event, setEvent] = useState(null);
   const [phases, setPhases] = useState([]);
   const [rounds, setRounds] = useState([]);
-
   const [validado, setValidado] = useState(false);
-  const [msg, setMsg] = useState("");
 
-  const [guesses, setGuesses] = useState({});
+  const [toast, setToast] = useState(null);
 
-  // =========================
-  // VALIDAR CÓDIGO DO EVENTO
-  // =========================
+  function showToast(text, type = "success") {
+    setToast({ text, type });
+    setTimeout(() => setToast(null), 3000);
+  }
+
+  // =====================
+  // VALIDAR EVENTO
+  // =====================
   async function validarEvento() {
     const code = senha.trim();
 
-    const { data: pass, error } = await supabase
+    const { data: pass } = await supabase
       .from("event_passw")
       .select("*")
       .eq("code_event", code)
       .eq("status", 1)
       .maybeSingle();
 
-    if (error || !pass) {
-      setMsg("Código inválido ou já usado");
+    if (!pass) {
+      showToast("Código inválido ou usado", "error");
       return;
     }
 
     await carregarEvento(pass.event_uuid);
+
     setValidado(true);
-    setMsg("Evento liberado ✔");
+    showToast("Evento liberado ✔");
   }
 
-  // =========================
-  // CARREGAR EVENTO COMPLETO
-  // =========================
+  // =====================
+  // CARREGAR EVENTO
+  // =====================
   async function carregarEvento(eventId) {
     const { data: ev } = await supabase
       .from("events")
@@ -62,9 +66,9 @@ export default function EventPage() {
     setRounds(rd || []);
   }
 
-  // =========================
+  // =====================
   // SALVAR PALPITE
-  // =========================
+  // =====================
   async function salvarGuess(roundId, value) {
     const code = senha.trim();
 
@@ -76,19 +80,27 @@ export default function EventPage() {
 
     await supabase.from("guesses").insert([
       {
-        user_uuid: "anonymous", // depois liga ao auth real
+        user_uuid: "anonymous",
         event_round_id: roundId,
         event_guess: value,
         event_uuid: pass.event_uuid,
       },
     ]);
 
-    setMsg("Palpite salvo ✔");
+    showToast("✔ Palpite salvo com sucesso! Boa sorte 🍀");
+
+    // 🔥 HOOK FUTURO NOTIFICAÇÃO
+    await supabase.functions.invoke("notify-guess", {
+      body: {
+        event_round_id: roundId,
+        guess: value,
+      },
+    });
   }
 
-  // =========================
-  // RENDER ROUNDS
-  // =========================
+  // =====================
+  // ROUNDS
+  // =====================
   function renderRounds() {
     if (!rounds.length) return <p>Nenhum round encontrado</p>;
 
@@ -100,55 +112,45 @@ export default function EventPage() {
           marginBottom: 10,
           border: "1px solid #ddd",
           borderRadius: 8,
+          background: "#fff",
         }}
       >
-        <div style={{ marginBottom: 6 }}>
-          <strong>Round {r.round_order ?? index + 1}</strong>
-        </div>
+        <strong>Round {r.round_order ?? index + 1}</strong>
 
-        {/* Futebol */}
-        {event?.event_type === "team_vs_team" && (
-          <input
-            placeholder="Palpite (ex: 1x0, M/E/V etc)"
-            onBlur={(e) => salvarGuess(r.id, e.target.value)}
-            style={{
-              padding: 8,
-              width: "100%",
-              marginBottom: 6,
-            }}
-          />
-        )}
-
-        {/* Individual */}
-        {event?.event_type === "individual" && (
-          <input
-            placeholder="Escolha do vencedor"
-            onBlur={(e) => salvarGuess(r.id, e.target.value)}
-            style={{
-              padding: 8,
-              width: "100%",
-            }}
-          />
-        )}
-
-        {/* Métrico */}
-        {event?.event_type === "metric" && (
-          <input
-            type="number"
-            placeholder="Valor estimado"
-            onBlur={(e) => salvarGuess(r.id, e.target.value)}
-            style={{
-              padding: 8,
-              width: "100%",
-            }}
-          />
-        )}
+        <input
+          placeholder="Seu palpite"
+          onBlur={(e) => salvarGuess(r.id, e.target.value)}
+          style={{
+            marginTop: 8,
+            width: "100%",
+            padding: 10,
+          }}
+        />
       </div>
     ));
   }
 
   return (
     <div style={{ padding: 16 }}>
+      {/* TOAST */}
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            top: 90,
+            right: 20,
+            background:
+              toast.type === "error" ? "#dc2626" : "#16a34a",
+            color: "#fff",
+            padding: "12px 16px",
+            borderRadius: 10,
+            zIndex: 9999,
+          }}
+        >
+          {toast.text}
+        </div>
+      )}
+
       {/* LOGIN EVENTO */}
       {!validado && (
         <div>
@@ -158,36 +160,32 @@ export default function EventPage() {
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             placeholder="Código do evento"
-            style={{
-              padding: 8,
-              width: "70%",
-              marginRight: 8,
-            }}
+            style={{ padding: 10, width: "70%" }}
           />
 
-          <button onClick={validarEvento}>Entrar</button>
-
-          {msg && <p style={{ marginTop: 10 }}>{msg}</p>}
+          <button
+            onClick={validarEvento}
+            style={{
+              marginLeft: 10,
+              padding: 10,
+              background: "#FF6A00",
+              color: "#fff",
+              border: "none",
+            }}
+          >
+            Entrar
+          </button>
         </div>
       )}
 
-      {/* EVENTO ATIVO */}
+      {/* EVENTO */}
       {validado && event && (
         <>
           <h2>{event.name}</h2>
           <p>{event.description}</p>
 
-          <hr />
-
           <h3>Rounds</h3>
-
           {renderRounds()}
-
-          {msg && (
-            <p style={{ marginTop: 10, color: "green" }}>
-              {msg}
-            </p>
-          )}
         </>
       )}
     </div>
