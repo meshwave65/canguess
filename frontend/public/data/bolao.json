@@ -3,9 +3,9 @@
   "event_name": "BOLÃO DA COPA 009",
   "workspace_name": "Zé Bangu",
   "is_open": false,
-  "event_status": "true",
+  "event_status": "false",
   "phase_uuid": "73cc0474-726e-454e-b0c4-20ca7f9c28e6",
-  "generated_at": "2026-06-17T04:27:12.850245+00:00",
+  "generated_at": "2026-06-17T07:49:50.873534+00:00",
   "rounds": [
     {
       "round_uuid": "c4d0fd93-1b5e-4a03-a6af-def331e490f5",

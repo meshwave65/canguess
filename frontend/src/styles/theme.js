@@ -1,9 +1,9 @@
 export const theme = {
   colors: {
-    primary: "#0f2f3a", // azul petróleo (ajusta fino depois se quiser)
-    primaryHover: "#0b252d",
+    primary: "#0B3C49",        // 👈 AGORA É O AZUL OFICIAL
+    primaryHover: "#0A313B",
 
-    accent: "#f97316", // laranja intenso
+    accent: "#f97316",
     accentHover: "#ea580c",
 
     text: "#111827",
