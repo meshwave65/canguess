@@ -7,7 +7,7 @@ import Login from "../pages/Login";
 import Predictions from "../pages/Predictions";
 import Ranking from "../pages/Ranking";
 
-import EventPage from "../pages/EventPage"; // ✅ AQUI ESTÁ O FIX
+import EventHome from "../pages/EventHome"; // ✅ AQUI ESTÁ O FIX
 
 import Admin from "../pages/Admin";
 import AdminLogin from "../pages/AdminLogin";
@@ -39,7 +39,7 @@ export default function AppRoutes() {
         <Route path="/ranking" element={<Ranking />} />
 
         {/* ✅ FIX PRINCIPAL */}
-        <Route path="/events" element={<EventPage />} />
+        <Route path="/events" element={<EventHome />} />
       </Route>
 
       {/* ================= ADMIN LOGIN ================= */}

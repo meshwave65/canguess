@@ -1,3 +1,90 @@
+/*
+====================================================================
+🧾 CANGUESS LEGACY MODULE — EventPage.jsx
+====================================================================
+
+📌 STATUS:
+LEGACY (DEPRECATED)
+
+📅 Versão original:
+v0.4 → v0.5 (fase de transição entre evento + identidade)
+
+🧠 PROPÓSITO ORIGINAL:
+Este módulo foi criado como o primeiro ponto de entrada para um evento.
+
+Sua responsabilidade era:
+- validar acesso ao evento via código (event_passw)
+- carregar evento diretamente do Supabase
+- buscar phases e rounds
+- permitir interação inicial com palpites
+- controlar estado "validado" do evento
+
+---
+
+⚠️ MOTIVO DA OBSOLESCÊNCIA:
+
+Este módulo foi substituído pelo novo modelo arquitetural v0.6:
+
+EVENT-FIRST + CONTEXT-FIRST SYSTEM
+
+Principais mudanças que tornaram este módulo obsoleto:
+
+1. Entrada de evento deixou de ser backend-driven
+   → agora é baseada em manifest + assets + EventContext
+
+2. EventPage misturava responsabilidades:
+   - validação de acesso
+   - carregamento de dados
+   - UI de experiência
+   - lógica de negócio
+
+3. Novo fluxo único de entrada foi definido:
+   /events/?code=XXXX → EventHome (único entrypoint)
+
+4. A lógica de evento passou a ser centralizada em:
+   EventContext + EventBootstrapService
+
+---
+
+🧭 NOVO PADRÃO (SUBSTITUTO):
+
+✔ EventHome.jsx
+   - única porta de entrada de eventos
+   - baseado em manifest.json
+   - bootstrap de contexto
+
+✔ EventContext
+   - mantém estado global do evento ativo
+
+✔ EventBootstrapService (futuro)
+   - resolve URL → storage → default event
+
+---
+
+🚫 REGRA DE USO:
+
+Este módulo NÃO deve ser mais utilizado em fluxo de produção.
+
+Pode ser mantido apenas para:
+- referência histórica
+- auditoria de decisões
+- análise de evolução do sistema
+- evitar regressão arquitetural
+
+---
+
+🧠 NOTA DE ARQUITETURA:
+
+Este arquivo representa uma fase importante da evolução do Canguess,
+onde a entrada em eventos ainda era centralizada no backend.
+
+O sistema evoluiu para uma abordagem baseada em contexto contínuo,
+onde o evento é o núcleo da experiência e não uma etapa de validação.
+
+====================================================================
+*/
+
+
 import { useEffect, useState } from "react";
 import { supabase } from "../pages/admin/lib/supabase";
 

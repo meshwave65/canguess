@@ -19,25 +19,7 @@
         "-"
       ],
       "points": 0
-    },
-    {
-      "user_uuid": "9732212d-b76c-4c2d-b52c-4924a320b881",
-      "user_name": "user_973221",
-      "predictions": [
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-"
-      ],
-      "points": 0
     }
   ],
-  "users_count": 2
+  "users_count": 1
 }
