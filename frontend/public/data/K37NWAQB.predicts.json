@@ -1,0 +1,43 @@
+{
+  "code": "K37NWAQB",
+  "event_uuid": "e6a5c1df-2a11-4d03-9456-45e71706b3f1",
+  "users": [
+    {
+      "user_uuid": "a529703c-a92f-4082-b09f-9db9524cbb27",
+      "user_name": "Cabo Duarte",
+      "predictions": [
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-"
+      ],
+      "points": 0
+    },
+    {
+      "user_uuid": "9732212d-b76c-4c2d-b52c-4924a320b881",
+      "user_name": "user_973221",
+      "predictions": [
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-"
+      ],
+      "points": 0
+    }
+  ],
+  "users_count": 2
+}

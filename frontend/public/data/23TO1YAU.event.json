@@ -1,0 +1,240 @@
+{
+  "code": "23TO1YAU",
+  "event_uuid": "c5e8ffe3-ac8c-4981-9539-909617462455",
+  "event_name": null,
+  "workspace_name": null,
+  "event_code": "23TO1YAU",
+  "rounds": [
+    {
+      "round_uuid": "7a6280be-1c5a-4f6f-b3da-b74902233c52",
+      "round_name": "HOLANDA vs SUÉCIA",
+      "round_order": null,
+      "round_index": null,
+      "local": "Houston - EUA",
+      "round_date": "2026-06-20",
+      "time_round": "14:00:00",
+      "teams": [
+        {
+          "teams_code": "NED",
+          "teams_name": "Holanda"
+        },
+        {
+          "teams_code": "SWD",
+          "teams_name": "Suécia"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "730f046c-7733-420d-b92f-3a170129a3bf",
+      "round_name": "EQUADOR vs CURAÇAO",
+      "round_order": null,
+      "round_index": null,
+      "local": "Kansas City - EUA",
+      "round_date": "2026-06-20",
+      "time_round": "21:00:00",
+      "teams": [
+        {
+          "teams_code": "ECU",
+          "teams_name": "Equador"
+        },
+        {
+          "teams_code": "CUÇ",
+          "teams_name": "Curaçao"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "e69b0cbf-521a-4e95-8827-c01abde55b23",
+      "round_name": "ESPANHA vs ARABIA SAUDITA",
+      "round_order": null,
+      "round_index": null,
+      "local": "Atlanta - EUA",
+      "round_date": "2026-06-21",
+      "time_round": "13:00:00",
+      "teams": [
+        {
+          "teams_code": "ESP",
+          "teams_name": "Espanha"
+        },
+        {
+          "teams_code": "KSA",
+          "teams_name": "Arábia Saudita"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "c0bcb869-4338-4643-8018-944940e2f5e4",
+      "round_name": "URUGUAI vs CABO VERDE",
+      "round_order": null,
+      "round_index": null,
+      "local": "Miami - EUA",
+      "round_date": "2026-06-21",
+      "time_round": "19:00:00",
+      "teams": [
+        {
+          "teams_code": "URU",
+          "teams_name": "Uruguai"
+        },
+        {
+          "teams_code": "CPV",
+          "teams_name": "Cabo Verde"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "68a84c1a-7708-49bc-a462-3506af37eea5",
+      "round_name": "ARGENTINA vs AUSTRIA",
+      "round_order": null,
+      "round_index": null,
+      "local": "Dallas - EUA",
+      "round_date": "2026-06-22",
+      "time_round": "14:00:00",
+      "teams": [
+        {
+          "teams_code": "ARG",
+          "teams_name": "Argentina"
+        },
+        {
+          "teams_code": "AUT",
+          "teams_name": "Áustria"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "c4d0fd93-1b5e-4a03-a6af-def331e490f5",
+      "round_name": "TURQUIA vs PARAGUAI",
+      "round_order": null,
+      "round_index": null,
+      "local": "San Francisco - EUA",
+      "round_date": "2026-06-19",
+      "time_round": "00:00:00",
+      "teams": [
+        {
+          "teams_code": "TUR",
+          "teams_name": "Turquia"
+        },
+        {
+          "teams_code": "PAR",
+          "teams_name": "Paraguai"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "bc786f7c-840b-4ef7-aad7-3c807c124e13",
+      "round_name": "ALEMANHA vs COSTA DO MARFIM",
+      "round_order": null,
+      "round_index": null,
+      "local": "Toronto - Canadá",
+      "round_date": "2026-06-20",
+      "time_round": "17:00:00",
+      "teams": [
+        {
+          "teams_code": "GER",
+          "teams_name": "Alemanha"
+        },
+        {
+          "teams_code": "CIV",
+          "teams_name": "Costa do Marfim"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "c3d46588-d4f9-4cec-afea-8bcc488c904a",
+      "round_name": "TUNÍSIA vs JAPÃO",
+      "round_order": null,
+      "round_index": null,
+      "local": "Monterrey - México",
+      "round_date": "2026-06-20",
+      "time_round": "01:00:00",
+      "teams": [
+        {
+          "teams_code": "TUN",
+          "teams_name": "Tunísia"
+        },
+        {
+          "teams_code": "JPN",
+          "teams_name": "Japão"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "d498aba6-4b53-4862-9472-0d85008b7af9",
+      "round_name": "BELGICA vs IRAN",
+      "round_order": null,
+      "round_index": null,
+      "local": "Los Angelis - EUA",
+      "round_date": "2026-06-21",
+      "time_round": "16:00:00",
+      "teams": [
+        {
+          "teams_code": "BEL",
+          "teams_name": "Bélgica"
+        },
+        {
+          "teams_code": "IRN",
+          "teams_name": "Irã"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "a9bfe142-9d84-49bd-bed8-658ea88996e2",
+      "round_name": "NOVA ZELANDIA vs EGITO",
+      "round_order": null,
+      "round_index": null,
+      "local": "Vancouver - Canadá",
+      "round_date": "2026-06-21",
+      "time_round": "22:00:00",
+      "teams": [
+        {
+          "teams_code": "NZL",
+          "teams_name": "Nova Zelândia"
+        },
+        {
+          "teams_code": "EGY",
+          "teams_name": "Egito"
+        }
+      ],
+      "score": null,
+      "result": null
+    },
+    {
+      "round_uuid": "b30a4f6e-0e0c-42bf-9ff2-8581754470e3",
+      "round_name": "FRANÇA vs IRAQUE",
+      "round_order": null,
+      "round_index": null,
+      "local": "Philadelphia - EUA",
+      "round_date": "2026-06-22",
+      "time_round": "18:00:00",
+      "teams": [
+        {
+          "teams_code": "FRA",
+          "teams_name": "França"
+        },
+        {
+          "teams_code": "IRQ",
+          "teams_name": "Iraque"
+        }
+      ],
+      "score": null,
+      "result": null
+    }
+  ]
+}

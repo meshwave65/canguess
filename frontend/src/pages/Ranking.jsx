@@ -1,240 +1,459 @@
 import { useEffect, useState } from "react";
-import { supabase } from "./admin/lib/supabase";
 
 export default function Ranking() {
-  const [dados, setDados] = useState([]);
-  const [engine, setEngine] = useState(null);
-  const [rounds, setRounds] = useState([]);
 
-  async function load() {
-    try {
-      const res = await fetch("/data/bolao.json");
-      if (!res.ok) throw new Error("Falha ao carregar bolao.json");
+  const [event, setEvent] = useState(null);
+  const [predicts, setPredicts] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-      const data = await res.json();
+  const code = new URLSearchParams(window.location.search).get("code");
 
-      setEngine(data);
-      setRounds(data.rounds || []);
-
-      const eventId = data.event_uuid || data.id;
-
-      const [{ data: bolao }, { data: users }] = await Promise.all([
-        supabase
-          .from("predicts")
-          .select("*")
-          .eq("event_uuid", eventId)
-          .eq("status", "validado"),
-
-        supabase.from("users").select("id, user_name"),
-      ]);
-
-      if (!bolao) return;
-
-      const userMap = Object.fromEntries(
-        (users || []).map((u) => [u.id, u.user_name])
-      );
-
-      const grouped = {};
-
-      for (const item of bolao) {
-        const index = item.round_index - 1;
-
-        const round = data.rounds?.[index];
-
-        const isFinished =
-          round?.status === "encerrado" ||
-          round?.status === "disputa penaltis";
-
-        if (!grouped[item.user_uuid]) {
-          grouped[item.user_uuid] = {
-            user_uuid: item.user_uuid,
-            user_name: userMap[item.user_uuid] || "-",
-            predictions: Array(data.rounds.length).fill(""),
-            pontos: 0,
-          };
-        }
-
-        grouped[item.user_uuid].predictions[index] = item.prediction;
-
-        if (
-          isFinished &&
-          round?.result &&
-          item.prediction === round.result
-        ) {
-          grouped[item.user_uuid].pontos += 1;
-        }
-      }
-
-      const ranking = Object.values(grouped).sort((a, b) => {
-        if (b.pontos !== a.pontos) return b.pontos - a.pontos;
-        return a.user_name.localeCompare(b.user_name);
-      });
-
-      setDados(ranking);
-
-    } catch (err) {
-      console.error("Erro ranking:", err);
-    }
-  }
 
   useEffect(() => {
-    load();
-  }, []);
 
-  // 🔒 BLOQUEIO DO RANKING
-  if (engine && engine.is_open === true) {
-    return (
-      <div style={{ padding: 20, textAlign: "center", color: "#666" }}>
-        🔒 Ranking ainda não disponível. Ele será liberado após o encerramento das apostas.
-      </div>
+    async function load() {
+
+      try {
+
+        const eventRes = await fetch(
+          `/data/${code}.event.json?ts=${Date.now()}`
+        );
+
+        if (!eventRes.ok)
+          throw new Error("event.json não encontrado");
+
+
+        const eventData = await eventRes.json();
+
+        setEvent(eventData);
+
+
+
+        const predRes = await fetch(
+          `/data/${code}.predicts.json?ts=${Date.now()}`
+        );
+
+        if (!predRes.ok)
+          throw new Error("predicts.json não encontrado");
+
+
+        const predData = await predRes.json();
+
+        setPredicts(predData);
+
+
+      } catch(err){
+
+        console.error(err);
+        setError(err.message);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    }
+
+
+    if(code)
+      load();
+
+
+  },[code]);
+
+
+
+  if(loading)
+    return <div style={box}>Carregando Ranking...</div>;
+
+
+  if(error)
+    return <div style={{...box,color:"red"}}>{error}</div>;
+
+
+  if(!event || !predicts)
+    return <div style={box}>Sem dados</div>;
+
+
+
+  /*
+    Mantém ordem oficial da competição
+  */
+
+  const rounds = [...(event.rounds || [])]
+    .sort(
+      (a,b)=>
+        Number(a.round_order || 0) -
+        Number(b.round_order || 0)
     );
-  }
+
+
+
+  /*
+     NÃO ordenar aqui.
+     Engine já entrega a classificação correta.
+  */
+
+  const ranking = predicts.users || [];
+
+
 
   return (
-    <div style={{ padding: 10 }}>
 
-      {/* HEADER */}
-      <div style={headerBox}>
-        <div style={{ fontSize: 20, fontWeight: "bold" }}>
-          {engine?.event_name || "EVENTO"}
-        </div>
+    <div style={{
+      padding:20,
+      maxWidth:1400,
+      margin:"0 auto"
+    }}>
 
-        <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
-          Workspace {engine?.workspace_name || "-"}
-        </div>
+
+      {/* CABEÇALHO */}
+
+      <h1 style={{
+        textAlign:"center",
+        color:"#0B3C49",
+        marginBottom:5
+      }}>
+        {event.event_name || "Evento"}
+      </h1>
+
+
+      <h3 style={{
+        textAlign:"center",
+        margin:0,
+        color:"#555"
+      }}>
+        Workspace {event.workspace_name || "-"}
+      </h3>
+
+
+      <div style={{
+        textAlign:"center",
+        marginTop:8,
+        marginBottom:25,
+        color:"#777"
+      }}>
+        Event Code: {event.code}
       </div>
 
-      {/* JOGOS DA RODADA */}
-      <h3 style={{ marginTop: 20 }}>JOGOS DA RODADA</h3>
 
-      <div style={{ overflowX: "auto" }}>
-        <table style={tableStyle}>
-          <thead>
-            <tr>
-              <th style={th}>JOGO</th>
-              <th style={th}>DATA</th>
-              <th style={th}>HORA</th>
-              <th style={th}>LOCAL</th>
-              <th style={th}>PLACAR</th>
-              <th style={th}>RESULT</th>
-            </tr>
-          </thead>
 
-          <tbody>
-            {rounds.map((r, i) => (
-              <tr key={i}>
-                <td style={td}>{r.round_name}</td>
-                <td style={tdCenter}>{r.round_date || "-"}</td>
-                <td style={tdCenter}>{r.time_round || "-"}</td>
-                <td style={td}>{r.local || "-"}</td>
-                <td style={tdCenter}>{r.score || "-"}</td>
-                <td style={tdCenter}><b>{r.result || "-"}</b></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
 
-      {/* RANKING */}
-      <h3 style={{ marginTop: 30 }}>RANKING</h3>
+      {/* =======================
+            JOGOS
+      ======================== */}
 
-      <div style={{ overflowX: "auto" }}>
-        <table style={tableStyle}>
+      <h3>Jogos da Rodada</h3>
 
-          <thead>
-            <tr>
-              <th rowSpan={4} style={th}>USUÁRIO</th>
-              <th rowSpan={4} style={th}>PTS</th>
 
-              {rounds.map((r, i) => (
-                <th key={i} style={th}>
-                  {r.parts?.[0]?.team_code || "-"}
-                </th>
-              ))}
-            </tr>
+      <table style={table}>
 
-            <tr>
-              {rounds.map((_, i) => (
-                <th key={i} style={th}>vs</th>
-              ))}
-            </tr>
+        <thead>
 
-            <tr>
-              {rounds.map((r, i) => (
-                <th key={i} style={th}>
-                  {r.parts?.[1]?.team_code || "-"}
-                </th>
-              ))}
-            </tr>
+          <tr style={head}>
 
-            <tr>
-              {rounds.map((r, i) => (
-                <th key={i} style={th}>
-                  {r.score || "-"}
-                </th>
-              ))}
+            <th>Jogo</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Local</th>
+            <th>Placar</th>
+            <th>Resultado</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        {
+          rounds.map((r,i)=>(
+
+            <tr key={i}>
+
+              <td style={cell}>
+                {r.round_name}
+              </td>
+
+              <td style={cellCenter}>
+                {r.round_date || "-"}
+              </td>
+
+              <td style={cellCenter}>
+                {r.time_round || "-"}
+              </td>
+
+
+              <td style={cell}>
+                {r.local || "-"}
+              </td>
+
+
+              <td style={cellCenter}>
+                {r.score || "-"}
+              </td>
+
+
+              <td style={cellCenter}>
+                <b>{r.result || "-"}</b>
+              </td>
+
             </tr>
 
-          </thead>
+          ))
+        }
 
-          <tbody>
-            {dados.map((user) => (
-              <tr key={user.user_uuid}>
-                <td style={td}>{user.user_name}</td>
-                <td style={tdCenter}><b>{user.pontos}</b></td>
+        </tbody>
 
-                {rounds.map((r, i) => {
-                  const pick = user.predictions[i];
-                  const ok = pick === r.result;
+      </table>
 
-                  return (
-                    <td key={i} style={{ ...tdCenter, fontSize: 14 }}>
+
+
+
+
+      {/* =======================
+            RANKING
+      ======================== */}
+
+
+      <h3 style={{marginTop:35}}>
+        Ranking
+      </h3>
+
+
+
+      <div style={{overflowX:"auto"}}>
+
+      <table style={table}>
+
+
+        <thead>
+
+
+          <tr style={head}>
+
+
+            <th>
+              Pos
+            </th>
+
+
+            <th>
+              Participante
+            </th>
+
+
+            <th>
+              Pontos
+            </th>
+
+
+
+            {
+              rounds.map((r,i)=>{
+
+
+                const parts = r.parts || [];
+
+
+                const team1 =
+                  parts[0]?.teams?.teams_code ||
+                  parts[0]?.teams_code ||
+                  "-";
+
+
+                const team2 =
+                  parts[1]?.teams?.teams_code ||
+                  parts[1]?.teams_code ||
+                  "-";
+
+
+                return (
+
+                  <th key={i}>
+
+                    <div>
+                      {team1}
+                    </div>
+
+                    <div style={{
+                      fontSize:11
+                    }}>
+                      vs
+                    </div>
+
+                    <div>
+                      {team2}
+                    </div>
+
+                    <div style={{
+                      marginTop:4,
+                      fontSize:11
+                    }}>
+                      {r.score || "-"}
+                    </div>
+
+
+                  </th>
+
+                )
+
+              })
+            }
+
+
+          </tr>
+
+        </thead>
+
+
+
+        <tbody>
+
+
+        {
+
+        ranking.map((user,idx)=>(
+
+
+          <tr key={user.user_uuid}>
+
+
+            <td style={cellCenter}>
+              {user.position || idx+1}
+            </td>
+
+
+            <td style={{
+              ...cell,
+              fontWeight:600
+            }}>
+              {user.user_name}
+            </td>
+
+
+
+            <td style={{
+              ...cellCenter,
+              fontSize:18,
+              fontWeight:"bold",
+              color:"#f97316"
+            }}>
+              {user.points}
+            </td>
+
+
+
+
+            {
+              rounds.map((r,i)=>{
+
+
+                const pick =
+                  user.predictions?.[r.round_index];
+
+
+                const ok =
+                  pick &&
+                  pick === r.result;
+
+
+
+                return (
+
+                  <td key={i}
+                    style={cellCenter}
+                  >
+
+                    <span style={{
+                      padding:"4px 10px",
+                      borderRadius:6,
+                      background:
+                        ok
+                        ? "#dcfce7"
+                        : "#f1f5f9",
+                      fontWeight:700
+                    }}>
+
                       {pick || "-"}
-                      {ok && <span style={{ fontSize: 16 }}> ⚽</span>}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
 
-        </table>
+                      {
+                        ok &&
+                        <span style={{
+                          marginLeft:5
+                        }}>
+                          ⚽
+                        </span>
+                      }
+
+                    </span>
+
+
+                  </td>
+
+                )
+
+
+              })
+            }
+
+
+
+          </tr>
+
+
+        ))
+
+        }
+
+
+        </tbody>
+
+
+      </table>
+
+
       </div>
+
+
     </div>
+
   );
+
 }
 
-/* ===================== STYLES ===================== */
 
-const headerBox = {
-  background: "#0B3C49",
-  color: "#fff",
-  padding: "12px 14px",
-  borderRadius: 8,
-  textAlign: "center",
+
+
+const box={
+  padding:40,
+  textAlign:"center",
+  fontSize:18
 };
 
-const tableStyle = {
-  borderCollapse: "collapse",
-  width: "100%",
-  fontSize: 12,
+
+const table={
+  width:"100%",
+  borderCollapse:"collapse",
+  marginTop:10
 };
 
-const th = {
-  border: "1px solid #ddd",
-  padding: 6,
-  background: "#f3f4f6",
-  textAlign: "center",
-  verticalAlign: "middle",
+
+const head={
+  background:"#0B3C49",
+  color:"white"
 };
 
-const td = {
-  border: "1px solid #ddd",
-  padding: 6,
+
+const cell={
+  padding:8,
+  borderBottom:"1px solid #eee"
 };
 
-const tdCenter = {
-  border: "1px solid #ddd",
-  padding: 6,
-  textAlign: "center",
+
+const cellCenter={
+  ...cell,
+  textAlign:"center"
 };

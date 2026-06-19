@@ -1,0 +1,434 @@
+{
+  "code": "R410M9SQ",
+  "event_uuid": "dc0631b5-c7aa-4294-92e6-6d2fcc78f082",
+  "event_name": "BOLÃO DO ZÉ COPA 2026",
+  "workspace_name": "Zé Bangu",
+  "phase_uuid": "4fc838a9-5785-443f-b074-21dde132a2f0",
+  "rounds": [
+    {
+      "round_uuid": "2feb34c4-06fe-4f8f-b051-1459395ea8e7",
+      "round_name": "QATAR X SUIÇA",
+      "round_order": 1,
+      "round_index": 1,
+      "local": "San Francisco (EUA)",
+      "round_date": "2026-06-13",
+      "time_round": "16:00:00",
+      "score": "1-1",
+      "result": "X",
+      "parts": [
+        {
+          "id": "063e1ef3-d52a-406e-b61d-ab4faafd4477",
+          "round_uuid": "2feb34c4-06fe-4f8f-b051-1459395ea8e7",
+          "team_uuid": "10420458-8c43-41f0-a9c2-01917a2382ba",
+          "value": "1",
+          "created_at": "2026-06-12T05:18:01.675746",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "QAT",
+            "teams_name": "Catar"
+          }
+        },
+        {
+          "id": "4807eb3b-cd1d-495a-b4db-abc82af7cb70",
+          "round_uuid": "2feb34c4-06fe-4f8f-b051-1459395ea8e7",
+          "team_uuid": "78ead2d2-9f7a-4d02-8170-ec48ba9c874b",
+          "value": "1",
+          "created_at": "2026-06-12T05:30:13.822597",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "SUI",
+            "teams_name": "Suíça"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "c0275b0a-9082-42f3-865a-512d0b2f2865",
+      "round_name": "BRASIL X MARROCOS",
+      "round_order": 2,
+      "round_index": 2,
+      "local": "Nova York (EUA)",
+      "round_date": "2026-06-13",
+      "time_round": "19:00:00",
+      "score": "1-1",
+      "result": "X",
+      "parts": [
+        {
+          "id": "6aeba072-5d8f-4a19-991e-5889152f954f",
+          "round_uuid": "c0275b0a-9082-42f3-865a-512d0b2f2865",
+          "team_uuid": "1603705a-6977-4261-8c18-c4cce4fe8830",
+          "value": "1",
+          "created_at": "2026-06-12T05:31:45.810413",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "BRA",
+            "teams_name": "Brasil"
+          }
+        },
+        {
+          "id": "fac89381-fd5a-47d6-beb5-d0916e433009",
+          "round_uuid": "c0275b0a-9082-42f3-865a-512d0b2f2865",
+          "team_uuid": "fcc5e78f-6f00-4748-bade-b3c1d8044f47",
+          "value": "1",
+          "created_at": "2026-06-12T05:18:37.818532",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "MAR",
+            "teams_name": "Marrocos"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "3a9959ef-b4c6-429e-85c1-e11bfb727992",
+      "round_name": "HAITI X ESCOCIA",
+      "round_order": 3,
+      "round_index": 3,
+      "local": "Boston (EUA)",
+      "round_date": "2026-06-13",
+      "time_round": "22:00:00",
+      "score": "0-1",
+      "result": "2",
+      "parts": [
+        {
+          "id": "50127740-1ada-4238-8ea2-3b8aa3b3fc9b",
+          "round_uuid": "3a9959ef-b4c6-429e-85c1-e11bfb727992",
+          "team_uuid": "053ea4ca-4943-4aae-8e16-f5dc9746540d",
+          "value": "0",
+          "created_at": "2026-06-13T11:27:20.586273",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "HAI",
+            "teams_name": "Haiti"
+          }
+        },
+        {
+          "id": "43cf12d5-86ed-439e-bd49-5994c1e0df12",
+          "round_uuid": "3a9959ef-b4c6-429e-85c1-e11bfb727992",
+          "team_uuid": "ec429727-9816-435f-bdef-c51081c5d930",
+          "value": "1",
+          "created_at": "2026-06-13T11:27:20.586273",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "SCO",
+            "teams_name": "Escócia"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "91564d20-9df1-451a-bfe2-4b0f7a54c474",
+      "round_name": "AUSTRALIA X TURQUIA",
+      "round_order": 4,
+      "round_index": 4,
+      "local": "Vancouver (Canadá)",
+      "round_date": "2026-06-13",
+      "time_round": "01:00:00",
+      "score": "2-0",
+      "result": "1",
+      "parts": [
+        {
+          "id": "96d7be95-f70f-414c-82e7-707a5ec4f397",
+          "round_uuid": "91564d20-9df1-451a-bfe2-4b0f7a54c474",
+          "team_uuid": "05252ddf-27ba-4acf-b195-c8e4fd67eb00",
+          "value": "2",
+          "created_at": "2026-06-13T11:27:56.933113",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "AUS",
+            "teams_name": "Austrália"
+          }
+        },
+        {
+          "id": "f55fa33b-9515-4ee4-b595-07b60736a50f",
+          "round_uuid": "91564d20-9df1-451a-bfe2-4b0f7a54c474",
+          "team_uuid": "e9d3ce02-7999-40fd-91a8-a576d162c0f4",
+          "value": "0",
+          "created_at": "2026-06-13T11:27:56.933113",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "TUR",
+            "teams_name": "Turquia"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "f1a94c0b-aaf3-4eb5-b17c-bd2672de8dea",
+      "round_name": "ALEMANHA X CURAÇAO",
+      "round_order": 5,
+      "round_index": 5,
+      "local": "Houston (EUA)",
+      "round_date": "2026-06-14",
+      "time_round": "14:00:00",
+      "score": "7-1",
+      "result": "1",
+      "parts": [
+        {
+          "id": "904d594d-72f0-4674-b7d4-9d5a916be45a",
+          "round_uuid": "f1a94c0b-aaf3-4eb5-b17c-bd2672de8dea",
+          "team_uuid": "fa768174-0011-483e-b27a-9629786c8cec",
+          "value": "7",
+          "created_at": "2026-06-13T11:28:28.796601",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "GER",
+            "teams_name": "Alemanha"
+          }
+        },
+        {
+          "id": "e4128f1e-a8c2-405d-8217-2b0910771d8d",
+          "round_uuid": "f1a94c0b-aaf3-4eb5-b17c-bd2672de8dea",
+          "team_uuid": "c321462a-6fa5-4ab8-a776-3b440e28b9f5",
+          "value": "1",
+          "created_at": "2026-06-13T11:28:28.796601",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "CUÇ",
+            "teams_name": "Curaçao"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "72b19a8d-aea3-402b-bed7-34fc57a53966",
+      "round_name": "HOLANDA X JAPAO",
+      "round_order": 6,
+      "round_index": 6,
+      "local": "Dallas (EUA)",
+      "round_date": "2026-06-14",
+      "time_round": "17:00:00",
+      "score": "2-2",
+      "result": "X",
+      "parts": [
+        {
+          "id": "cfed4c43-7358-4ff5-897c-2abd12547b37",
+          "round_uuid": "72b19a8d-aea3-402b-bed7-34fc57a53966",
+          "team_uuid": "ba1f442e-11b7-4050-80fa-a5de627d08e1",
+          "value": "2",
+          "created_at": "2026-06-13T11:29:03.7568",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "NED",
+            "teams_name": "Holanda"
+          }
+        },
+        {
+          "id": "cf9858c1-2b58-4ff2-9191-156fa942510b",
+          "round_uuid": "72b19a8d-aea3-402b-bed7-34fc57a53966",
+          "team_uuid": "16138cf4-b107-4653-ad1d-3b55813686fa",
+          "value": "2",
+          "created_at": "2026-06-13T11:29:03.7568",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "JPN",
+            "teams_name": "Japão"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "d879495c-2377-4b3e-8a6a-4e4092e8fa8c",
+      "round_name": "COSTA DO MARFIM x EQUADOR",
+      "round_order": 7,
+      "round_index": 7,
+      "local": "Filadélfia (EUA)",
+      "round_date": "2026-06-14",
+      "time_round": "20:00:00",
+      "score": "1-0",
+      "result": "1",
+      "parts": [
+        {
+          "id": "2bad7e82-0503-4b19-a0e8-da8e05c62d15",
+          "round_uuid": "d879495c-2377-4b3e-8a6a-4e4092e8fa8c",
+          "team_uuid": "78f1d27c-bd4e-4bf5-a47f-15c1e81f613d",
+          "value": "1",
+          "created_at": "2026-06-13T11:29:31.441879",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "CIV",
+            "teams_name": "Costa do Marfim"
+          }
+        },
+        {
+          "id": "b44f79a3-dd94-4504-9453-7f2538c5bb1b",
+          "round_uuid": "d879495c-2377-4b3e-8a6a-4e4092e8fa8c",
+          "team_uuid": "766a38e4-cd4e-4975-9947-813a491636e7",
+          "value": "0",
+          "created_at": "2026-06-13T11:29:31.441879",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "ECU",
+            "teams_name": "Equador"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "b7f64ea5-8198-4f41-9f85-3445b7cac321",
+      "round_name": "SUECIA X TUNISIA",
+      "round_order": 8,
+      "round_index": 8,
+      "local": "Monterrey (México)",
+      "round_date": "2026-06-14",
+      "time_round": "23:00:00",
+      "score": "5-1",
+      "result": "1",
+      "parts": [
+        {
+          "id": "e9ded816-2f2c-40ed-bbe1-507b7fd2ab17",
+          "round_uuid": "b7f64ea5-8198-4f41-9f85-3445b7cac321",
+          "team_uuid": "63600c58-7af2-4221-9b90-a064c28eecd3",
+          "value": "5",
+          "created_at": "2026-06-13T11:30:45.344131",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "SWD",
+            "teams_name": "Suécia"
+          }
+        },
+        {
+          "id": "19c1df5c-60bb-4a64-96f7-67884c45160e",
+          "round_uuid": "b7f64ea5-8198-4f41-9f85-3445b7cac321",
+          "team_uuid": "4c90bf90-ec99-419e-9da1-d6ef30568ba6",
+          "value": "1",
+          "created_at": "2026-06-13T11:30:45.344131",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "TUN",
+            "teams_name": "Tunísia"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "b6564a95-ce7c-4e8c-aede-ead834aadde5",
+      "round_name": "ESPANHA X CABO VERDE",
+      "round_order": 9,
+      "round_index": 9,
+      "local": "Atlanta (EUA)",
+      "round_date": "2026-06-15",
+      "time_round": "13:00:00",
+      "score": "0-0",
+      "result": "X",
+      "parts": [
+        {
+          "id": "89ec2e2d-d59f-4f61-aeb4-c9134945a2c7",
+          "round_uuid": "b6564a95-ce7c-4e8c-aede-ead834aadde5",
+          "team_uuid": "55a8df6f-5b9e-4744-aed9-c51d6346e0e2",
+          "value": "0",
+          "created_at": "2026-06-13T11:31:15.718856",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "ESP",
+            "teams_name": "Espanha"
+          }
+        },
+        {
+          "id": "3378a854-a284-4555-8926-5b29352aec85",
+          "round_uuid": "b6564a95-ce7c-4e8c-aede-ead834aadde5",
+          "team_uuid": "f9bbbf9f-6375-4224-add5-454a2191166f",
+          "value": "0",
+          "created_at": "2026-06-13T11:31:15.718856",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "CPV",
+            "teams_name": "Cabo Verde"
+          }
+        }
+      ]
+    },
+    {
+      "round_uuid": "4b362a37-84ed-422a-99cb-7652c110c244",
+      "round_name": "BELGICA X EGITO",
+      "round_order": 10,
+      "round_index": 10,
+      "local": "Seattle (EUA)",
+      "round_date": "2026-06-15",
+      "time_round": "16:00:00",
+      "score": "1-1",
+      "result": "X",
+      "parts": [
+        {
+          "id": "3001e69f-f17d-499b-8144-92b4678cbd95",
+          "round_uuid": "4b362a37-84ed-422a-99cb-7652c110c244",
+          "team_uuid": "66ad62e8-6487-4ca9-bc23-992ddaf85f94",
+          "value": "1",
+          "created_at": "2026-06-13T11:31:40.563793",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "BEL",
+            "teams_name": "Bélgica"
+          }
+        },
+        {
+          "id": "4d2387b6-bec3-4fa1-88c1-9a91fce1afe9",
+          "round_uuid": "4b362a37-84ed-422a-99cb-7652c110c244",
+          "team_uuid": "95b4a4e1-6aae-415c-9fae-4be734a45200",
+          "value": "1",
+          "created_at": "2026-06-13T11:31:40.563793",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "EGY",
+            "teams_name": "Egito"
+          }
+        },
+        {
+          "id": "2ac354b5-ffae-4783-ac7d-4ca1a02cce06",
+          "round_uuid": "4b362a37-84ed-422a-99cb-7652c110c244",
+          "team_uuid": null,
+          "value": null,
+          "created_at": "2026-06-13T11:31:40.762529",
+          "sequence_part": null,
+          "teams": null
+        },
+        {
+          "id": "609b4221-5ce0-4d86-90f1-5ea46609c5ef",
+          "round_uuid": "4b362a37-84ed-422a-99cb-7652c110c244",
+          "team_uuid": null,
+          "value": null,
+          "created_at": "2026-06-13T11:31:40.762529",
+          "sequence_part": null,
+          "teams": null
+        }
+      ]
+    },
+    {
+      "round_uuid": "d3550688-6ca3-422a-a94b-498fb8f15a8e",
+      "round_name": "ARABIA SAUDITA x URUGUAI",
+      "round_order": 11,
+      "round_index": 11,
+      "local": "Miami (EUA)",
+      "round_date": "2026-06-15",
+      "time_round": "19:00:00",
+      "score": "1-1",
+      "result": "X",
+      "parts": [
+        {
+          "id": "d5e185da-f9c4-4654-b71d-b1c4e1e1ead9",
+          "round_uuid": "d3550688-6ca3-422a-a94b-498fb8f15a8e",
+          "team_uuid": "62c7c355-f9a9-4275-bff6-193381df22dd",
+          "value": "1",
+          "created_at": "2026-06-13T11:32:03.573904",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "KSA",
+            "teams_name": "Arábia Saudita"
+          }
+        },
+        {
+          "id": "d7158d1c-3915-4ee8-a219-663d209dcdf5",
+          "round_uuid": "d3550688-6ca3-422a-a94b-498fb8f15a8e",
+          "team_uuid": "2c0a8954-9806-412c-87d9-a46dfe60f489",
+          "value": "1",
+          "created_at": "2026-06-13T11:32:03.573904",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "URU",
+            "teams_name": "Uruguai"
+          }
+        }
+      ]
+    }
+  ]
+}

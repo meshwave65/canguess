@@ -1,48 +1,132 @@
 import { supabase } from "../pages/admin/lib/supabase";
 
+
 // =========================
-// FIND USER
+// UTIL
 // =========================
+
+function cleanPhone(phone) {
+  return (phone || "").replace(/\D/g, "");
+}
+
+
+function randomCode(size = 8) {
+  const chars =
+    "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  let result = "";
+
+  for (let i = 0; i < size; i++) {
+    result += chars[
+      Math.floor(Math.random() * chars.length)
+    ];
+  }
+
+  return result;
+}
+
+
+// =========================
+// FIND REAL USER
+// =========================
+
 export async function findUserByPhone(phone) {
-  const clean = phone.replace(/\D/g, "");
 
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("phone", clean)
-    .maybeSingle();
+  const clean = cleanPhone(phone);
 
-  if (error) return null;
+  const { data, error } =
+    await supabase
+      .from("users")
+      .select("*")
+      .eq("phone", clean)
+      .maybeSingle();
+
+
+  if (error) {
+    console.error(
+      "findUserByPhone:",
+      error
+    );
+    return null;
+  }
+
+
   return data;
 }
 
+
+
 // =========================
-// CREATE GUEST USER (SEM AUTH)
+// CREATE GUEST USER
 // =========================
-export async function createUser(input) {
-  const cleanPhone = (input.phone || "").replace(/\D/g, "");
+
+export async function createGuestUser(input) {
+
+  const clean = cleanPhone(input.phone);
+
+
+  const uuidCode = randomCode(8);
+
 
   const payload = {
-    user_name: input.userName || `user_${cleanPhone.slice(0, 6)}`,
-    full_name: input.fullName || "Guest",
-    phone: cleanPhone,
-    email: input.email || null,
 
-    // IMPORTANTÍSSIMO:
-    password_hash: null,
-    is_guest: true,
+    full_name:
+      input.fullName ||
+      "CanGuest",
+
+
+    user_name:
+      input.userName ||
+      `user_${uuidCode}`,
+
+
+    phone:
+      clean,
+
+
+    email:
+      input.email ||
+      `guest_${uuidCode}@canguess.local`,
+
+
+    status:
+      "active"
+
   };
 
-  const { data, error } = await supabase
-    .from("users")
-    .insert(payload)
-    .select()
-    .single();
+
+
+  const { data, error } =
+    await supabase
+      .from("guest_users")
+      .insert(payload)
+      .select()
+      .single();
+
+
 
   if (error) {
-    console.error("createUser error:", error);
-    return { ok: false, error };
+
+    console.error(
+      "createGuestUser:",
+      error
+    );
+
+    return {
+      ok:false,
+      error
+    };
+
   }
 
-  return { ok: true, user: data };
+
+
+  return {
+    ok:true,
+    user:data
+  };
+
 }
+
+
+
