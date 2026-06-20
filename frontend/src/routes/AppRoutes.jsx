@@ -37,7 +37,8 @@ export default function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/palpites" element={<Predictions />} />
         <Route path="/ranking" element={<Ranking />} />
-
+     {/* ================= REGISTER ================= */}
+      <Route path="/register" element={<Register />} />
         {/* ✅ FIX PRINCIPAL */}
         <Route path="/events" element={<EventHome />} />
       </Route>

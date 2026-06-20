@@ -20,11 +20,11 @@ export default function Home() {
     async function loadWorkspaces() {
       const { data, error } = await supabase
         .from("workspaces")
-        .select("id, name, user_uuid");
+        .select("id, workspace_name, user_uuid");
 
       if (!error) {
         setWorkspaces([
-          { id: "all", name: "All", user_uuid: null },
+          { id: "all", workspace_name: "All", user_uuid: null },
           ...(data || [])
         ]);
       }
@@ -42,13 +42,13 @@ export default function Home() {
       if (workspaceId === "all") {
         const { data } = await supabase
           .from("events")
-          .select("id, name, workspace_uuid");
+          .select("id, event_name, workspace_uuid");
 
         setEvents(data || []);
       } else {
         const { data } = await supabase
           .from("events")
-          .select("id, name, workspace_uuid")
+          .select("id, event_name, workspace_uuid")
           .eq("workspace_uuid", workspaceId);
 
         setEvents(data || []);

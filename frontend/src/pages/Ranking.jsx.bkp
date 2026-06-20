@@ -1,0 +1,42 @@
+import { useEvent } from "../contexts/EventContext";
+
+export default function Ranking() {
+export default function Ranking() {
+  console.log("ENTROU NO RANKING");
+
+  return (
+    <div>
+      <h1>TESTE RANKING</h1>
+    </div>
+  );
+}
+  const { currentEvent, loading } = useEvent();
+
+  if (loading) {
+    return <div>Carregando evento...</div>;
+  }
+
+  if (!currentEvent) {
+    return (
+      <div>
+        Selecione um evento para acessar o ranking.
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h1>Ranking</h1>
+
+      <p>
+        Evento:
+        {currentEvent.event_code}
+      </p>
+
+      <p>
+        ID:
+        {currentEvent.id}
+      </p>
+    </div>
+  );
+}

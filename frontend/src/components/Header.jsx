@@ -53,6 +53,7 @@ export default function Header() {
 
   const events = [
     { workspace: "Zé Bangu", code: "R410M9SQ" },
+    { workspace: "Real Shape", code: "J9T6BFE8" },
     { workspace: "CanGuess Oficial", code: "CANGUESS01" },
     { workspace: "Amigos da Bola", code: "ADB2026" },
   ];

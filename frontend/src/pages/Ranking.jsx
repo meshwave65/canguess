@@ -352,7 +352,7 @@ export default function Ranking() {
 
 
                 const pick =
-                  user.predictions?.[r.round_index];
+                  user.predictions?.[i];
 
 
                 const ok =
