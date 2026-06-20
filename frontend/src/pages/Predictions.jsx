@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../pages/admin/lib/supabase";
-import {
-  findUserByPhone,
-  createGuestUser,
-} from "../services/userService";
+import { findUserByPhone, createGuestUser } from "../services/userService";
 import { theme } from "../styles/theme";
 
 export default function Predictions() {
-
   const [engine, setEngine] = useState(null);
   const [rounds, setRounds] = useState([]);
 
   const [step, setStep] = useState("form");
-
   const [msg, setMsg] = useState("");
 
   const [fullName, setFullName] = useState("");
@@ -21,17 +16,18 @@ export default function Predictions() {
   const [email, setEmail] = useState("");
 
   const [user, setUser] = useState(null);
-
   const [bets, setBets] = useState({});
 
   const [showModal, setShowModal] = useState(false);
-
-  // ✅ NOVO: modal de sucesso
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const WORKSPACE_ID = engine?.workspace_uuid;
+  const [showGuestHint, setShowGuestHint] = useState(true);
+
   const EVENT_ID = engine?.event_uuid;
 
+  // ======================
+  // LOAD EVENT (HARDCORE OK POR ENQUANTO)
+  // ======================
   useEffect(() => {
     async function load() {
       const data = await fetch("/data/bolao.json").then(r => r.json());
@@ -53,6 +49,9 @@ export default function Predictions() {
     }));
   }
 
+  // ======================
+  // USER VALIDATION
+  // ======================
   async function validarUsuario() {
     const cleanPhone = formatPhone(phone);
 
@@ -61,7 +60,7 @@ export default function Predictions() {
       return;
     }
 
-    setMsg("Validando usuário...");
+    setMsg("Validando...");
 
     let currentUser = await findUserByPhone(cleanPhone);
 
@@ -74,7 +73,7 @@ export default function Predictions() {
       });
 
       if (!result.ok) {
-        setMsg("Erro criando convidado");
+        setMsg("Erro ao criar usuário");
         return;
       }
 
@@ -86,40 +85,9 @@ export default function Predictions() {
     setMsg("");
   }
 
-  function buildMessage() {
-    const now = new Date().toLocaleString("pt-BR");
-
-    return `🎯 PALPITE REGISTRADO
-
-👤 Nome:
-${user?.full_name || "-"}
-
-🔖 Username:
-${user?.user_name || "-"}
-
-📱 Telefone:
-${user?.phone || "-"}
-
-📧 Email:
-${user?.email || "-"}
-
-🕒 Data:
-${now}
-
-🏆 Evento:
-${engine?.event_name || "-"}
-
-ID:
-${EVENT_ID}
-
-📊 PALPITES:
-
-${rounds.map((r, i) =>
-  `${r.round_name} → ${bets[i] || "-"}`
-).join("\n")}
-`;
-  }
-
+  // ======================
+  // SAVE BETS
+  // ======================
   async function confirmarEnvio() {
     try {
       setMsg("Salvando...");
@@ -142,16 +110,11 @@ ${rounds.map((r, i) =>
       if (error) throw error;
 
       setShowModal(false);
-
-      // ❌ antigo: setStep("done")
-      // ❌ antigo: setMsg("✔ Palpites enviados!")
-
-      // ✅ novo fluxo forte
       setShowSuccess(true);
 
     } catch (e) {
       console.error(e);
-      setMsg("❌ Erro ao salvar palpites");
+      setMsg("Erro ao salvar palpites");
     }
   }
 
@@ -162,140 +125,129 @@ ${rounds.map((r, i) =>
   return (
     <div style={styles.page}>
 
-      {/* HEADER */}
-      <div style={styles.header}>
-        <div style={styles.headerTitle}>
-          {engine.event_name}
+      <div style={styles.card}>
+
+        {/* HEADER */}
+        <div style={styles.header}>
+          <div style={styles.headerTitle}>{engine.event_name}</div>
+          <div style={styles.headerTag}>{engine.workspace_name}</div>
         </div>
-        <div style={styles.headerTag}>
-          {engine.workspace_name}
-        </div>
+
+        {/* GUEST HINT */}
+        {showGuestHint && !user && (
+            <div style={styles.guestHint}>
+                Você pode jogar como visitante usando apenas telefone.<br />
+                Recomendamos criar conta para melhor experiência.<br />
+                Não leva nem 1 minuto e não vai mais ter de inserir estes dados a cada palpite.<br />
+                Clique em LOGIN e faça seu cadastro agora.<br />
+
+    <button align="center"
+      style={styles.smallBtn}
+      onClick={() => setShowGuestHint(false)}
+    >
+      OK
+    </button>
+  </div>
+)}
+
+        {/* FORM */}
+        {step === "form" && !user && (
+          <>
+            <input
+              style={styles.input}
+              placeholder="Nome"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+            />
+
+            <input
+              style={styles.input}
+              placeholder="Username"
+              value={userName}
+              onChange={e => setUserName(e.target.value)}
+            />
+
+            <input
+              style={styles.input}
+              placeholder="Telefone *"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+            />
+
+            <input
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+
+            <button style={styles.primaryBtn} onClick={validarUsuario}>
+              Continuar
+            </button>
+
+            {msg && <p style={styles.msg}>{msg}</p>}
+          </>
+        )}
+
+        {/* BETS */}
+        {step === "bets" && (
+          <>
+            <h3 style={styles.title}>Seus palpites</h3>
+
+            {rounds.map((r, i) => (
+              <div key={i} style={styles.round}>
+                <div style={styles.roundTitle}>{r.round_name}</div>
+
+                <div style={styles.options}>
+                  {["1", "X", "2"].map(v => (
+                    <label key={v} style={styles.option}>
+                      <input
+                        type="radio"
+                        checked={bets[i] === v}
+                        onChange={() => escolher(i, v)}
+                      />
+                      {v}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <button style={styles.primaryBtn} onClick={() => setShowModal(true)}>
+              Revisar e enviar
+            </button>
+          </>
+        )}
+
       </div>
 
-      {/* FORM */}
-      {step === "form" && (
-        <div style={styles.card}>
-          <h3 style={styles.title}>Participar do evento</h3>
-
-          <p style={styles.subtitle}>
-            Informe telefone para participar.
-          </p>
-
-          <input
-            style={styles.input}
-            placeholder="Nome (opcional)"
-            value={fullName}
-            onChange={e => setFullName(e.target.value)}
-          />
-
-          <input
-            style={styles.input}
-            placeholder="Username (opcional)"
-            value={userName}
-            onChange={e => setUserName(e.target.value)}
-          />
-
-          <input
-            style={styles.input}
-            placeholder="Telefone *"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
-          />
-
-          <input
-            style={styles.input}
-            placeholder="Email (opcional)"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
-
-          <button
-            style={styles.primaryBtn}
-            onClick={validarUsuario}
-          >
-            Continuar
-          </button>
-
-          {msg && <p style={styles.msg}>{msg}</p>}
-        </div>
-      )}
-
-      {/* BETS */}
-      {step === "bets" && (
-        <div style={styles.card}>
-          <h3 style={styles.title}>Seus palpites</h3>
-
-          {rounds.map((r, i) => (
-            <div key={i} style={styles.round}>
-              <div style={styles.roundTitle}>
-                {r.round_name}
-              </div>
-
-              <div style={styles.options}>
-                {["1", "X", "2"].map(v => (
-                  <label key={v} style={styles.option}>
-                    <input
-                      type="radio"
-                      checked={bets[i] === v}
-                      onChange={() => escolher(i, v)}
-                    />
-                    {v}
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          <button
-            style={styles.primaryBtn}
-            onClick={() => setShowModal(true)}
-          >
-            Revisar e enviar
-          </button>
-        </div>
-      )}
-
-      {/* CONFIRM MODAL */}
+      {/* MODAL */}
       {showModal && (
         <div style={styles.overlay}>
           <div style={styles.modalCard}>
-            <h3>Confirmar envio</h3>
-
             <pre style={styles.pre}>
-              {buildMessage()}
+              {rounds.map((r, i) =>
+                `${r.round_name} → ${bets[i] || "-"}`
+              ).join("\n")}
             </pre>
 
-            <button
-              style={styles.primaryBtn}
-              onClick={confirmarEnvio}
-            >
+            <button style={styles.primaryBtn} onClick={confirmarEnvio}>
               Confirmar
             </button>
 
-            <button
-              style={styles.secondaryBtn}
-              onClick={() => setShowModal(false)}
-            >
+            <button style={styles.secondaryBtn} onClick={() => setShowModal(false)}>
               Voltar
             </button>
           </div>
         </div>
       )}
 
-      {/* ✅ SUCCESS MODAL */}
+      {/* SUCCESS */}
       {showSuccess && (
         <div style={styles.overlay}>
           <div style={styles.modalCard}>
             <h2>✔ Palpites enviados</h2>
-
-            <p>
-              Seu registro foi confirmado com sucesso.
-            </p>
-
-            <button
-              style={styles.primaryBtn}
-              onClick={() => window.location.reload()}
-            >
+            <button style={styles.primaryBtn} onClick={() => window.location.reload()}>
               OK
             </button>
           </div>
@@ -307,136 +259,148 @@ ${rounds.map((r, i) =>
 }
 
 /* =========================
-   STYLES
+   STYLES (CONSISTENTE COM LOGIN)
 ========================= */
 
 const styles = {
-
   page: {
     minHeight: "100vh",
-    background: theme.colors.background,
-    padding: 12,
-    fontFamily: "Arial",
-    color: theme.colors.text
-  },
-
-  header: {
-    background: theme.colors.primary,
-    padding: 14,
-    borderRadius: 12,
-    color: "#fff"
-  },
-
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold"
-  },
-
-  headerTag: {
-    marginTop: 5,
-    fontSize: 12
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#0B3C49",
+    padding: 16,
   },
 
   card: {
-    background: theme.colors.card,
-    marginTop: 14,
-    padding: 16,
-    borderRadius: 12,
-    border: `1px solid ${theme.colors.border}`
+    width: 440,
+    background: "#fff",
+    borderRadius: 18,
+    padding: 20,
+    boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+  },
+
+  header: {
+    textAlign: "center",
+    marginBottom: 10,
+  },
+
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#0B3C49",
+  },
+
+  headerTag: {
+    fontSize: 12,
+    color: "#6b7280",
   },
 
   title: {
-    color: theme.colors.primary
-  },
-
-  subtitle: {
-    fontSize: 13,
-    color: theme.colors.muted
+    fontSize: 14,
+    fontWeight: "700",
+    marginBottom: 10,
+    color: "#0B3C49",
   },
 
   input: {
     width: "100%",
-    padding: 10,
+    padding: 12,
     marginBottom: 10,
-    borderRadius: 8,
-    border: `1px solid ${theme.colors.border}`
+    borderRadius: 10,
+    border: "1px solid #e5e7eb",
   },
 
   round: {
     padding: 10,
-    borderBottom: `1px solid ${theme.colors.border}`
+    borderBottom: "1px solid #eee",
   },
 
   roundTitle: {
     fontWeight: "bold",
-    marginBottom: 8
+    fontSize: 13,
   },
 
   options: {
     display: "flex",
-    gap: 15
+    gap: 12,
+    marginTop: 6,
   },
 
   option: {
     display: "flex",
-    gap: 5
+    gap: 6,
   },
 
   primaryBtn: {
     width: "100%",
-    marginTop: 14,
     padding: 12,
-    background: theme.colors.primary,
+    marginTop: 12,
+    background: "#f97316",
     color: "#fff",
     border: "none",
     borderRadius: 10,
     fontWeight: "bold",
-    cursor: "pointer"
   },
 
   secondaryBtn: {
     width: "100%",
-    marginTop: 8,
     padding: 12,
+    marginTop: 8,
+    background: "transparent",
+    border: "1px solid #0B3C49",
     borderRadius: 10,
-    background: "#fff",
-    border: `1px solid ${theme.colors.border}`
   },
 
   overlay: {
     position: "fixed",
     inset: 0,
-    background: "rgba(0,0,0,.45)",
+    background: "rgba(0,0,0,.5)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: 20
   },
 
   modalCard: {
-    background: theme.colors.card,
-    width: "100%",
-    maxWidth: 420,
+    width: 340,
+    background: "#fff",
     padding: 16,
-    borderRadius: 12,
-    maxHeight: "80vh",
-    overflow: "auto"
+    borderRadius: 14,
   },
 
   pre: {
-    whiteSpace: "pre-wrap",
     fontSize: 12,
-    background: theme.colors.background,
+    whiteSpace: "pre-wrap",
+  },
+
+  guestHint: {
+    fontSize: 12,
+    background: "#fff7ed",
     padding: 10,
-    borderRadius: 8
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+
+  smallBtn: {
+    marginTop: 10,
+    padding: 8,
+    fontSize: 12,
+    display: "block",
+    marginLeft: "auto",
+    marginRight: "auto",
+    background: "#0B3C49",
+    color: "#fff",
+    border: "none",
+    borderRadius: 6,
+    cursor: "pointer"
   },
 
   msg: {
     fontSize: 12,
-    marginTop: 10
+    marginTop: 10,
   },
 
   loading: {
-    padding: 20
+    color: "#fff",
   }
 };

@@ -1,11 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useEvent } from "../contexts/EventContext";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function BottomNav() {
   const navigate = useNavigate();
-  const { currentEvent } = useEvent();
+  const location = useLocation();
 
-  const eventCode = currentEvent?.code || currentEvent?.event_code;
+  // 🔥 pega sempre da URL
+  const params = new URLSearchParams(location.search);
+  const eventCode = params.get("code");
 
   return (
     <nav style={{
@@ -21,62 +22,42 @@ export default function BottomNav() {
       color: "#fff",
       boxShadow: "0 -2px 8px rgba(0,0,0,0.15)",
     }}>
-      
-      <div style={{ display: "flex", gap: "14px" }}>
-        <Link to="/" style={{ color: "#fff" }}>🏠 Home</Link>
-        <Link to="/palpites" style={{ color: "#fff" }}>⚽ Palpites</Link>
-        
-        {/* Ranking - Versão Corrigida */}
-        {eventCode ? (
-          <Link 
-            to={`/ranking/?code=${eventCode}`} 
-            style={{ color: "#fff", textDecoration: "none" }}
-          >
-            🏆 Ranking
-          </Link>
-        ) : (
-          <span 
-            style={{ 
-              color: "#888", 
-              cursor: "not-allowed",
-              opacity: 0.6 
-            }}
-            title="Selecione um evento primeiro"
-          >
-            🏆 Ranking
-          </span>
-        )}
 
-        <Link to="/admin-login" style={{ color: "#fff" }}>⚙️ Admin</Link>
+      <div style={{ display: "flex", gap: "14px" }}>
+
+        <Link to="/" style={{ color: "#fff" }}>
+          🏠 Home
+        </Link>
+
+        <Link
+          to={eventCode ? `/palpites/?code=${eventCode}` : "#"}
+          style={{ color: "#fff" }}
+        >
+          ⚽ Palpites
+        </Link>
+
+        <Link
+          to={eventCode ? `/ranking/?code=${eventCode}` : "#"}
+          style={{ color: "#fff", textDecoration: "none" }}
+        >
+          🏆 Ranking
+        </Link>
+
+        <Link to="/admin-login" style={{ color: "#fff" }}>
+          ⚙️ Admin
+        </Link>
+
       </div>
 
-      {/* Botões globais */}
       <div style={{ display: "flex", gap: "10px" }}>
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#fff",
-            cursor: "pointer",
-            fontSize: "18px",
-          }}
-        >
+        <button onClick={() => navigate(-1)} style={{ background: "transparent", border: "none", color: "#fff" }}>
           ⬅️
         </button>
-        <button
-          onClick={() => navigate("/")}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#fff",
-            cursor: "pointer",
-            fontSize: "18px",
-          }}
-        >
+        <button onClick={() => navigate("/")} style={{ background: "transparent", border: "none", color: "#fff" }}>
           🏠
         </button>
       </div>
+
     </nav>
   );
 }

@@ -1,5 +1,7 @@
 {
   "code": "CANGUESS01",
+  "event_name": "Bolão da Copa Oficial",
+  "workspace_name": "CanGuess Oficial",
   "banner": "/assets/events/CANGUESS01/Banner.CANGUESS01.png",
   "intro": "/assets/events/CANGUESS01/Intro.CANGUESS01.md",
   "rules": "/assets/events/CANGUESS01/Rules.CANGUESS01.md",

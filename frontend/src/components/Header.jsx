@@ -1,15 +1,33 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEvent } from "../contexts/EventContext";
 
 export default function Header() {
   const navigate = useNavigate();
+
+  // ======================
+  // CONTEXTO GLOBAL
+  // ======================
+  const { currentEvent, loadEventByCode } = useEvent();
+
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [selectedCode, setSelectedCode] = useState("");
   const [manualCode, setManualCode] = useState("");
 
   // ======================
-  // LOAD USER (SAFE)
+  // DEBUG
+  // ======================
+  useEffect(() => {
+    console.log("[Header] mounted");
+  }, []);
+
+  useEffect(() => {
+    console.log("[Header] currentEvent:", currentEvent);
+  }, [currentEvent]);
+
+  // ======================
+  // USER LOCAL
   // ======================
   useEffect(() => {
     const stored = localStorage.getItem("canguess_user");
@@ -19,7 +37,7 @@ export default function Header() {
     try {
       setUser(JSON.parse(stored));
     } catch (e) {
-      console.error("User inválido no storage");
+      console.error("[Header] user inválido");
       localStorage.removeItem("canguess_user");
     }
   }, []);
@@ -36,10 +54,12 @@ export default function Header() {
   }
 
   // ======================
-  // SEARCH
+  // SEARCH (FONTE REAL)
   // ======================
-  const handleSearch = () => {
+  const handleSearch = async () => {
     const codeToUse = manualCode.trim() || selectedCode;
+
+    console.log("[Header] search code:", codeToUse);
 
     if (!codeToUse) {
       alert("Digite um código ou selecione um evento");
@@ -48,25 +68,37 @@ export default function Header() {
 
     setShowSearch(false);
     setManualCode("");
-    navigate(`/events/?code=${codeToUse}`);
+
+    // 🔥 AQUI está o pulo do gato:
+    // não só navega — CARREGA EVENTO NO CONTEXTO
+    await loadEventByCode(codeToUse);
+
+    navigate(`/events?code=${codeToUse}`);
   };
 
-  const events = [
-    { workspace: "Zé Bangu", code: "R410M9SQ" },
-    { workspace: "Real Shape", code: "J9T6BFE8" },
-    { workspace: "CanGuess Oficial", code: "CANGUESS01" },
-    { workspace: "Amigos da Bola", code: "ADB2026" },
-  ];
+  // ======================
+  // EVENTO ATUAL (DO CONTEXTO)
+  // ======================
+  const eventCode = currentEvent?.code || currentEvent?.event_code;
 
   return (
     <>
       <header style={styles.header}>
         {/* LEFT */}
         <div style={styles.left}>
-          <img src="/canguess-logo-1024.png" style={styles.logo} alt="logo" />
+          <img
+            src="/canguess-logo-1024.png"
+            style={styles.logo}
+            alt="logo"
+          />
+
           <div>
             <h1 style={styles.title}>CanGuess</h1>
-            <p style={styles.subtitle}>Já deu seu palpite hoje?</p>
+            <p style={styles.subtitle}>
+              {eventCode
+                ? `Evento ativo: ${eventCode}`
+                : "Nenhum evento selecionado"}
+            </p>
           </div>
         </div>
 
@@ -90,10 +122,10 @@ export default function Header() {
         </div>
       </header>
 
-      {/* SEARCH */}
+      {/* SEARCH PANEL */}
       {showSearch && (
         <div style={styles.searchCard}>
-          <div style={styles.searchTitle}>🔍 BUSCAR EVENTOS</div>
+          <div style={styles.searchTitle}>🔍 BUSCAR EVENTO</div>
 
           <div style={styles.searchRow}>
             <select
@@ -101,23 +133,27 @@ export default function Header() {
               value={selectedCode}
               onChange={(e) => setSelectedCode(e.target.value)}
             >
-              <option value="">Selecione um Workspace</option>
-              {events.map((e, i) => (
-                <option key={i} value={e.code}>
-                  {e.workspace}
-                </option>
-              ))}
+              <option value="">Selecione (opcional)</option>
+
+              {/* opcional futuro: pode vir do backend */}
             </select>
 
             <input
               placeholder="Ou digite o código do evento"
               style={styles.input}
               value={manualCode}
-              onChange={(e) => setManualCode(e.target.value.toUpperCase())}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              onChange={(e) =>
+                setManualCode(e.target.value.toUpperCase())
+              }
+              onKeyDown={(e) =>
+                e.key === "Enter" && handleSearch()
+              }
             />
 
-            <button style={styles.btnGreen} onClick={handleSearch}>
+            <button
+              style={styles.btnGreen}
+              onClick={handleSearch}
+            >
               BUSCAR
             </button>
           </div>
@@ -145,11 +181,14 @@ const styles = {
     alignItems: "center",
     borderBottom: "3px solid #f97316",
   },
+
   left: { display: "flex", alignItems: "center", gap: 12 },
   right: { display: "flex", alignItems: "center", gap: 10 },
+
   logo: { width: 42, height: 42 },
   title: { margin: 0, fontSize: "1.1rem" },
   subtitle: { margin: 0, fontSize: "0.75rem", opacity: 0.8 },
+
   user: { marginLeft: 10, fontSize: "0.9rem", fontWeight: "bold" },
 
   btnAccent: {
@@ -161,6 +200,7 @@ const styles = {
     fontWeight: "bold",
     cursor: "pointer",
   },
+
   btnOutline: {
     background: "transparent",
     border: "1px solid #fff",
@@ -169,6 +209,7 @@ const styles = {
     borderRadius: 6,
     cursor: "pointer",
   },
+
   btnGreen: {
     background: "#22c55e",
     border: "none",

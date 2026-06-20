@@ -89,14 +89,14 @@ export default function EventHome() {
 
       {/* HEADER */}
       <div style={styles.header}>
-        <h1 style={styles.title}>{manifest.code}</h1>
+        <h1 style={styles.title}>{manifest.event_name}</h1>
 
         <p style={styles.subtitle}>
-          Event Hub
+          Workspace: <b>{manifest.workspace_name}</b>
         </p>
 
         <p style={styles.code}>
-          Code: {manifest.code}
+          Event Code: <b>{manifest.code}</b>
         </p>
       </div>
 

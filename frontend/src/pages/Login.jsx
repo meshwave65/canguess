@@ -96,40 +96,51 @@ export default function Login() {
 ========================= */
 
 const styles = {
+
   page: {
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     background: "#0B3C49",
+    padding: 16,
+  },
+
+  header: {
+    background: "#ffffff",
+    color: "#0B3C49",
+    padding: 14,
+    borderRadius: 14,
+    width: 340,
+    marginBottom: 10,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+  },
+
+  headerTag: {
+    fontSize: 12,
+    opacity: 0.7,
+    marginTop: 4,
   },
 
   card: {
     width: 340,
     background: "#ffffff",
     borderRadius: 18,
-    padding: 26,
+    padding: 20,
     boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
-    textAlign: "center",
-  },
-
-  ball: {
-    fontSize: 44,
-    marginBottom: 8,
   },
 
   title: {
-    margin: 0,
     color: "#0B3C49",
-    fontSize: "1.6rem",
+    fontSize: 16,
     fontWeight: "800",
-  },
-
-  subtitle: {
-    marginTop: 4,
-    marginBottom: 18,
-    fontSize: 12,
-    color: "#6b7280",
+    marginBottom: 12,
   },
 
   input: {
@@ -138,26 +149,48 @@ const styles = {
     marginBottom: 10,
     borderRadius: 10,
     border: "1px solid #e5e7eb",
+    fontSize: 14,
     outline: "none",
+  },
+
+  round: {
+    padding: 10,
+    borderBottom: "1px solid #eee",
+  },
+
+  roundTitle: {
+    fontWeight: "bold",
+    fontSize: 13,
+    marginBottom: 8,
+  },
+
+  options: {
+    display: "flex",
+    gap: 14,
+  },
+
+  option: {
+    display: "flex",
+    gap: 6,
     fontSize: 14,
   },
 
   primaryBtn: {
     width: "100%",
     padding: 12,
-    background: "#f97316", // 🔥 mantém CanGuess laranja
+    marginTop: 14,
+    background: "#f97316",
     color: "#fff",
     border: "none",
     borderRadius: 10,
     fontWeight: "bold",
     cursor: "pointer",
-    marginTop: 6,
   },
 
   secondaryBtn: {
     width: "100%",
-    padding: 11,
-    marginTop: 10,
+    padding: 12,
+    marginTop: 8,
     background: "transparent",
     border: "1px solid #0B3C49",
     color: "#0B3C49",
@@ -166,9 +199,59 @@ const styles = {
     cursor: "pointer",
   },
 
-  msg: {
-    marginTop: 10,
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+  },
+
+  modalCard: {
+    width: 340,
+    background: "#fff",
+    padding: 16,
+    borderRadius: 14,
+    maxHeight: "80vh",
+    overflow: "auto",
+  },
+
+  pre: {
     fontSize: 12,
+    whiteSpace: "pre-wrap",
+  },
+
+  guestHint: {
+    width: 340,
+    background: "#fff7ed",
+    border: "1px solid #fed7aa",
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+    fontSize: 12,
+  },
+
+  smallBtn: {
+    marginTop: 8,
+    padding: 6,
+    fontSize: 12,
+    background: "#f97316",
+    color: "#fff",
+    border: "none",
+    borderRadius: 6,
+  },
+
+  msg: {
+    fontSize: 12,
+    marginTop: 10,
     color: "#6b7280",
   },
+
+  loading: {
+    color: "#fff",
+    textAlign: "center",
+    padding: 20,
+  }
 };
