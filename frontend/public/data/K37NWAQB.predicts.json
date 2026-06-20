@@ -4,7 +4,7 @@
   "users": [
     {
       "user_uuid": "07b572f7-0d46-4090-bf9b-dd840823de9a",
-      "user_name": "Sidicley",
+      "user_name": "Sidicley2",
       "predictions": [
         "2",
         "1",
@@ -23,6 +23,24 @@
     {
       "user_uuid": "15d4e397-7b12-4beb-8381-bc0109dd757d",
       "user_name": "Rodrigo Gold",
+      "predictions": [
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "d3a14d3c-8eef-4c5f-8722-74643568a1b8",
+      "user_name": "Siidicley1",
       "predictions": [
         "2",
         "1",
@@ -71,6 +89,24 @@
         "2",
         "1",
         "1"
+      ],
+      "points": 0
+    },
+    {
+      "user_uuid": "eae43640-c70d-40ee-892b-3b048697710f",
+      "user_name": "Zé Bangu",
+      "predictions": [
+        "X",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "X",
+        "1",
+        "2"
       ],
       "points": 0
     },
@@ -253,25 +289,7 @@
         "1"
       ],
       "points": 0
-    },
-    {
-      "user_uuid": "eae43640-c70d-40ee-892b-3b048697710f",
-      "user_name": "Zé Bangu",
-      "predictions": [
-        "X",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "X",
-        "1",
-        "2"
-      ],
-      "points": 0
     }
   ],
-  "users_count": 15
+  "users_count": 16
 }
