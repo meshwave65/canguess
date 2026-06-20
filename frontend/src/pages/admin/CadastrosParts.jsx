@@ -59,7 +59,7 @@ export default function CadastroParts() {
     const { data: teamsData } = await supabase
       .from("teams")
       .select("*")
-      .order("name", { ascending: true });
+      .order("teams_name", { ascending: true });
 
     setTeams(teamsData || []);
 
@@ -291,7 +291,7 @@ export default function CadastroParts() {
                   key={t.id}
                   value={t.id}
                 >
-                  {t.name} - {t.code}
+                  {t.teams_name} - {t.teams_code}
                 </option>
 
               ))}

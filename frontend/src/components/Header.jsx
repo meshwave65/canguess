@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEvent } from "../contexts/EventContext";
 
 export default function Header() {
   const navigate = useNavigate();
-
-  // ======================
-  // CONTEXTO GLOBAL
-  // ======================
-  const { currentEvent, loadEventByCode } = useEvent();
 
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
@@ -16,18 +10,18 @@ export default function Header() {
   const [manualCode, setManualCode] = useState("");
 
   // ======================
-  // DEBUG
+  // DEBUG LIFECYCLE
   // ======================
   useEffect(() => {
     console.log("[Header] mounted");
   }, []);
 
   useEffect(() => {
-    console.log("[Header] currentEvent:", currentEvent);
-  }, [currentEvent]);
+    console.log("[Header] showSearch:", showSearch);
+  }, [showSearch]);
 
   // ======================
-  // USER LOCAL
+  // LOAD USER (SAFE)
   // ======================
   useEffect(() => {
     const stored = localStorage.getItem("canguess_user");
@@ -37,7 +31,7 @@ export default function Header() {
     try {
       setUser(JSON.parse(stored));
     } catch (e) {
-      console.error("[Header] user inválido");
+      console.error("[Header] user inválido no storage");
       localStorage.removeItem("canguess_user");
     }
   }, []);
@@ -54,12 +48,12 @@ export default function Header() {
   }
 
   // ======================
-  // SEARCH (FONTE REAL)
+  // SEARCH
   // ======================
-  const handleSearch = async () => {
+  const handleSearch = () => {
     const codeToUse = manualCode.trim() || selectedCode;
 
-    console.log("[Header] search code:", codeToUse);
+    console.log("[Header] handleSearch code:", codeToUse);
 
     if (!codeToUse) {
       alert("Digite um código ou selecione um evento");
@@ -69,17 +63,18 @@ export default function Header() {
     setShowSearch(false);
     setManualCode("");
 
-    // 🔥 AQUI está o pulo do gato:
-    // não só navega — CARREGA EVENTO NO CONTEXTO
-    await loadEventByCode(codeToUse);
-
     navigate(`/events?code=${codeToUse}`);
   };
 
   // ======================
-  // EVENTO ATUAL (DO CONTEXTO)
+  // MOCK EVENTS (TEMP SAFE)
   // ======================
-  const eventCode = currentEvent?.code || currentEvent?.event_code;
+  const events = [
+    { workspace: "Zé Bangu", code: "R410M9SQ" },
+    { workspace: "Real Shape", code: "23TO1YAU" },
+    { workspace: "CanGuess Oficial", code: "CANGUESS01" },
+    { workspace: "Amigos da Bola", code: "ADB2026" },
+  ];
 
   return (
     <>
@@ -94,11 +89,7 @@ export default function Header() {
 
           <div>
             <h1 style={styles.title}>CanGuess</h1>
-            <p style={styles.subtitle}>
-              {eventCode
-                ? `Evento ativo: ${eventCode}`
-                : "Nenhum evento selecionado"}
-            </p>
+            <p style={styles.subtitle}>Já deu seu palpite hoje?</p>
           </div>
         </div>
 
@@ -106,7 +97,10 @@ export default function Header() {
         <div style={styles.right}>
           <button
             style={styles.btnAccent}
-            onClick={() => setShowSearch(v => !v)}
+            onClick={() => {
+              console.log("[Header] toggle search click");
+              setShowSearch(v => !v);
+            }}
           >
             🔎 Buscar eventos
           </button>
@@ -125,7 +119,9 @@ export default function Header() {
       {/* SEARCH PANEL */}
       {showSearch && (
         <div style={styles.searchCard}>
-          <div style={styles.searchTitle}>🔍 BUSCAR EVENTO</div>
+          <div style={styles.searchTitle}>
+            🔍 BUSCAR EVENTOS
+          </div>
 
           <div style={styles.searchRow}>
             <select
@@ -133,9 +129,13 @@ export default function Header() {
               value={selectedCode}
               onChange={(e) => setSelectedCode(e.target.value)}
             >
-              <option value="">Selecione (opcional)</option>
+              <option value="">Selecione um Workspace</option>
 
-              {/* opcional futuro: pode vir do backend */}
+              {events.map((e, i) => (
+                <option key={i} value={e.code}>
+                  {e.workspace}
+                </option>
+              ))}
             </select>
 
             <input
