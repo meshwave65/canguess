@@ -3,6 +3,7 @@
   "event_uuid": "e6a5c1df-2a11-4d03-9456-45e71706b3f1",
   "event_name": "BOLÃO DA COPA 009",
   "workspace_name": "Zé Bangu",
+  "workspace_uuid": "cec020f0-ed86-4658-b2e3-415556495844",
   "phase_uuid": "73cc0474-726e-454e-b0c4-20ca7f9c28e6",
   "rounds": [
     {
@@ -13,14 +14,14 @@
       "local": "San Francisco - EUA",
       "round_date": "2026-06-19",
       "time_round": "00:00:00",
-      "score": null,
-      "result": null,
+      "score": "0-1",
+      "result": "2",
       "parts": [
         {
           "id": "dfc8043a-2a78-4b21-92eb-b016ab40ee3f",
           "round_uuid": "c4d0fd93-1b5e-4a03-a6af-def331e490f5",
           "team_uuid": "e9d3ce02-7999-40fd-91a8-a576d162c0f4",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-16T17:43:10.595984",
           "sequence_part": 1,
           "teams": {
@@ -32,7 +33,7 @@
           "id": "4104cabc-4dc5-461c-88db-3c264cc956ec",
           "round_uuid": "c4d0fd93-1b5e-4a03-a6af-def331e490f5",
           "team_uuid": "c6cf8793-4b63-438e-b55a-d081a083cdb1",
-          "value": null,
+          "value": "1",
           "created_at": "2026-06-16T17:43:10.812279",
           "sequence_part": 2,
           "teams": {

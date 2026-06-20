@@ -91,7 +91,7 @@ def fetch_predicts(event_uuid):
     r = requests.get(
         f"{SUPABASE_URL}/rest/v1/predicts"
         f"?event_uuid=eq.{event_uuid}"
-        f"&select=user_uuid,round_index,prediction",
+        f"&select=user_uuid,round_index,prediction,ref_workspace",
         headers=HEADERS
     )
     return r.json()
@@ -239,6 +239,7 @@ def run_engine(code):
         "event_uuid": event_uuid,
         "event_name": event_details.get("event_name") or f"Bolão {code}",
         "workspace_name": workspace_name,
+        "workspace_uuid": workspace_uuid,
         "phase_uuid": phase_uuid,
         "rounds": rounds
     }
@@ -263,10 +264,11 @@ def run_engine(code):
         json.dump(predicts_json, f, indent=2, ensure_ascii=False)
 
     print("✅ ENGINE CONCLUÍDO")
-    print(f"   Event Name   : {event_json['event_name']}")
-    print(f"   Workspace    : {workspace_name}")
-    print(f"   Rounds       : {len(rounds)}")
-    print(f"   Usuários     : {len(users_out)}")
+    print(f"   Event Name     : {event_json['event_name']}")
+    print(f"   Workspace      : {workspace_name}")
+    print(f"   Workspace_uuid : {workspace_uuid}")
+    print(f"   Rounds         : {len(rounds)}")
+    print(f"   Usuários       : {len(users_out)}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
