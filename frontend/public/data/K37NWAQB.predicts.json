@@ -18,7 +18,7 @@
         "1",
         "1"
       ],
-      "points": 1
+      "points": 2
     },
     {
       "user_uuid": "15d4e397-7b12-4beb-8381-bc0109dd757d",
@@ -36,7 +36,7 @@
         "1",
         "1"
       ],
-      "points": 1
+      "points": 2
     },
     {
       "user_uuid": "d3a14d3c-8eef-4c5f-8722-74643568a1b8",
@@ -51,6 +51,132 @@
         "1",
         "1",
         "2",
+        "1",
+        "1"
+      ],
+      "points": 2
+    },
+    {
+      "user_uuid": "eae43640-c70d-40ee-892b-3b048697710f",
+      "user_name": "Zé Bangu",
+      "predictions": [
+        "X",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "X",
+        "1",
+        "2"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "4efc0838-fad2-4abe-9e0d-d8493f37b1aa",
+      "user_name": "Wagner",
+      "predictions": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "fb5037f6-36dc-4988-8382-a6f9f2db57ed",
+      "user_name": "Teco",
+      "predictions": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "511a71b8-0675-4647-ac3d-0bdc606036a0",
+      "user_name": "Ivan Light",
+      "predictions": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "9d424d8a-2888-4eac-83ab-19407ab0a198",
+      "user_name": "Dallas",
+      "predictions": [
+        "X",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "X",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "1096ab5b-3b53-4c1a-9274-10096c7e1e0d",
+      "user_name": "Sherri",
+      "predictions": [
+        "X",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "018b1d7d-45e9-425c-9dd1-42268c90970f",
+      "user_name": "Carlindo",
+      "predictions": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "1",
         "1",
         "1"
       ],
@@ -93,78 +219,6 @@
       "points": 0
     },
     {
-      "user_uuid": "eae43640-c70d-40ee-892b-3b048697710f",
-      "user_name": "Zé Bangu",
-      "predictions": [
-        "X",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "X",
-        "1",
-        "2"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "4efc0838-fad2-4abe-9e0d-d8493f37b1aa",
-      "user_name": "Wagner",
-      "predictions": [
-        "1",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "fb5037f6-36dc-4988-8382-a6f9f2db57ed",
-      "user_name": "Teco",
-      "predictions": [
-        "1",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "511a71b8-0675-4647-ac3d-0bdc606036a0",
-      "user_name": "Ivan Light",
-      "predictions": [
-        "1",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
       "user_uuid": "b8804ee7-7a17-45e8-bcdd-066c7057daa3",
       "user_name": "Dudu",
       "predictions": [
@@ -175,24 +229,6 @@
         "2",
         "1",
         "1",
-        "1",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "9d424d8a-2888-4eac-83ab-19407ab0a198",
-      "user_name": "Dallas",
-      "predictions": [
-        "X",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "X",
         "1",
         "2",
         "1",
@@ -231,42 +267,6 @@
         "1",
         "X",
         "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "1096ab5b-3b53-4c1a-9274-10096c7e1e0d",
-      "user_name": "Sherri",
-      "predictions": [
-        "X",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "018b1d7d-45e9-425c-9dd1-42268c90970f",
-      "user_name": "Carlindo",
-      "predictions": [
-        "1",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "1",
         "1",
         "1"
       ],

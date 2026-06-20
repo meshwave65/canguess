@@ -51,14 +51,14 @@
       "local": "Houston - EUA",
       "round_date": "2026-06-20",
       "time_round": "14:00:00",
-      "score": null,
-      "result": null,
+      "score": "5-1",
+      "result": "1",
       "parts": [
         {
           "id": "3442e817-464c-4569-9a51-f188415c8cdf",
           "round_uuid": "7a6280be-1c5a-4f6f-b3da-b74902233c52",
           "team_uuid": "ba1f442e-11b7-4050-80fa-a5de627d08e1",
-          "value": null,
+          "value": "5",
           "created_at": "2026-06-16T17:47:20.302945",
           "sequence_part": 1,
           "teams": {
@@ -70,7 +70,7 @@
           "id": "f88d327f-c051-4a18-a0aa-7669d9efd48f",
           "round_uuid": "7a6280be-1c5a-4f6f-b3da-b74902233c52",
           "team_uuid": "63600c58-7af2-4221-9b90-a064c28eecd3",
-          "value": null,
+          "value": "1",
           "created_at": "2026-06-16T17:47:20.526539",
           "sequence_part": 2,
           "teams": {
