@@ -18,7 +18,7 @@
         "1",
         "1"
       ],
-      "points": 2
+      "points": 3
     },
     {
       "user_uuid": "15d4e397-7b12-4beb-8381-bc0109dd757d",
@@ -36,7 +36,7 @@
         "1",
         "1"
       ],
-      "points": 2
+      "points": 3
     },
     {
       "user_uuid": "d3a14d3c-8eef-4c5f-8722-74643568a1b8",
@@ -54,7 +54,7 @@
         "1",
         "1"
       ],
-      "points": 2
+      "points": 3
     },
     {
       "user_uuid": "eae43640-c70d-40ee-892b-3b048697710f",
@@ -72,7 +72,7 @@
         "1",
         "2"
       ],
-      "points": 1
+      "points": 2
     },
     {
       "user_uuid": "4efc0838-fad2-4abe-9e0d-d8493f37b1aa",
@@ -90,7 +90,7 @@
         "1",
         "1"
       ],
-      "points": 1
+      "points": 2
     },
     {
       "user_uuid": "fb5037f6-36dc-4988-8382-a6f9f2db57ed",
@@ -108,7 +108,7 @@
         "1",
         "1"
       ],
-      "points": 1
+      "points": 2
     },
     {
       "user_uuid": "511a71b8-0675-4647-ac3d-0bdc606036a0",
@@ -126,7 +126,7 @@
         "1",
         "1"
       ],
-      "points": 1
+      "points": 2
     },
     {
       "user_uuid": "9d424d8a-2888-4eac-83ab-19407ab0a198",
@@ -144,7 +144,7 @@
         "1",
         "1"
       ],
-      "points": 1
+      "points": 2
     },
     {
       "user_uuid": "1096ab5b-3b53-4c1a-9274-10096c7e1e0d",
@@ -162,7 +162,7 @@
         "1",
         "1"
       ],
-      "points": 1
+      "points": 2
     },
     {
       "user_uuid": "018b1d7d-45e9-425c-9dd1-42268c90970f",
@@ -170,6 +170,96 @@
       "predictions": [
         "1",
         "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "points": 2
+    },
+    {
+      "user_uuid": "af9854fb-1170-4c9c-b98a-b4492c7ccbc5",
+      "user_name": "Marquinho",
+      "predictions": [
+        "1",
+        "2",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "b8804ee7-7a17-45e8-bcdd-066c7057daa3",
+      "user_name": "Dudu",
+      "predictions": [
+        "X",
+        "X",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "85e669c1-9979-4e45-8f67-c8d45dafab7d",
+      "user_name": "Marcelinho",
+      "predictions": [
+        "X",
+        "X",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "162a424b-2660-41df-9e3c-1c91e314295d",
+      "user_name": "Felipe",
+      "predictions": [
+        "X",
+        "X",
+        "1",
+        "1",
+        "2",
+        "1",
+        "1",
+        "X",
+        "2",
+        "1",
+        "1"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "41187815-ce88-493c-803a-d0d96ee62576",
+      "user_name": "Gerson",
+      "predictions": [
+        "1",
+        "2",
         "1",
         "1",
         "2",
@@ -197,96 +287,6 @@
         "-",
         "-",
         "-"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "af9854fb-1170-4c9c-b98a-b4492c7ccbc5",
-      "user_name": "Marquinho",
-      "predictions": [
-        "1",
-        "2",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "b8804ee7-7a17-45e8-bcdd-066c7057daa3",
-      "user_name": "Dudu",
-      "predictions": [
-        "X",
-        "X",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "85e669c1-9979-4e45-8f67-c8d45dafab7d",
-      "user_name": "Marcelinho",
-      "predictions": [
-        "X",
-        "X",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "162a424b-2660-41df-9e3c-1c91e314295d",
-      "user_name": "Felipe",
-      "predictions": [
-        "X",
-        "X",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "X",
-        "2",
-        "1",
-        "1"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "41187815-ce88-493c-803a-d0d96ee62576",
-      "user_name": "Gerson",
-      "predictions": [
-        "1",
-        "2",
-        "1",
-        "1",
-        "2",
-        "1",
-        "1",
-        "1",
-        "1",
-        "1",
-        "1"
       ],
       "points": 0
     }

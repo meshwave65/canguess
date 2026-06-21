@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "../pages/admin/lib/supabase";
 import { findUserByPhone, createGuestUser } from "../services/userService";
 import { theme } from "../styles/theme";
+import { useLocation } from "react-router-dom";
 
 export default function Predictions() {
+
+  const location = useLocation();
+
+  const params = new URLSearchParams(location.search);
+  const code = params.get("code");
+
   const [engine, setEngine] = useState(null);
   const [rounds, setRounds] = useState([]);
 
@@ -23,20 +30,32 @@ export default function Predictions() {
 
   const [showGuestHint, setShowGuestHint] = useState(true);
 
-  const EVENT_ID = engine?.event_uuid;
+  const EVENT_ID = engine?.event_uuid || code;
 
   // ======================
-  // LOAD EVENT (HARDCORE OK POR ENQUANTO)
+  // LOAD EVENT BY CODE (NO HARDCODE)
   // ======================
   useEffect(() => {
     async function load() {
-      const data = await fetch("/data/bolao.json").then(r => r.json());
+      if (!code) return;
+
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .eq("code", code)
+        .single();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
       setEngine(data);
       setRounds(data.rounds || []);
     }
 
     load();
-  }, []);
+  }, [code]);
 
   function formatPhone(v) {
     return v.replace(/\D/g, "");
@@ -86,7 +105,7 @@ export default function Predictions() {
   }
 
   // ======================
-  // SAVE BETS
+  // SAVE BETS (NOW PROPER EVENT ISOLATION)
   // ======================
   async function confirmarEnvio() {
     try {
@@ -118,6 +137,9 @@ export default function Predictions() {
     }
   }
 
+  // ======================
+  // LOADING STATE
+  // ======================
   if (!engine) {
     return <div style={styles.loading}>Carregando evento...</div>;
   }
@@ -135,20 +157,20 @@ export default function Predictions() {
 
         {/* GUEST HINT */}
         {showGuestHint && !user && (
-            <div style={styles.guestHint}>
-                Você pode jogar como visitante usando apenas telefone.<br />
-                Recomendamos criar conta para melhor experiência.<br />
-                Não leva nem 1 minuto e não vai mais ter de inserir estes dados a cada palpite.<br />
-                Clique em LOGIN e faça seu cadastro agora.<br />
+          <div style={styles.guestHint}>
+            Você pode jogar como visitante usando apenas telefone.<br />
+            Recomendamos criar conta para melhor experiência.<br />
+            Não leva nem 1 minuto.<br />
+            Clique em LOGIN e faça seu cadastro agora.<br />
 
-    <button align="center"
-      style={styles.smallBtn}
-      onClick={() => setShowGuestHint(false)}
-    >
-      OK
-    </button>
-  </div>
-)}
+            <button
+              style={styles.smallBtn}
+              onClick={() => setShowGuestHint(false)}
+            >
+              OK
+            </button>
+          </div>
+        )}
 
         {/* FORM */}
         {step === "form" && !user && (
@@ -213,7 +235,10 @@ export default function Predictions() {
               </div>
             ))}
 
-            <button style={styles.primaryBtn} onClick={() => setShowModal(true)}>
+            <button
+              style={styles.primaryBtn}
+              onClick={() => setShowModal(true)}
+            >
               Revisar e enviar
             </button>
           </>
@@ -235,7 +260,10 @@ export default function Predictions() {
               Confirmar
             </button>
 
-            <button style={styles.secondaryBtn} onClick={() => setShowModal(false)}>
+            <button
+              style={styles.secondaryBtn}
+              onClick={() => setShowModal(false)}
+            >
               Voltar
             </button>
           </div>
@@ -247,7 +275,10 @@ export default function Predictions() {
         <div style={styles.overlay}>
           <div style={styles.modalCard}>
             <h2>✔ Palpites enviados</h2>
-            <button style={styles.primaryBtn} onClick={() => window.location.reload()}>
+            <button
+              style={styles.primaryBtn}
+              onClick={() => window.location.reload()}
+            >
               OK
             </button>
           </div>
@@ -259,7 +290,7 @@ export default function Predictions() {
 }
 
 /* =========================
-   STYLES (CONSISTENTE COM LOGIN)
+   STYLES (mantido seu visual)
 ========================= */
 
 const styles = {

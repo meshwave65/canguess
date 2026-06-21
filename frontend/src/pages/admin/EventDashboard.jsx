@@ -78,7 +78,7 @@ export default function EventDashboard() {
       .from("event_rounds")
       .select("*")
       .eq("event_phase_uuid", selectedPhase.id)
-      .order("created_at", { ascending: true });
+      .order("round_date", { ascending: true });
 
     if (error) {
       console.error(error);

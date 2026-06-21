@@ -88,14 +88,14 @@
       "local": "Toronto - Canadá",
       "round_date": "2026-06-20",
       "time_round": "17:00:00",
-      "score": null,
-      "result": null,
+      "score": "2-1",
+      "result": "1",
       "parts": [
         {
           "id": "50013c98-267a-497a-9333-70361566a26b",
           "round_uuid": "bc786f7c-840b-4ef7-aad7-3c807c124e13",
           "team_uuid": "fa768174-0011-483e-b27a-9629786c8cec",
-          "value": null,
+          "value": "2",
           "created_at": "2026-06-16T17:47:51.669477",
           "sequence_part": 1,
           "teams": {
@@ -107,7 +107,7 @@
           "id": "bea3ff88-56a5-4c3d-bde6-262dd640b8c3",
           "round_uuid": "bc786f7c-840b-4ef7-aad7-3c807c124e13",
           "team_uuid": "78f1d27c-bd4e-4bf5-a47f-15c1e81f613d",
-          "value": null,
+          "value": "1",
           "created_at": "2026-06-16T17:47:51.467849",
           "sequence_part": 2,
           "teams": {
