@@ -18,7 +18,7 @@ export default function Home() {
         style={styles.banner}
       >
         <img
-          src="/assets/marketing/banners/Banner_patrocinado_Copa2026.png"
+          src="/assets/marketing/banners/banner_publicidade_canguess.png"
           alt="CanGuess"
           style={styles.bannerImage}
         />
@@ -53,7 +53,7 @@ export default function Home() {
 
           <button
             style={styles.primaryBtn}
-            onClick={() => navigate("/events")}
+            onClick={() => navigate("/events/?code=CANGUES01")}
           >
             🎯 EXPLORAR EVENTOS
           </button>
