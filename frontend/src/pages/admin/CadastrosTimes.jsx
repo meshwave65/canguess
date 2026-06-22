@@ -26,7 +26,7 @@ export default function CadastrosTimes() {
 
   const [teamName, setTeamName] = useState("");
   const [teamCode, setTeamCode] = useState("");
-  const [divisao, setDivisao] = useState("");
+  const [division, setDivision] = useState("");
 
   const [message, setMessage] = useState("");
 
@@ -78,7 +78,7 @@ export default function CadastrosTimes() {
       .from("regions")
       .insert([
         {
-          country_id: countryId,
+          country_uuid: countryId,
           code: regionCode,
           region: regionName,
         },
@@ -102,7 +102,7 @@ export default function CadastrosTimes() {
       .from("cities")
       .insert([
         {
-          region_id: regionId,
+          region_uuid: regionId,
           name: cityName,
         },
       ])
@@ -121,16 +121,16 @@ export default function CadastrosTimes() {
   async function addTeam() {
     const { data: city } = await supabase
       .from("cities")
-      .select("name")
+      .select("teams_name,teams_code")
       .eq("id", cityId)
       .single();
 
-    const { error } = await supabase.from("times").insert([
+    const { error } = await supabase.from("teams").insert([
       {
-        nome: teamName,
-        codigo: teamCode,
-        divisao,
-        cidade: city?.name || "",
+        teams_name: teamName,
+        teams_code: teamCode,
+        division: division,
+        city_uuid: city?.name || "",
       },
     ]);
 
@@ -138,7 +138,7 @@ export default function CadastrosTimes() {
 
     setTeamName("");
     setTeamCode("");
-    setDivisao("");
+    setDivision("");
     show("Time salvo");
   }
 
@@ -337,8 +337,8 @@ export default function CadastrosTimes() {
           <input
             style={{ ...s.input, width: 80 }}
             placeholder="Div"
-            value={divisao}
-            onChange={e => setDivisao(e.target.value)}
+            value={division}
+            onChange={e => setDivision(e.target.value)}
           />
 
           <button style={s.btn} onClick={addTeam}>💾</button>
