@@ -125,14 +125,14 @@
       "local": "Kansas City - EUA",
       "round_date": "2026-06-20",
       "time_round": "21:00:00",
-      "score": null,
-      "result": null,
+      "score": "0-0",
+      "result": "X",
       "parts": [
         {
           "id": "45fac485-087c-4761-85c2-c6e9a79776d6",
           "round_uuid": "730f046c-7733-420d-b92f-3a170129a3bf",
           "team_uuid": "766a38e4-cd4e-4975-9947-813a491636e7",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-16T18:00:24.446505",
           "sequence_part": 1,
           "teams": {
@@ -144,7 +144,7 @@
           "id": "a02d3c29-7c40-4134-9635-abc8324f5a58",
           "round_uuid": "730f046c-7733-420d-b92f-3a170129a3bf",
           "team_uuid": "c321462a-6fa5-4ab8-a776-3b440e28b9f5",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-16T18:00:24.645686",
           "sequence_part": 2,
           "teams": {
@@ -162,14 +162,14 @@
       "local": "Monterrey - México",
       "round_date": "2026-06-20",
       "time_round": "01:00:00",
-      "score": null,
-      "result": null,
+      "score": "0-4",
+      "result": "2",
       "parts": [
         {
           "id": "cd5d6025-391e-4734-8cea-d061ef383a54",
           "round_uuid": "c3d46588-d4f9-4cec-afea-8bcc488c904a",
           "team_uuid": "4c90bf90-ec99-419e-9da1-d6ef30568ba6",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-16T18:01:00.980049",
           "sequence_part": 1,
           "teams": {
@@ -181,7 +181,7 @@
           "id": "2897a94c-7dfb-46d8-8b2f-011c7b6c29ef",
           "round_uuid": "c3d46588-d4f9-4cec-afea-8bcc488c904a",
           "team_uuid": "16138cf4-b107-4653-ad1d-3b55813686fa",
-          "value": null,
+          "value": "4",
           "created_at": "2026-06-16T18:01:36.475923",
           "sequence_part": 2,
           "teams": {
@@ -199,14 +199,14 @@
       "local": "Atlanta - EUA",
       "round_date": "2026-06-21",
       "time_round": "13:00:00",
-      "score": null,
-      "result": null,
+      "score": "4-0",
+      "result": "1",
       "parts": [
         {
           "id": "164301c3-d52d-409d-8ab5-36c5f8987e47",
           "round_uuid": "e69b0cbf-521a-4e95-8827-c01abde55b23",
           "team_uuid": "55a8df6f-5b9e-4744-aed9-c51d6346e0e2",
-          "value": null,
+          "value": "4",
           "created_at": "2026-06-16T18:02:48.831584",
           "sequence_part": 1,
           "teams": {
@@ -218,7 +218,7 @@
           "id": "67d6d990-6f7d-4a6e-b775-7442ef2ec5f8",
           "round_uuid": "e69b0cbf-521a-4e95-8827-c01abde55b23",
           "team_uuid": "62c7c355-f9a9-4275-bff6-193381df22dd",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-16T18:04:50.916372",
           "sequence_part": 2,
           "teams": {
@@ -236,14 +236,14 @@
       "local": "Los Angelis - EUA",
       "round_date": "2026-06-21",
       "time_round": "16:00:00",
-      "score": null,
-      "result": null,
+      "score": "0-0",
+      "result": "X",
       "parts": [
         {
           "id": "1e4735cf-3eb4-4a7c-b11d-464dae02f4aa",
           "round_uuid": "d498aba6-4b53-4862-9472-0d85008b7af9",
           "team_uuid": "66ad62e8-6487-4ca9-bc23-992ddaf85f94",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-16T18:05:28.359397",
           "sequence_part": 1,
           "teams": {
@@ -255,7 +255,7 @@
           "id": "83e4fe6c-f4c4-4dae-a97b-3507f29cb5c1",
           "round_uuid": "d498aba6-4b53-4862-9472-0d85008b7af9",
           "team_uuid": "f3383932-855c-40b0-91fc-678178b4ae00",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-16T18:05:28.514761",
           "sequence_part": 2,
           "teams": {
@@ -273,14 +273,14 @@
       "local": "Miami - EUA",
       "round_date": "2026-06-21",
       "time_round": "19:00:00",
-      "score": null,
-      "result": null,
+      "score": "2-2",
+      "result": "X",
       "parts": [
         {
           "id": "0373cda4-e4e1-4642-9ed3-643578b6a913",
           "round_uuid": "c0bcb869-4338-4643-8018-944940e2f5e4",
           "team_uuid": "2c0a8954-9806-412c-87d9-a46dfe60f489",
-          "value": null,
+          "value": "2",
           "created_at": "2026-06-16T18:05:55.625353",
           "sequence_part": 1,
           "teams": {
@@ -292,7 +292,7 @@
           "id": "8f220319-9c48-440f-a433-730ce9c3782e",
           "round_uuid": "c0bcb869-4338-4643-8018-944940e2f5e4",
           "team_uuid": "f9bbbf9f-6375-4224-add5-454a2191166f",
-          "value": null,
+          "value": "2",
           "created_at": "2026-06-16T18:06:35.39598",
           "sequence_part": 2,
           "teams": {
@@ -310,14 +310,14 @@
       "local": "Vancouver - Canadá",
       "round_date": "2026-06-21",
       "time_round": "22:00:00",
-      "score": null,
-      "result": null,
+      "score": "1-3",
+      "result": "2",
       "parts": [
         {
           "id": "8a5db523-18f4-492c-b794-b051e3b11856",
           "round_uuid": "a9bfe142-9d84-49bd-bed8-658ea88996e2",
           "team_uuid": "229b1d05-b2f9-4ead-975e-082d957aeb46",
-          "value": null,
+          "value": "1",
           "created_at": "2026-06-16T18:07:03.989746",
           "sequence_part": 1,
           "teams": {
@@ -329,7 +329,7 @@
           "id": "f4ccdf01-2f56-4731-9139-40e214c0b470",
           "round_uuid": "a9bfe142-9d84-49bd-bed8-658ea88996e2",
           "team_uuid": "95b4a4e1-6aae-415c-9fae-4be734a45200",
-          "value": null,
+          "value": "3",
           "created_at": "2026-06-16T18:07:03.786359",
           "sequence_part": 2,
           "teams": {
