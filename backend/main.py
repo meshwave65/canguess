@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 import os
 import requests
 import uuid
-import engine_canguess2_0
+import engine_canguess_2.0
 import engine_workspaces
-import create_event_assets
+import create_events_assets
 
 # =========================================================
 # ENV
