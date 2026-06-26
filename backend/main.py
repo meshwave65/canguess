@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 import os
 import requests
 import uuid
+import engine_canguess2_0
+import engine_workspaces
+import create_event_assets
 
 # =========================================================
 # ENV
@@ -74,3 +77,35 @@ async def create_country(payload: dict):
         raise HTTPException(status_code=400, detail=r.text)
 
     return {"ok": True, "data": data}
+
+@app.post("/webhook/round-result")
+async def round_result(req: Request):
+    data = await req.json()
+
+    code = data.get("code")
+
+    if not code:
+        raise HTTPException(status_code=400, detail="missing code")
+
+    engine_canguess2_0.run_engine(code)
+
+    return {"ok": True}
+
+@app.post("/webhook/workspace")
+async def workspace(req: Request):
+    engine_workspaces.run_engine()
+
+    return {"ok": True}
+
+@app.post("/webhook/event-created")
+async def event_created(req: Request):
+    data = await req.json()
+
+    code = data.get("code")
+
+    if not code:
+        raise HTTPException(status_code=400, detail="missing code")
+
+    create_event_assets.run(code)
+
+    return {"ok": True}
