@@ -1,0 +1,8 @@
+{
+  "name": "canguess-engines",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.2"
+  }
+}

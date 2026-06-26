@@ -6,22 +6,15 @@ export default function Header() {
 
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
-  const [selectedCode, setSelectedCode] = useState("");
+
+  const [selectedEventCode, setSelectedEventCode] = useState("");
   const [manualCode, setManualCode] = useState("");
 
-  // ======================
-  // DEBUG LIFECYCLE
-  // ======================
-  useEffect(() => {
-    console.log("[Header] mounted");
-  }, []);
-
-  useEffect(() => {
-    console.log("[Header] showSearch:", showSearch);
-  }, [showSearch]);
+  const [workspaces, setWorkspaces] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // ======================
-  // LOAD USER (SAFE)
+  // LOAD USER
   // ======================
   useEffect(() => {
     const stored = localStorage.getItem("canguess_user");
@@ -31,12 +24,35 @@ export default function Header() {
     try {
       setUser(JSON.parse(stored));
     } catch (e) {
-      console.error("[Header] user inválido no storage");
+      console.error("[Header] user inválido");
       localStorage.removeItem("canguess_user");
     }
   }, []);
 
   const userName = user?.userName || "Guest User";
+
+  // ======================
+  // LOAD ENGINE JSON (SEM SUPABASE)
+  // ======================
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+
+      try {
+        const res = await fetch("/data/workspaces.json");
+        const json = await res.json();
+
+        setWorkspaces(json || []);
+      } catch (err) {
+        console.error("[Header] erro ao carregar engine JSON:", err);
+        setWorkspaces([]);
+      }
+
+      setLoading(false);
+    }
+
+    load();
+  }, []);
 
   // ======================
   // LOGOUT
@@ -48,15 +64,13 @@ export default function Header() {
   }
 
   // ======================
-  // SEARCH
+  // NAVIGATE
   // ======================
-  const handleSearch = () => {
-    const codeToUse = manualCode.trim() || selectedCode;
-
-    console.log("[Header] handleSearch code:", codeToUse);
+  function handleOpen() {
+    const codeToUse = manualCode.trim() || selectedEventCode;
 
     if (!codeToUse) {
-      alert("Digite um código ou selecione um evento");
+      alert("Selecione ou digite um código de evento");
       return;
     }
 
@@ -64,18 +78,11 @@ export default function Header() {
     setManualCode("");
 
     navigate(`/events?code=${codeToUse}`);
-  };
+  }
 
   // ======================
-  // MOCK EVENTS (TEMP SAFE)
+  // UI
   // ======================
-  const events = [
-    { workspace: "Zé Bangu", code: "R410M9SQ" },
-    { workspace: "Real Shape", code: "23TO1YAU" },
-    { workspace: "CanGuess Oficial", code: "CANGUESS01" },
-    { workspace: "Amigos da Bola", code: "ADB2026" },
-  ];
-
   return (
     <>
       <header style={styles.header}>
@@ -97,12 +104,9 @@ export default function Header() {
         <div style={styles.right}>
           <button
             style={styles.btnAccent}
-            onClick={() => {
-              console.log("[Header] toggle search click");
-              setShowSearch(v => !v);
-            }}
+            onClick={() => setShowSearch(v => !v)}
           >
-            🔎 Buscar eventos
+            🔎 Eventos
           </button>
 
           <button
@@ -116,45 +120,49 @@ export default function Header() {
         </div>
       </header>
 
-      {/* SEARCH PANEL */}
+      {/* DROPDOWN */}
       {showSearch && (
         <div style={styles.searchCard}>
           <div style={styles.searchTitle}>
-            🔍 BUSCAR EVENTOS
+            🔍 SELECIONAR EVENTO
           </div>
 
           <div style={styles.searchRow}>
             <select
               style={styles.input}
-              value={selectedCode}
-              onChange={(e) => setSelectedCode(e.target.value)}
+              value={selectedEventCode}
+              onChange={(e) => setSelectedEventCode(e.target.value)}
             >
-              <option value="">Selecione um Workspace</option>
+              <option value="">
+                {loading ? "Carregando..." : "Selecione um evento"}
+              </option>
 
-              {events.map((e, i) => (
-                <option key={i} value={e.code}>
-                  {e.workspace}
+              {workspaces.map((ws) => (
+                <option
+                  key={ws.workspace_id}
+                  value={ws.event?.code || ""}
+                  disabled={!ws.event}
+                >
+                  {ws.workspace}
+                  {ws.event ? ` → ${ws.event.name}` : " (SEM EVENTO)"}
                 </option>
               ))}
             </select>
 
             <input
-              placeholder="Ou digite o código do evento"
+              placeholder="Ou digite código manual"
               style={styles.input}
               value={manualCode}
               onChange={(e) =>
                 setManualCode(e.target.value.toUpperCase())
               }
-              onKeyDown={(e) =>
-                e.key === "Enter" && handleSearch()
-              }
             />
 
             <button
               style={styles.btnGreen}
-              onClick={handleSearch}
+              onClick={handleOpen}
             >
-              BUSCAR
+              ABRIR
             </button>
           </div>
         </div>

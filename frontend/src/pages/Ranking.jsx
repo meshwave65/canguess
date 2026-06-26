@@ -39,8 +39,10 @@ export default function Ranking() {
 
 
         const predData = await predRes.json();
-
+        
         setPredicts(predData);
+        console.log("PREDICTS CARREGADO:", predData);
+        console.log("USERS:", predData.users);
 
 
       } catch(err){

@@ -1,0 +1,32 @@
+[
+  {
+    "workspace": "Zé Bangu",
+    "workspace_id": "cec020f0-ed86-4658-b2e3-415556495844",
+    "event": {
+      "id": "e6a5c1df-2a11-4d03-9456-45e71706b3f1",
+      "name": "BOLÃO DA COPA 009",
+      "status": "OPEN",
+      "code": "K37NWAQB"
+    }
+  },
+  {
+    "workspace": "Real Shape",
+    "workspace_id": "d9fdccee-fe88-46d5-b368-4f993b725314",
+    "event": {
+      "id": "1cc7b7e3-c9eb-4101-93e4-73e5d383acf4",
+      "name": "BOLÃO REAL SHAPE",
+      "status": "OPEN",
+      "code": "J9T6BFE8"
+    }
+  },
+  {
+    "workspace": "CanGuess Official",
+    "workspace_id": "da4d8555-3cf7-4844-ab63-bd650cc1cc49",
+    "event": {
+      "id": "c5e8ffe3-ac8c-4981-9539-909617462455",
+      "name": "COPA DOMINGO",
+      "status": "DONE",
+      "code": "23TO1YAU"
+    }
+  }
+]
