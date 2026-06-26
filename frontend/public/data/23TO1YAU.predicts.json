@@ -3,15 +3,15 @@
   "event_uuid": "c5e8ffe3-ac8c-4981-9539-909617462455",
   "users": [
     {
-      "user_uuid": "0ce4337c-47d6-4942-b45e-202e318f0087",
-      "user_name": "user_0ce433",
+      "user_uuid": "73613999-560d-4591-b00c-667f067b1e28",
+      "user_name": "guest_1782176771264",
       "predictions": [
         "1",
-        "X",
-        "2",
-        "2"
+        "1",
+        "1",
+        "1"
       ],
-      "points": 0
+      "points": 4
     },
     {
       "user_uuid": "39694bdc-1f13-40ab-8c67-63484f716f49",
@@ -22,7 +22,7 @@
         "2",
         "1"
       ],
-      "points": 0
+      "points": 3
     },
     {
       "user_uuid": "90e7de01-6e1e-4bd1-8106-fd753a81c81a",
@@ -33,7 +33,7 @@
         "1",
         "X"
       ],
-      "points": 0
+      "points": 2
     },
     {
       "user_uuid": "77b072ae-d662-4f30-b447-b1a2eefaf8e7",
@@ -44,7 +44,7 @@
         "2",
         "1"
       ],
-      "points": 0
+      "points": 2
     },
     {
       "user_uuid": "5e6207ac-ab8a-424c-a7d4-c9ededa984d5",
@@ -55,18 +55,29 @@
         "2",
         "1"
       ],
-      "points": 0
+      "points": 2
     },
     {
-      "user_uuid": "73613999-560d-4591-b00c-667f067b1e28",
-      "user_name": "guest_1782176771264",
+      "user_uuid": "0ce4337c-47d6-4942-b45e-202e318f0087",
+      "user_name": "user_0ce433",
       "predictions": [
         "1",
-        "1",
-        "1",
-        "1"
+        "X",
+        "2",
+        "2"
       ],
-      "points": 0
+      "points": 1
+    },
+    {
+      "user_uuid": "2150f556-e3a7-4674-8a2c-69333152397a",
+      "user_name": "guest_1782177574510",
+      "predictions": [
+        "2",
+        "1",
+        "X",
+        "2"
+      ],
+      "points": 1
     },
     {
       "user_uuid": "4049f92d-1771-4575-81fa-6c88068538f8",
@@ -86,17 +97,6 @@
         "2",
         "2",
         "2",
-        "2"
-      ],
-      "points": 0
-    },
-    {
-      "user_uuid": "2150f556-e3a7-4674-8a2c-69333152397a",
-      "user_name": "guest_1782177574510",
-      "predictions": [
-        "2",
-        "1",
-        "X",
         "2"
       ],
       "points": 0

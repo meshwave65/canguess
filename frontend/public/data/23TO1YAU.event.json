@@ -2,7 +2,7 @@
   "code": "23TO1YAU",
   "event_uuid": "c5e8ffe3-ac8c-4981-9539-909617462455",
   "event_name": "COPA DOMINGO",
-  "workspace_name": "CunGuess Official",
+  "workspace_name": "CanGuess Official",
   "workspace_uuid": "da4d8555-3cf7-4844-ab63-bd650cc1cc49",
   "phase_uuid": "60e0b152-fb8f-427c-a3b4-90092636e098",
   "rounds": [
@@ -14,14 +14,14 @@
       "local": null,
       "round_date": "2026-06-21",
       "time_round": null,
-      "score": null,
-      "result": null,
+      "score": "1x0",
+      "result": "1",
       "parts": [
         {
           "id": "cb193017-0150-4d53-996a-19ef4a0f0126",
           "round_uuid": "0cc10830-adad-45ce-b252-40ce09c32f51",
           "team_uuid": "78f1d27c-bd4e-4bf5-a47f-15c1e81f613d",
-          "value": null,
+          "value": "1",
           "created_at": "2026-06-20T19:55:46.858001",
           "sequence_part": 1,
           "teams": {
@@ -33,7 +33,7 @@
           "id": "61969eb0-3b52-4744-af4f-9ac6206d4cca",
           "round_uuid": "0cc10830-adad-45ce-b252-40ce09c32f51",
           "team_uuid": "766a38e4-cd4e-4975-9947-813a491636e7",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-20T19:55:46.858001",
           "sequence_part": 2,
           "teams": {
@@ -51,14 +51,14 @@
       "local": null,
       "round_date": "2026-06-21",
       "time_round": null,
-      "score": null,
-      "result": null,
+      "score": "5x0",
+      "result": "1",
       "parts": [
         {
           "id": "13b5f564-9b1a-412a-aa9f-84d7bad063be",
           "round_uuid": "6cc77ff0-ce9a-4a03-ba72-39086e50bdbd",
           "team_uuid": "63600c58-7af2-4221-9b90-a064c28eecd3",
-          "value": null,
+          "value": "5",
           "created_at": "2026-06-20T19:57:26.430022",
           "sequence_part": 1,
           "teams": {
@@ -70,7 +70,7 @@
           "id": "b3d104cb-da15-4df0-b27b-be7f1f2cf0fb",
           "round_uuid": "6cc77ff0-ce9a-4a03-ba72-39086e50bdbd",
           "team_uuid": "4c90bf90-ec99-419e-9da1-d6ef30568ba6",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-20T19:57:26.430022",
           "sequence_part": 2,
           "teams": {
@@ -88,14 +88,14 @@
       "local": null,
       "round_date": "2026-06-21",
       "time_round": null,
-      "score": null,
-      "result": null,
+      "score": "7x1",
+      "result": "1",
       "parts": [
         {
           "id": "70e0ece2-850c-4849-a0b7-54e381a06431",
           "round_uuid": "13035579-e5ec-47a8-b57c-f827db9994f0",
           "team_uuid": "fa768174-0011-483e-b27a-9629786c8cec",
-          "value": null,
+          "value": "7",
           "created_at": "2026-06-18T15:19:23.874579",
           "sequence_part": 1,
           "teams": {
@@ -107,7 +107,7 @@
           "id": "44af7d08-f962-42ee-9ed3-19a9aeac7be3",
           "round_uuid": "13035579-e5ec-47a8-b57c-f827db9994f0",
           "team_uuid": "c321462a-6fa5-4ab8-a776-3b440e28b9f5",
-          "value": null,
+          "value": "1",
           "created_at": "2026-06-20T19:50:59.435737",
           "sequence_part": 2,
           "teams": {
@@ -125,14 +125,14 @@
       "local": null,
       "round_date": "2026-06-21",
       "time_round": null,
-      "score": null,
-      "result": null,
+      "score": "2x0",
+      "result": "1",
       "parts": [
         {
           "id": "db530b12-5b2c-48cb-90d1-930ed28019e2",
           "round_uuid": "1364fd23-fd19-4742-9546-ae5fba049b41",
           "team_uuid": "ba1f442e-11b7-4050-80fa-a5de627d08e1",
-          "value": null,
+          "value": "2",
           "created_at": "2026-06-20T19:56:38.79972",
           "sequence_part": 1,
           "teams": {
@@ -144,7 +144,7 @@
           "id": "a1652ca9-5517-47a1-95d9-6d2b0a13bab4",
           "round_uuid": "1364fd23-fd19-4742-9546-ae5fba049b41",
           "team_uuid": "16138cf4-b107-4653-ad1d-3b55813686fa",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-20T19:56:38.79972",
           "sequence_part": 2,
           "teams": {
