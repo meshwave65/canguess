@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 import requests
 import uuid
-import engine_canguess_2.0
+import engine_canguess_2_0
 import engine_workspaces
 import create_events_assets
 
