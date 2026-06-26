@@ -2,238 +2,226 @@ import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
 
 export default function MapaPalpites() {
+  const [workspaces, setWorkspaces] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [selectedWorkspace, setSelectedWorkspace] = useState("");
+  const [selectedEventId, setSelectedEventId] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [dados, setDados] = useState([]);
   const [statusMap, setStatusMap] = useState({});
-  const [engine, setEngine] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [rounds, setRounds] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const [error, setError] = useState("");
 
-  function calcResult(a, b) {
-    if (a == null || b == null) return "-";
-    if (a > b) return "A";
-    if (a < b) return "B";
-    return "X";
-  }
+  // ==================== CARREGAR WORKSPACES ====================
+  async function loadWorkspaces() {
+    const { data, error } = await supabase
+      .from("workspaces")
+      .select("id, workspace_name")
+      .order("workspace_name");
 
-  async function updateStatus(user_id, status) {
-    try {
-      await supabase
-        .from("predicts")
-        .update({ status })
-        .eq("user_uuid", user_id);
-    } catch (err) {
-      console.error("Erro ao atualizar status:", err);
+    if (error) {
+      console.error("Erro workspaces:", error);
+      setError("Erro ao carregar workspaces: " + error.message);
+    } else {
+      setWorkspaces(data || []);
+      console.log("Workspaces carregados:", data);
     }
   }
 
-  async function load() {
+  // ==================== CARREGAR EVENTOS OPEN ====================
+  async function loadOpenEvents(workspaceId) {
+    if (!workspaceId) return;
+    setLoadingEvents(true);
+    setError("");
+
+    const { data, error } = await supabase
+      .from("events")
+      .select("id, event_name, status, is_open")
+      .eq("workspace_uuid", workspaceId)
+      .eq("status", "OPEN")
+      .order("event_name");
+
+    if (error) {
+      console.error("Erro eventos:", error);
+      setError("Erro ao carregar eventos");
+    } else {
+      setEvents(data || []);
+    }
+    setLoadingEvents(false);
+  }
+
+  // ==================== CARREGAR PALPITES + ROUNDS ====================
+  async function loadPalpites(eventId) {
+    if (!eventId) return;
     setLoading(true);
 
     try {
-      const bolaoJson = await fetch("/data/bolao.json").then((r) =>
-        r.json()
-      );
+      const { data: eventData } = await supabase
+        .from("events")
+        .select("*")
+        .eq("id", eventId)
+        .single();
+      setSelectedEvent(eventData);
 
-      setEngine(bolaoJson);
+      // Rounds
+      const { data: roundsData } = await supabase
+        .from("event_rounds")
+        .select("*")
+        .eq("event_uuid", eventId)
+        .order("round_number", { ascending: true });
 
-      const rounds = bolaoJson.rounds || [];
-      const TOTAL = rounds.length;
+      setRounds(roundsData || []);
 
-      const { data: bolao } = await supabase
+      // Palpites
+      const { data: predicts } = await supabase
         .from("predicts")
         .select("*")
-        .eq("event_uuid", bolaoJson.event_uuid);
+        .eq("event_uuid", eventId);
+
+      const userIds = [...new Set(predicts?.map(p => p.user_id || p.user_uuid))];
 
       const { data: users } = await supabase
         .from("users")
-        .select("id, user_name");
+        .select("id, user_name")
+        .in("id", userIds);
 
-      const userMap = Object.fromEntries(
-        (users || []).map((u) => [u.id, u.user_name])
-      );
+      const userMap = Object.fromEntries((users || []).map(u => [u.id, u.user_name]));
 
       const grouped = {};
-
-      (bolao || []).forEach((item) => {
+      (predicts || []).forEach((item) => {
         const userId = item.user_id || item.user_uuid;
-
         if (!grouped[userId]) {
           grouped[userId] = {
             user_id: userId,
-            user_name: userMap[userId] || "-",
-            status: "Em validação",
-            palpites: Array(TOTAL).fill("-"),
+            user_name: userMap[userId] || "Desconhecido",
+            palpites: Array(roundsData?.length || 0).fill("-"),
             pontos: 0,
+            status: item.status || "Em validação"
           };
         }
 
-        const i = item.round_index - 1;
-        grouped[userId].palpites[i] = item.prediction;
+        const index = (item.round_index || 1) - 1;
+        if (index >= 0 && index < grouped[userId].palpites.length) {
+          grouped[userId].palpites[index] = item.prediction;
+        }
 
-        const round = rounds[i];
-
-        const a = round?.parts?.[0]?.value;
-        const b = round?.parts?.[1]?.value;
-
-        const result = calcResult(a, b);
-
-        if (item.prediction === result && item.status === "Validado") {
+        if (item.status === "Validado" && item.prediction === item.result) {
           grouped[userId].pontos += 1;
         }
-
-        if (item.status === "Validado") {
-          grouped[userId].status = "Validado";
-        }
+        if (item.status) grouped[userId].status = item.status;
       });
 
       const arr = Object.values(grouped);
-
       setDados(arr);
-
-      setStatusMap(
-        Object.fromEntries(arr.map((u) => [u.user_id, u.status]))
-      );
+      setStatusMap(Object.fromEntries(arr.map(u => [u.user_id, u.status])));
     } catch (err) {
-      console.error("Erro ao carregar bolao.json:", err);
+      console.error(err);
+      setError("Erro ao carregar palpites");
     }
-
     setLoading(false);
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  async function updateStatus(user_id, status) {
+    if (!selectedEventId) return;
+    await supabase
+      .from("predicts")
+      .update({ status })
+      .eq("event_uuid", selectedEventId)
+      .eq("user_id", user_id);
 
-  const th = {
-    border: "1px solid #ddd",
-    padding: 6,
-    background: "#f3f4f6",
-    textAlign: "center",
-  };
-
-  const td = {
-    border: "1px solid #ddd",
-    padding: 6,
-  };
-
-  const tdCenter = {
-    border: "1px solid #ddd",
-    padding: 6,
-    textAlign: "center",
-  };
-
-  if (loading) {
-    return <div style={{ padding: 10 }}>Carregando...</div>;
+    loadPalpites(selectedEventId);
   }
 
-  const rounds = engine?.rounds || [];
+  useEffect(() => { loadWorkspaces(); }, []);
+  useEffect(() => { if (selectedWorkspace) loadOpenEvents(selectedWorkspace); }, [selectedWorkspace]);
+  useEffect(() => { if (selectedEventId) loadPalpites(selectedEventId); }, [selectedEventId]);
 
   return (
-    <div style={{ padding: 10 }}>
-      {/* HEADER */}
-      <h2>{engine?.event_name || "Evento"}</h2>
-      <h4>Tela de Validação de Apostas</h4>
+    <div style={{ padding: 20 }}>
+      <h2>🔐 Validação de Palpites</h2>
 
-      <div style={{ overflowX: "auto" }}>
-        <table
-          style={{
-            borderCollapse: "collapse",
-            width: "100%",
-            fontSize: 12,
-          }}
-        >
-          <thead>
-            <tr>
-              <th style={th}>USUÁRIO</th>
-              <th style={th}>PTS</th>
+      {error && <p style={{ color: "red", background: "#fee", padding: 10 }}>{error}</p>}
 
-              {rounds.map((r, i) => (
-                <th key={i} style={th}>
-                  {r.parts?.[0]?.team_code || "-"}
-                </th>
-              ))}
-            </tr>
-
-            <tr>
-              <th style={th}></th>
-              <th style={th}></th>
-
-              {rounds.map((_, i) => (
-                <th key={i} style={th}>
-                  vs
-                </th>
-              ))}
-            </tr>
-
-            <tr>
-              <th style={th}></th>
-              <th style={th}></th>
-
-              {rounds.map((r, i) => (
-                <th key={i} style={th}>
-                  {r.parts?.[1]?.team_code || "-"}
-                </th>
-              ))}
-            </tr>
-
-            <tr>
-              <th style={th}></th>
-              <th style={th}></th>
-
-              {rounds.map((r, i) => (
-                <th key={i} style={{ ...th, fontWeight: "bold" }}>
-                  {r.score || "-"}
-                </th>
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {dados.map((user) => (
-              <tr key={user.user_id}>
-                <td style={td}>
-                  <div>{user.user_name}</div>
-
-                  {/* 🔥 AUTO-SAVE AQUI */}
-                  <select
-                    value={statusMap[user.user_id]}
-                    onChange={async (e) => {
-                      const newStatus = e.target.value;
-
-                      setStatusMap((prev) => ({
-                        ...prev,
-                        [user.user_id]: newStatus,
-                      }));
-
-                      await updateStatus(user.user_id, newStatus);
-
-                      // 🔥 recarrega para atualizar ranking e rounds
-                      load();
-                    }}
-                  >
-                    <option>Em validação</option>
-                    <option>Validado</option>
-                    <option>Cancelado</option>
-                  </select>
-                </td>
-
-                <td style={tdCenter}>
-                  <b>{user.pontos}</b>
-                </td>
-
-                {rounds.map((r, i) => {
-                  const pick = user.palpites[i];
-
-                  return (
-                    <td key={i} style={tdCenter}>
-                      {pick || "-"}
-                    </td>
-                  );
-                })}
-              </tr>
+      <div style={{ display: "flex", gap: 20, marginBottom: 25, flexWrap: "wrap" }}>
+        <div>
+          <label><strong>Workspace:</strong></label><br />
+          <select
+            value={selectedWorkspace}
+            onChange={(e) => setSelectedWorkspace(e.target.value)}
+            style={{ padding: 10, width: 300 }}
+          >
+            <option value="">Selecione um Workspace</option>
+            {workspaces.map(w => (
+              <option key={w.id} value={w.id}>
+                {w.workspace_name}
+              </option>
             ))}
-          </tbody>
-        </table>
+          </select>
+        </div>
+
+        <div>
+          <label><strong>Evento (Status = OPEN):</strong></label><br />
+          <select
+            value={selectedEventId}
+            onChange={(e) => setSelectedEventId(e.target.value)}
+            disabled={!selectedWorkspace}
+            style={{ padding: 10, width: 380 }}
+          >
+            <option value="">Selecione um evento OPEN</option>
+            {events.map(e => (
+              <option key={e.id} value={e.id}>{e.event_name}</option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      {loading && <p>Carregando palpites...</p>}
+
+      {selectedEventId && dados.length > 0 && (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 13 }}>
+            <thead>
+              <tr>
+                <th style={th}>USUÁRIO</th>
+                <th style={th}>PTS</th>
+                {rounds.map((_, i) => (
+                  <th key={i} style={th}>Jogo {i+1}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {dados.map((user) => (
+                <tr key={user.user_id}>
+                  <td style={td}>
+                    <strong>{user.user_name}</strong><br />
+                    <select
+                      value={statusMap[user.user_id] || "Em validação"}
+                      onChange={(e) => updateStatus(user.user_id, e.target.value)}
+                      style={{ padding: 6, marginTop: 4, minWidth: 140 }}
+                    >
+                      <option value="Em validação">Em validação</option>
+                      <option value="Validado">Validado</option>
+                      <option value="Cancelado">Cancelado</option>
+                    </select>
+                  </td>
+                  <td style={tdCenter}><b>{user.pontos}</b></td>
+                  {user.palpites.map((pick, i) => (
+                    <td key={i} style={tdCenter}>{pick || "-"}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {selectedEventId && dados.length === 0 && <p>Nenhum palpite encontrado para este evento.</p>}
     </div>
   );
 }
+
+const th = { border: "1px solid #ddd", padding: 10, background: "#f3f4f6", textAlign: "center" };
+const td = { border: "1px solid #ddd", padding: 10 };
+const tdCenter = { border: "1px solid #ddd", padding: 10, textAlign: "center" };

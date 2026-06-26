@@ -4,17 +4,16 @@ import { supabase } from "./lib/supabase";
 
 export default function CadastrosRodadas() {
   const navigate = useNavigate();
-
   const [times, setTimes] = useState([]);
   const [mensagem, setMensagem] = useState("");
-
   const [jogos, setJogos] = useState(
-    Array.from({ length: 11 }, () => ({
+    Array.from({ length: 10 }, () => ({
       home: "",
       away: "",
       date: "",
       time: "",
-      local: ""
+      local: "",
+      score: "" // Placar
     }))
   );
 
@@ -23,11 +22,8 @@ export default function CadastrosRodadas() {
   }, []);
 
   async function loadTimes() {
-    const { data, error } = await supabase
-      .from("times")
-      .select("id,nome,codigo");
-
-    if (!error) setTimes(data || []);
+    const { data } = await supabase.from("times").select("id,nome,codigo");
+    setTimes(data || []);
   }
 
   function updateGame(index, field, value) {
@@ -39,72 +35,77 @@ export default function CadastrosRodadas() {
   function addGame() {
     setJogos([
       ...jogos,
-      { home: "", away: "", date: "", time: "", local: "" }
+      { home: "", away: "", date: "", time: "", local: "", score: "" }
     ]);
   }
 
   async function saveRound() {
     setMensagem("");
-
     try {
       const validos = jogos.filter(
         (j) => j.home && j.away && j.date && j.time
       );
 
       if (validos.length === 0) {
-        setMensagem("Preencha pelo menos um jogo");
+        setMensagem("❌ Preencha pelo menos um jogo completo");
         return;
       }
 
-      const { error } = await supabase.from("round_games").insert(
+      const { error } = await supabase.from("event_rounds").insert(
         validos.map((j) => ({
           home_team: j.home,
           away_team: j.away,
           game_date: `${j.date} ${j.time}`,
-          local: j.local
+          local: j.local || null,
+          result_round: j.score?.trim() || null,   // ← Placar salvo aqui
         }))
       );
 
       if (error) {
-        setMensagem("Erro ao salvar rodada");
+        console.error(error);
+        setMensagem("Erro ao salvar: " + error.message);
         return;
       }
 
-      setMensagem("Rodada salva com sucesso!");
+      setMensagem("✅ Rodada salva com sucesso!");
+      // Limpa o formulário após salvar
+      setJogos(Array.from({ length: 10 }, () => ({
+        home: "", away: "", date: "", time: "", local: "", score: ""
+      })));
     } catch (err) {
       setMensagem("Erro inesperado");
     }
   }
 
   return (
-    <div style={{ padding: 12, paddingBottom: 80 }}>
-      {/* HEADER PADRÃO */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 10
-        }}
-      >
-        <button onClick={() => navigate("/")} style={iconBtn}>
-          🏠
-        </button>
-
-        <h3 style={{ color: "#C1121F" }}>Cadastro de Rodadas</h3>
-
-        <button onClick={() => navigate(-1)} style={iconBtn}>
-          ←
-        </button>
+    <div style={{ padding: 15, paddingBottom: 100 }}>
+      {/* HEADER */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 15
+      }}>
+        <button onClick={() => navigate("/")} style={iconBtn}>🏠</button>
+        <h3 style={{ color: "#C1121F", margin: 0 }}>Cadastro de Rodadas</h3>
+        <button onClick={() => navigate(-1)} style={iconBtn}>←</button>
       </div>
 
       {/* MENSAGEM */}
       {mensagem && (
-        <div style={msgBox}>{mensagem}</div>
+        <div style={{
+          padding: 12,
+          marginBottom: 15,
+          background: mensagem.includes("sucesso") ? "#d4edda" : "#f8d7da",
+          color: mensagem.includes("sucesso") ? "#155724" : "#721c24",
+          borderRadius: 6
+        }}>
+          {mensagem}
+        </div>
       )}
 
-      {/* LINHAS DOS JOGOS */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      {/* LISTA DE JOGOS */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {jogos.map((jogo, i) => (
           <div key={i} style={row}>
             {/* CASA */}
@@ -113,7 +114,7 @@ export default function CadastrosRodadas() {
               onChange={(e) => updateGame(i, "home", e.target.value)}
               style={select}
             >
-              <option value="">Casa</option>
+              <option value="">Time Casa</option>
               {times.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.nome}
@@ -121,7 +122,7 @@ export default function CadastrosRodadas() {
               ))}
             </select>
 
-            <span style={{ fontWeight: "bold" }}>x</span>
+            <span style={{ fontWeight: "bold", fontSize: "18px" }}>x</span>
 
             {/* FORA */}
             <select
@@ -129,7 +130,7 @@ export default function CadastrosRodadas() {
               onChange={(e) => updateGame(i, "away", e.target.value)}
               style={select}
             >
-              <option value="">Fora</option>
+              <option value="">Time Fora</option>
               {times.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.nome}
@@ -160,85 +161,98 @@ export default function CadastrosRodadas() {
               onChange={(e) => updateGame(i, "local", e.target.value)}
               style={localInput}
             />
+
+            {/* 🔥 PLACAR - MAIS DESTAQUE */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <label style={{ fontSize: "12px", fontWeight: "bold", marginBottom: 2 }}>Placar</label>
+              <input
+                placeholder="3x1"
+                value={jogo.score}
+                onChange={(e) => updateGame(i, "score", e.target.value)}
+                style={scoreInput}
+              />
+            </div>
           </div>
         ))}
       </div>
 
-      {/* AÇÕES */}
-      <div style={{ marginTop: 12 }}>
+      {/* BOTÕES */}
+      <div style={{ marginTop: 20, display: "flex", gap: 10, flexDirection: "column" }}>
         <button onClick={addGame} style={btnSecondary}>
-          + Adicionar jogo
+          + Adicionar Jogo
         </button>
-
         <button onClick={saveRound} style={btnPrimary}>
-          💾 Salvar Rodada
+          💾 Salvar Rodada Completa
         </button>
       </div>
     </div>
   );
 }
 
-/* ===== ESTILO PADRÃO IGUAL CADASTROS ===== */
-
+/* ========================= STYLES ========================= */
 const row = {
   display: "flex",
   alignItems: "center",
-  gap: 6,
+  gap: 8,
   background: "#fff",
-  padding: 6,
-  borderRadius: 6
+  padding: 10,
+  borderRadius: 8,
+  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+  flexWrap: "wrap",
 };
 
 const select = {
   flex: 1,
-  padding: 4
+  minWidth: 140,
+  padding: 8,
+  borderRadius: 6,
+  border: "1px solid #ccc",
 };
 
-const dateInput = {
-  width: 110,
-  padding: 4
+const dateInput = { width: 120, padding: 8, borderRadius: 6, border: "1px solid #ccc" };
+const timeInput = { width: 90, padding: 8, borderRadius: 6, border: "1px solid #ccc" };
+const localInput = { 
+  flex: 1.5, 
+  minWidth: 120, 
+  padding: 8, 
+  borderRadius: 6, 
+  border: "1px solid #ccc" 
 };
 
-const timeInput = {
-  width: 80,
-  padding: 4
-};
-
-const localInput = {
-  flex: 2,
-  padding: 4
+const scoreInput = {
+  width: 90,
+  padding: 8,
+  fontWeight: "bold",
+  fontSize: "16px",
+  textAlign: "center",
+  border: "2px solid #C1121F",
+  borderRadius: 6,
+  backgroundColor: "#fff9f9"
 };
 
 const btnPrimary = {
   width: "100%",
-  marginTop: 8,
+  padding: 14,
   background: "#C1121F",
   color: "#fff",
   border: "none",
-  padding: 12,
-  borderRadius: 6,
-  fontWeight: "bold"
+  borderRadius: 8,
+  fontWeight: "bold",
+  fontSize: 16,
 };
 
 const btnSecondary = {
   width: "100%",
-  marginTop: 8,
-  background: "#eee",
+  padding: 12,
+  background: "#6c757d",
+  color: "#fff",
   border: "none",
-  padding: 10,
-  borderRadius: 6
+  borderRadius: 8,
 };
 
 const iconBtn = {
   background: "transparent",
   border: "none",
-  fontSize: 20,
-  cursor: "pointer"
-};
-
-const msgBox = {
-  marginBottom: 10,
-  padding: 8,
-  background: "#f5f5f5",
-  borderRadius: 6
+  fontSize: 24,
+  cursor: "pointer",
 };

@@ -65,7 +65,6 @@ export default function AppRoutes() {
         <Route path="resultados" element={<div>Resultados</div>} />
         <Route path="usuarios" element={<div>Usuários</div>} />
         <Route path="consultas" element={<div>Consultas</div>} />
-
         <Route path="palpites" element={<MapaPalpites />} />
 
         <Route path="cadastros" element={<CadastrosHome />} />
