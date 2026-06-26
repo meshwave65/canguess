@@ -1,9 +1,27 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+
 import os
+import sys
 import requests
 import uuid
+
+
+# =========================
+# ENGINE PATH
+# =========================
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENGINES_DIR = os.path.join(BASE_DIR, "engines")
+
+sys.path.append(ENGINES_DIR)
+
+
+# =========================
+# ENGINES
+# =========================
+
 import engine_canguess_2_0
 import engine_workspaces
 import create_events_assets
@@ -87,7 +105,7 @@ async def round_result(req: Request):
     if not code:
         raise HTTPException(status_code=400, detail="missing code")
 
-    engine_canguess2_0.run_engine(code)
+    engine_canguess_2_0.run_engine(code)
 
     return {"ok": True}
 
