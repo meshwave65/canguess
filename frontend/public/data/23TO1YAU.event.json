@@ -9,7 +9,7 @@
     {
       "round_uuid": "0cc10830-adad-45ce-b252-40ce09c32f51",
       "round_name": "Costa do Marfin vs Equador",
-      "round_order": null,
+      "round_order": 1,
       "round_index": 1,
       "local": null,
       "round_date": "2026-06-21",
@@ -46,12 +46,12 @@
     {
       "round_uuid": "6cc77ff0-ce9a-4a03-ba72-39086e50bdbd",
       "round_name": "Suécia vs Tunísia",
-      "round_order": null,
+      "round_order": 2,
       "round_index": 2,
       "local": null,
       "round_date": "2026-06-21",
       "time_round": null,
-      "score": "5x0",
+      "score": "5x1",
       "result": "1",
       "parts": [
         {
@@ -70,7 +70,7 @@
           "id": "b3d104cb-da15-4df0-b27b-be7f1f2cf0fb",
           "round_uuid": "6cc77ff0-ce9a-4a03-ba72-39086e50bdbd",
           "team_uuid": "4c90bf90-ec99-419e-9da1-d6ef30568ba6",
-          "value": "0",
+          "value": "1",
           "created_at": "2026-06-20T19:57:26.430022",
           "sequence_part": 2,
           "teams": {
@@ -81,10 +81,47 @@
       ]
     },
     {
+      "round_uuid": "1364fd23-fd19-4742-9546-ae5fba049b41",
+      "round_name": "Holanda vs Japão",
+      "round_order": 3,
+      "round_index": 3,
+      "local": null,
+      "round_date": "2026-06-21",
+      "time_round": null,
+      "score": "2x2",
+      "result": "X",
+      "parts": [
+        {
+          "id": "db530b12-5b2c-48cb-90d1-930ed28019e2",
+          "round_uuid": "1364fd23-fd19-4742-9546-ae5fba049b41",
+          "team_uuid": "ba1f442e-11b7-4050-80fa-a5de627d08e1",
+          "value": "2",
+          "created_at": "2026-06-20T19:56:38.79972",
+          "sequence_part": 1,
+          "teams": {
+            "teams_code": "NED",
+            "teams_name": "Holanda"
+          }
+        },
+        {
+          "id": "a1652ca9-5517-47a1-95d9-6d2b0a13bab4",
+          "round_uuid": "1364fd23-fd19-4742-9546-ae5fba049b41",
+          "team_uuid": "16138cf4-b107-4653-ad1d-3b55813686fa",
+          "value": "2",
+          "created_at": "2026-06-20T19:56:38.79972",
+          "sequence_part": 2,
+          "teams": {
+            "teams_code": "JPN",
+            "teams_name": "Japão"
+          }
+        }
+      ]
+    },
+    {
       "round_uuid": "13035579-e5ec-47a8-b57c-f827db9994f0",
       "round_name": "Alemanha vs Curaçau",
-      "round_order": null,
-      "round_index": 3,
+      "round_order": 4,
+      "round_index": 4,
       "local": null,
       "round_date": "2026-06-21",
       "time_round": null,
@@ -113,43 +150,6 @@
           "teams": {
             "teams_code": "CUÇ",
             "teams_name": "Curaçao"
-          }
-        }
-      ]
-    },
-    {
-      "round_uuid": "1364fd23-fd19-4742-9546-ae5fba049b41",
-      "round_name": "Holanda vs Japão",
-      "round_order": null,
-      "round_index": 4,
-      "local": null,
-      "round_date": "2026-06-21",
-      "time_round": null,
-      "score": "2x0",
-      "result": "1",
-      "parts": [
-        {
-          "id": "db530b12-5b2c-48cb-90d1-930ed28019e2",
-          "round_uuid": "1364fd23-fd19-4742-9546-ae5fba049b41",
-          "team_uuid": "ba1f442e-11b7-4050-80fa-a5de627d08e1",
-          "value": "2",
-          "created_at": "2026-06-20T19:56:38.79972",
-          "sequence_part": 1,
-          "teams": {
-            "teams_code": "NED",
-            "teams_name": "Holanda"
-          }
-        },
-        {
-          "id": "a1652ca9-5517-47a1-95d9-6d2b0a13bab4",
-          "round_uuid": "1364fd23-fd19-4742-9546-ae5fba049b41",
-          "team_uuid": "16138cf4-b107-4653-ad1d-3b55813686fa",
-          "value": "0",
-          "created_at": "2026-06-20T19:56:38.79972",
-          "sequence_part": 2,
-          "teams": {
-            "teams_code": "JPN",
-            "teams_name": "Japão"
           }
         }
       ]

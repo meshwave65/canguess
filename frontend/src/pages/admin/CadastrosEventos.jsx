@@ -77,7 +77,7 @@ export default function CadastrosEventos() {
       const { error: updateError } = await supabase
         .from("events")
         .update({
-          name: event.name,
+          event_name: event.name,
           event_type_uuid: event.event_type_uuid,
           data_inicio: event.data_inicio,
           data_fim: event.data_fim,
@@ -113,7 +113,7 @@ export default function CadastrosEventos() {
       .from("events")
       .insert([
         {
-          name,
+          event_name,
           description,
           data_inicio: dataInicio || null,
           data_fim: dataFim || null,
