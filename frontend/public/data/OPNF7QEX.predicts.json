@@ -1,6 +1,61 @@
 {
   "code": "OPNF7QEX",
   "event_uuid": "979ac7c6-5dfa-4e70-ab84-f0409d30d3c4",
-  "users": [],
-  "users_count": 0
+  "users": [
+    {
+      "user_uuid": "0308f1f7-16fa-4c0a-9374-b46da0af1f7b",
+      "user_name": "guest_1782708646383",
+      "predictions": [
+        "1",
+        "X",
+        "2",
+        "X",
+        "1",
+        "X",
+        "2",
+        "X",
+        "1",
+        "X",
+        "2"
+      ],
+      "points": 0
+    },
+    {
+      "user_uuid": "a529703c-a92f-4082-b09f-9db9524cbb27",
+      "user_name": "Cabo Duarte",
+      "predictions": [
+        "1",
+        "2",
+        "1",
+        "2",
+        "1",
+        "2",
+        "1",
+        "2",
+        "1",
+        "2",
+        "1"
+      ],
+      "points": 0
+    },
+    {
+      "user_uuid": "df07a948-771b-4539-a623-b2f389e399a9",
+      "user_name": "guest_1782709594511",
+      "predictions": [
+        "X",
+        "1",
+        "2",
+        "X",
+        "1",
+        "2",
+        "X",
+        "1",
+        "2",
+        "X",
+        "1"
+      ],
+      "points": 0
+    }
+  ],
+  "users_count": 3
 }
