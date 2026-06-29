@@ -10,6 +10,16 @@
     }
   },
   {
+    "workspace": "Zé Bangu",
+    "workspace_id": "cec020f0-ed86-4658-b2e3-415556495844",
+    "event": {
+      "id": "979ac7c6-5dfa-4e70-ab84-f0409d30d3c4",
+      "name": "BOLÃO DO ZÉ BANGU ESPECIAL COPA 011",
+      "status": "OPEN",
+      "code": "OPNF7QEX"
+    }
+  },
+  {
     "workspace": "Real Shape",
     "workspace_id": "d9fdccee-fe88-46d5-b368-4f993b725314",
     "event": {

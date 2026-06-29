@@ -47,10 +47,6 @@ export default function AppRoutes() {
       <Route path="/admin-login" element={<AdminLogin />} />
 
 
-      {/* ================= REGISTER ================= */}
-      <Route path="/register" element={<Register />} />
-
-
       {/* ================= ADMIN PROTECTED ================= */}
       <Route
         path="/admin/*"

@@ -1,0 +1,143 @@
+{
+  "code": "OPNF7QEX",
+  "event_uuid": "979ac7c6-5dfa-4e70-ab84-f0409d30d3c4",
+  "event_name": "BOLÃO DO ZÉ BANGU ESPECIAL COPA 011",
+  "workspace_name": "Zé Bangu",
+  "workspace_confirm_phone": "351914845439",
+  "workspace_uuid": "cec020f0-ed86-4658-b2e3-415556495844",
+  "phase_uuid": "1f3a49a3-d502-4d3b-874b-7af0c6b59c5a",
+  "rounds": [
+    {
+      "round_uuid": "4f51a47b-b23b-41aa-b7e4-a8893f543138",
+      "round_name": "Alemanha vs Paraguai",
+      "round_order": 1,
+      "round_index": 1,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "dcf3e9f0-f4d1-4072-8199-8167ade44f4e",
+      "round_name": "Holanda vs Marrocos",
+      "round_order": 2,
+      "round_index": 2,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "64ad343e-346e-4f64-bf81-c867a6f9a61c",
+      "round_name": "Costa do Marfim vs Noruega",
+      "round_order": 3,
+      "round_index": 3,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "0619675e-6b97-4688-ae5e-6910fe801006",
+      "round_name": "França vs Suécia",
+      "round_order": 4,
+      "round_index": 4,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "ceec3d4e-2b3d-4960-bf4a-ebb9ee2171fe",
+      "round_name": "M[exico vs Equador",
+      "round_order": 5,
+      "round_index": 5,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "2939298c-8c8f-48e6-9218-c27ac24142bc",
+      "round_name": "Inglaterra vs RD do Congo",
+      "round_order": 6,
+      "round_index": 6,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "0b8f8cc5-e76f-4020-9407-5531b935e346",
+      "round_name": "Bélgica vs Senegal",
+      "round_order": 7,
+      "round_index": 7,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "8624793e-10bf-4957-99ac-2880fd14f140",
+      "round_name": "EUA vs Bósnia",
+      "round_order": 8,
+      "round_index": 8,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "dac5ac66-9a4f-42e3-a7bb-8591ac48fc37",
+      "round_name": "Espanha vs Áustria",
+      "round_order": 9,
+      "round_index": 9,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "da72a002-6ebe-409e-b437-6bf57d81af00",
+      "round_name": "Portugal vs Croácia",
+      "round_order": 10,
+      "round_index": 10,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    },
+    {
+      "round_uuid": "3a8e8b2f-4558-4c63-bd9d-ff8e181ae01d",
+      "round_name": "Cuiabá vs América MG",
+      "round_order": 11,
+      "round_index": 11,
+      "local": null,
+      "round_date": null,
+      "time_round": null,
+      "score": null,
+      "result": null,
+      "parts": []
+    }
+  ]
+}

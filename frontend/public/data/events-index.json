@@ -16,11 +16,17 @@
     "event_uuid": "dc0631b5-c7aa-4294-92e6-6d2fcc78f082",
     "workspace": "cec020f0-ed86-4658-b2e3-415556495844",
     "phase_uuid": "4fc838a9-5785-443f-b074-21dde132a2f0"
-  }
+  },
   {
     "code": "TEST5678",
     "event_uuid": "86179acc-7954-47f6-b039-5a51a84d6996",
     "workspace": "da4d8555-3cf7-4844-ab63-bd650cc1cc49",
     "phase_uuid": "4a7bcd0f-4cbe-421f-a270-b186ae750c45"
+  },
+  {
+    "code": "OPNF7QEX",
+    "event_uuid": "979ac7c6-5dfa-4e70-ab84-f0409d30d3c4",
+    "workspace": "cec020f0-ed86-4658-b2e3-415556495844",
+    "phase_uuid": "1f3a49a3-d502-4d3b-874b-7af0c6b59c5a"
   }
 ]

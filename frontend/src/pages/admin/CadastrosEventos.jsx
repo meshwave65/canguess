@@ -4,11 +4,11 @@ import { supabase } from "./lib/supabase";
 
 export default function CadastrosEventos() {
   const navigate = useNavigate();
-
+  
   const [eventTypes, setEventTypes] = useState([]);
   const [events, setEvents] = useState([]);
   const [workspaces, setWorkspaces] = useState([]);
-
+  
   const [workspaceId, setWorkspaceId] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -77,7 +77,7 @@ export default function CadastrosEventos() {
       const { error: updateError } = await supabase
         .from("events")
         .update({
-          event_name: event.name,
+          event_name: event.event_name,           // ← Corrigido
           event_type_uuid: event.event_type_uuid,
           data_inicio: event.data_inicio,
           data_fim: event.data_fim,
@@ -98,7 +98,7 @@ export default function CadastrosEventos() {
       }
 
       show("Evento atualizado com sucesso");
-      load();
+      load(); // recarrega para atualizar tudo
     } catch (error) {
       console.error(error);
       show("Erro ao salvar alterações");
@@ -113,7 +113,7 @@ export default function CadastrosEventos() {
       .from("events")
       .insert([
         {
-          event_name,
+          event_name: name,                    // nome correto
           description,
           data_inicio: dataInicio || null,
           data_fim: dataFim || null,
@@ -304,7 +304,6 @@ export default function CadastrosEventos() {
           <input type="date" style={s.input} value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
           <span>Fim:</span>
           <input type="date" style={s.input} value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
-
           <button style={{ ...s.btn, background: "#007bff", color: "#fff" }} onClick={salvarEvento}>
             💾 Salvar Evento
           </button>
@@ -330,8 +329,8 @@ export default function CadastrosEventos() {
                 <td>
                   <input
                     style={{ ...s.input, width: "95%" }}
-                    value={e.event_name || e.name || ""}
-                    onChange={(ev) => handleInlineChange(e.id, "name", ev.target.value)}
+                    value={e.event_name || ""}
+                    onChange={(ev) => handleInlineChange(e.id, "event_name", ev.target.value)}
                   />
                 </td>
                 <td>
@@ -357,12 +356,24 @@ export default function CadastrosEventos() {
                   />
                 </td>
                 <td align="center">
-                  <input type="date" style={s.input} value={e.data_inicio || ""} onChange={(ev) => handleInlineChange(e.id, "data_inicio", ev.target.value)} />
-                  <input type="date" style={s.input} value={e.data_fim || ""} onChange={(ev) => handleInlineChange(e.id, "data_fim", ev.target.value)} />
+                  <input 
+                    type="date" 
+                    style={s.input} 
+                    value={e.data_inicio || ""} 
+                    onChange={(ev) => handleInlineChange(e.id, "data_inicio", ev.target.value)} 
+                  />
+                  <input 
+                    type="date" 
+                    style={s.input} 
+                    value={e.data_fim || ""} 
+                    onChange={(ev) => handleInlineChange(e.id, "data_fim", ev.target.value)} 
+                  />
                 </td>
                 <td align="center">
                   <button style={s.btnSave} onClick={() => salvarEdicaoInline(e)}>💾</button>
-                  <button style={s.btn} onClick={() => navigate(`/admin/cadastros/eventos/${e.id}/estrutura`)}>Estrutura</button>
+                  <button style={s.btn} onClick={() => navigate(`/admin/cadastros/eventos/${e.id}/estrutura`)}>
+                    Estrutura
+                  </button>
                   <button style={s.btn} onClick={() => excluirEvento(e.id)}>🗑️</button>
                 </td>
               </tr>

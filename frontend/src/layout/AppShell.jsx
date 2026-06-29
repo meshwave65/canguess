@@ -6,6 +6,15 @@ import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 
 
+export default function AppShell() {
+ return (
+ <>
+ <AppInitializer />
+ <AppLayout />
+ </>
+ );
+}
+
 function AppInitializer() {
 
   const { loadEventByCode } = useEvent();
@@ -62,20 +71,3 @@ function AppLayout() {
 
 }
 
-
-
-export default function AppShell() {
-
-  return (
-
-    <EventProvider>
-
-      <AppInitializer />
-
-      <AppLayout />
-
-    </EventProvider>
-
-  );
-
-}
