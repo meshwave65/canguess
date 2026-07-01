@@ -237,7 +237,7 @@ def fetch_predicts(event_uuid):
 
         f"{SUPABASE_URL}/rest/v1/predicts"
         f"?event_uuid=eq.{event_uuid}"
-        f"&select=user_uuid,round_index,prediction",
+        f"&select=user_uuid,round_index,prediction, status",
 
         headers=HEADERS
 
@@ -724,7 +724,8 @@ def run_engine(code):
     user_data = defaultdict(
         lambda:
         {
-            "predictions":[]
+            "predictions":[],
+            "status":"Em Validação"
         }
     )
 
@@ -737,6 +738,10 @@ def run_engine(code):
             "user_uuid"
         )
 
+        status = p.get(
+            "status",
+            "Em Validação"
+        )
 
         if uid:
 
@@ -753,7 +758,9 @@ def run_engine(code):
 
             })
 
-
+            user_data[uid][
+                  "status"
+            ] = status
 
 
 
@@ -863,7 +870,9 @@ def run_engine(code):
 
             "predictions":
                 predictions,
-
+            
+            "status":
+                data["status"],
 
             "points":
                 points

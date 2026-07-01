@@ -20,6 +20,7 @@ export default function Ranking() {
           `/data/${code}.event.json?ts=${Date.now()}`
         );
 
+
         if (!eventRes.ok)
           throw new Error("event.json não encontrado");
 
@@ -34,21 +35,22 @@ export default function Ranking() {
           `/data/${code}.predicts.json?ts=${Date.now()}`
         );
 
+
         if (!predRes.ok)
           throw new Error("predicts.json não encontrado");
 
 
         const predData = await predRes.json();
-        
+
         setPredicts(predData);
-        console.log("PREDICTS CARREGADO:", predData);
-        console.log("USERS:", predData.users);
 
 
       } catch(err){
 
         console.error(err);
+
         setError(err.message);
+
 
       } finally {
 
@@ -67,12 +69,15 @@ export default function Ranking() {
 
 
 
+
   if(loading)
     return <div style={box}>Carregando Ranking...</div>;
 
 
+
   if(error)
     return <div style={{...box,color:"red"}}>{error}</div>;
+
 
 
   if(!event || !predicts)
@@ -80,9 +85,6 @@ export default function Ranking() {
 
 
 
-  /*
-    Mantém ordem oficial da competição
-  */
 
   const rounds = [...(event.rounds || [])]
     .sort(
@@ -93,12 +95,255 @@ export default function Ranking() {
 
 
 
-  /*
-     NÃO ordenar aqui.
-     Engine já entrega a classificação correta.
-  */
-
   const ranking = predicts.users || [];
+
+
+
+  const jogadores = ranking.filter(
+    user =>
+      user.status === "Validado"
+  );
+
+
+
+  const cangueteiros = ranking.filter(
+    user =>
+      user.status !== "Validado"
+  );
+
+
+
+
+  function RankingTable({users,title}){
+
+
+    return (
+
+      <>
+
+
+      <h3 style={{
+        marginTop:35
+      }}>
+        {title}
+      </h3>
+
+
+
+      <div style={{
+        overflowX:"auto"
+      }}>
+
+
+      <table style={table}>
+
+
+      <thead>
+
+      <tr style={head}>
+
+
+      <th>
+        Pos
+      </th>
+
+
+      <th>
+        Participante
+      </th>
+
+
+      <th>
+        Pontos
+      </th>
+
+
+
+      {
+        rounds.map((r,i)=>{
+
+
+          const parts = r.parts || [];
+
+
+          const team1 =
+            parts[0]?.teams?.teams_code ||
+            "-";
+
+
+          const team2 =
+            parts[1]?.teams?.teams_code ||
+            "-";
+
+
+
+          return (
+
+            <th key={i}>
+
+              <div>
+                {team1}
+              </div>
+
+
+              <div style={{
+                fontSize:11
+              }}>
+                vs
+              </div>
+
+
+              <div>
+                {team2}
+              </div>
+
+
+              <div style={{
+                marginTop:4,
+                fontSize:11
+              }}>
+                {r.score || "-"}
+              </div>
+
+
+            </th>
+
+          )
+
+
+        })
+      }
+
+
+      </tr>
+
+      </thead>
+
+
+
+
+      <tbody>
+
+
+      {
+        users.map((user,idx)=>(
+
+
+          <tr key={user.user_uuid}>
+
+
+          <td style={cellCenter}>
+            {idx+1}
+          </td>
+
+
+
+          <td style={{
+            ...cell,
+            fontWeight:600
+          }}>
+            {user.user_name}
+          </td>
+
+
+
+
+          <td style={{
+            ...cellCenter,
+            fontSize:18,
+            fontWeight:"bold",
+            color:"#f97316"
+          }}>
+            {user.points}
+          </td>
+
+
+
+
+          {
+            rounds.map((r,i)=>{
+
+
+              const pick =
+                user.predictions?.[i];
+
+
+
+              const ok =
+                pick &&
+                pick === r.result;
+
+
+
+              return (
+
+                <td
+                  key={i}
+                  style={cellCenter}
+                >
+
+                <span style={{
+                  padding:"4px 10px",
+                  borderRadius:6,
+                  background:
+                    ok
+                    ? "#dcfce7"
+                    : "#f1f5f9",
+                  fontWeight:700
+                }}>
+
+
+                {pick || "-"}
+
+
+                {
+                  ok &&
+                  <span style={{
+                    marginLeft:5
+                  }}>
+                    ⚽
+                  </span>
+                }
+
+
+                </span>
+
+
+                </td>
+
+              )
+
+
+            })
+          }
+
+
+
+          </tr>
+
+
+        ))
+      }
+
+
+
+      </tbody>
+
+
+      </table>
+
+
+      </div>
+
+
+      </>
+
+    )
+
+  }
+
+
+
 
 
 
@@ -111,320 +356,140 @@ export default function Ranking() {
     }}>
 
 
-      {/* CABEÇALHO */}
+    <h1 style={{
+      textAlign:"center",
+      color:"#0B3C49",
+      marginBottom:5
+    }}>
+      {event.event_name || "Evento"}
+    </h1>
 
-      <h1 style={{
-        textAlign:"center",
-        color:"#0B3C49",
-        marginBottom:5
-      }}>
-        {event.event_name || "Evento"}
-      </h1>
 
 
-      <h3 style={{
-        textAlign:"center",
-        margin:0,
-        color:"#555"
-      }}>
-        Workspace {event.workspace_name || "-"}
-      </h3>
+    <h3 style={{
+      textAlign:"center",
+      margin:0,
+      color:"#555"
+    }}>
+      Workspace {event.workspace_name || "-"}
+    </h3>
 
 
-      <div style={{
-        textAlign:"center",
-        marginTop:8,
-        marginBottom:25,
-        color:"#777"
-      }}>
-        Event Code: {event.code}
-      </div>
 
+    <div style={{
+      textAlign:"center",
+      marginTop:8,
+      marginBottom:25,
+      color:"#777"
+    }}>
+      Event Code: {event.code}
+    </div>
 
 
 
-      {/* =======================
-            JOGOS
-      ======================== */}
 
-      <h3>Jogos da Rodada</h3>
 
+    <h3>
+      Jogos da Rodada
+    </h3>
 
-      <table style={table}>
 
-        <thead>
 
-          <tr style={head}>
+    <table style={table}>
 
-            <th>Jogo</th>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Local</th>
-            <th>Placar</th>
-            <th>Resultado</th>
+    <thead>
 
-          </tr>
+    <tr style={head}>
 
-        </thead>
+      <th>Jogo</th>
+      <th>Data</th>
+      <th>Hora</th>
+      <th>Local</th>
+      <th>Placar</th>
+      <th>Resultado</th>
 
+    </tr>
 
-        <tbody>
+    </thead>
 
-        {
-          rounds.map((r,i)=>(
 
-            <tr key={i}>
+    <tbody>
 
-              <td style={cell}>
-                {r.round_name}
-              </td>
 
-              <td style={cellCenter}>
-                {r.round_date || "-"}
-              </td>
+    {
+      rounds.map((r,i)=>(
 
-              <td style={cellCenter}>
-                {r.time_round || "-"}
-              </td>
+        <tr key={i}>
 
 
-              <td style={cell}>
-                {r.local || "-"}
-              </td>
+        <td style={cell}>
+          {r.round_name}
+        </td>
 
 
-              <td style={cellCenter}>
-                {r.score || "-"}
-              </td>
+        <td style={cellCenter}>
+          {r.round_date || "-"}
+        </td>
 
 
-              <td style={cellCenter}>
-                <b>{r.result || "-"}</b>
-              </td>
+        <td style={cellCenter}>
+          {r.time_round || "-"}
+        </td>
 
-            </tr>
 
-          ))
-        }
+        <td style={cell}>
+          {r.local || "-"}
+        </td>
 
-        </tbody>
 
-      </table>
+        <td style={cellCenter}>
+          {r.score || "-"}
+        </td>
 
 
+        <td style={cellCenter}>
+          <b>
+            {r.result || "-"}
+          </b>
+        </td>
 
 
+        </tr>
 
-      {/* =======================
-            RANKING
-      ======================== */}
+      ))
+    }
 
 
-      <h3 style={{marginTop:35}}>
-        Ranking
-      </h3>
+    </tbody>
 
 
+    </table>
 
-      <div style={{overflowX:"auto"}}>
 
-      <table style={table}>
 
 
-        <thead>
 
+    <RankingTable
+      users={jogadores}
+      title="🏆 Jogadores Validados"
+    />
 
-          <tr style={head}>
 
 
-            <th>
-              Pos
-            </th>
+    <RankingTable
+      users={cangueteiros}
+      title="🥸 Cangueteiros (Só torcendo)"
+    />
 
-
-            <th>
-              Participante
-            </th>
-
-
-            <th>
-              Pontos
-            </th>
-
-
-
-            {
-              rounds.map((r,i)=>{
-
-
-                const parts = r.parts || [];
-
-
-                const team1 =
-                  parts[0]?.teams?.teams_code ||
-                  parts[0]?.teams_code ||
-                  "-";
-
-
-                const team2 =
-                  parts[1]?.teams?.teams_code ||
-                  parts[1]?.teams_code ||
-                  "-";
-
-
-                return (
-
-                  <th key={i}>
-
-                    <div>
-                      {team1}
-                    </div>
-
-                    <div style={{
-                      fontSize:11
-                    }}>
-                      vs
-                    </div>
-
-                    <div>
-                      {team2}
-                    </div>
-
-                    <div style={{
-                      marginTop:4,
-                      fontSize:11
-                    }}>
-                      {r.score || "-"}
-                    </div>
-
-
-                  </th>
-
-                )
-
-              })
-            }
-
-
-          </tr>
-
-        </thead>
-
-
-
-        <tbody>
-
-
-        {
-
-        ranking.map((user,idx)=>(
-
-
-          <tr key={user.user_uuid}>
-
-
-            <td style={cellCenter}>
-              {user.position || idx+1}
-            </td>
-
-
-            <td style={{
-              ...cell,
-              fontWeight:600
-            }}>
-              {user.user_name}
-            </td>
-
-
-
-            <td style={{
-              ...cellCenter,
-              fontSize:18,
-              fontWeight:"bold",
-              color:"#f97316"
-            }}>
-              {user.points}
-            </td>
-
-
-
-
-            {
-              rounds.map((r,i)=>{
-
-
-                const pick =
-                  user.predictions?.[i];
-
-
-                const ok =
-                  pick &&
-                  pick === r.result;
-
-
-
-                return (
-
-                  <td key={i}
-                    style={cellCenter}
-                  >
-
-                    <span style={{
-                      padding:"4px 10px",
-                      borderRadius:6,
-                      background:
-                        ok
-                        ? "#dcfce7"
-                        : "#f1f5f9",
-                      fontWeight:700
-                    }}>
-
-                      {pick || "-"}
-
-                      {
-                        ok &&
-                        <span style={{
-                          marginLeft:5
-                        }}>
-                          ⚽
-                        </span>
-                      }
-
-                    </span>
-
-
-                  </td>
-
-                )
-
-
-              })
-            }
-
-
-
-          </tr>
-
-
-        ))
-
-        }
-
-
-        </tbody>
-
-
-      </table>
-
-
-      </div>
 
 
     </div>
 
   );
 
+
 }
+
 
 
 
@@ -436,11 +501,13 @@ const box={
 };
 
 
+
 const table={
   width:"100%",
   borderCollapse:"collapse",
   marginTop:10
 };
+
 
 
 const head={
@@ -449,10 +516,12 @@ const head={
 };
 
 
+
 const cell={
   padding:8,
   borderBottom:"1px solid #eee"
 };
+
 
 
 const cellCenter={

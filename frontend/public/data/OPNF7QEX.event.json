@@ -164,14 +164,14 @@
       "local": "Estadio da Cidade do México - México",
       "round_date": "2026-06-30",
       "time_round": "22:00:00",
-      "score": null,
-      "result": null,
+      "score": "2x0",
+      "result": "1",
       "parts": [
         {
           "id": "da9fd6d0-29f9-4288-bf7b-13ceb9f3681a",
           "round_uuid": "ceec3d4e-2b3d-4960-bf4a-ebb9ee2171fe",
           "team_uuid": "2fdfc589-2fda-4450-af49-b668d3fd7dbd",
-          "value": null,
+          "value": "2",
           "created_at": "2026-06-29T18:05:11.732572",
           "sequence_part": 1,
           "teams": {
@@ -183,7 +183,7 @@
           "id": "3d7d0911-c1fc-4a4c-beaa-40a4448d8018",
           "round_uuid": "ceec3d4e-2b3d-4960-bf4a-ebb9ee2171fe",
           "team_uuid": "766a38e4-cd4e-4975-9947-813a491636e7",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-29T18:05:11.732572",
           "sequence_part": 2,
           "teams": {
@@ -201,14 +201,14 @@
       "local": "Estadio de Atlanta - EUA",
       "round_date": "2026-07-01",
       "time_round": "13:00:00",
-      "score": null,
-      "result": null,
+      "score": "2x1",
+      "result": "1",
       "parts": [
         {
           "id": "2f16a3b5-9572-4196-93e0-64195d2f8f0f",
           "round_uuid": "2939298c-8c8f-48e6-9218-c27ac24142bc",
           "team_uuid": "ae978a90-fe9c-4c13-bf61-819380a4bb0f",
-          "value": null,
+          "value": "2",
           "created_at": "2026-06-29T18:00:42.672881",
           "sequence_part": 1,
           "teams": {
@@ -220,7 +220,7 @@
           "id": "6f72efc9-6edb-4111-94c5-31d141895979",
           "round_uuid": "2939298c-8c8f-48e6-9218-c27ac24142bc",
           "team_uuid": "cb376a21-c541-44b1-876c-106c9b40e666",
-          "value": null,
+          "value": "1",
           "created_at": "2026-06-29T18:00:42.672881",
           "sequence_part": 2,
           "teams": {
