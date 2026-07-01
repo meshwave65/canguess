@@ -80,7 +80,7 @@ def fetch_event_details(event_uuid):
 
             f"{SUPABASE_URL}/rest/v1/events"
             f"?id=eq.{event_uuid}"
-            f"&select=event_name",
+            f"&select=event_name,is_open",
 
             headers=HEADERS
         )
@@ -93,7 +93,10 @@ def fetch_event_details(event_uuid):
 
             return {
                 "event_name":
-                    data[0].get("event_name")
+                    data[0].get("event_name"),
+
+                "is_open":
+                    data[0].get("is_open", False)
             }
 
 
@@ -145,6 +148,46 @@ def fetch_workspace_name(workspace_uuid):
 
     return "-"
 
+# =======================================================
+# CONFIRM_PHONE DO WORKSPACE
+# =======================================================
+
+def fetch_workspace_phone(workspace_uuid):
+
+    if not workspace_uuid:
+        return "-"
+
+
+    try:
+
+        r = requests.get(
+
+            f"{SUPABASE_URL}/rest/v1/workspaces"
+            f"?id=eq.{workspace_uuid}"
+            f"&select=confirm_phone",
+
+            headers=HEADERS
+
+        )
+
+
+        data = r.json()
+
+
+        if data:
+
+            return data[0].get(
+                "confirm_phone",
+                "-"
+            )
+
+
+    except Exception:
+
+        pass
+
+
+    return "-"
 
 
 
@@ -512,12 +555,19 @@ def run_engine(code):
     event_details = fetch_event_details(
         event_uuid
     )
-
+    
+    is_open = event_details.get(
+        "is_open",
+        False
+    )
 
     workspace_name = fetch_workspace_name(
         workspace_uuid
     )
 
+    confirm_phone = fetch_workspace_phone(
+        workspace_uuid
+    )
 
 
     # =========================
@@ -760,13 +810,22 @@ def run_engine(code):
                 idx < len(predictions)
             ):
 
-                predictions[idx] = (
-                    p["prediction"]
-                )
+                if is_open:
+
+                    predictions[idx] = (
+                        p["prediction"]
+                    )
+
+                else:
+
+                    predictions[idx] = "-"
 
 
 
-        points = 0
+            points = 0
+
+            if not is_open:
+                points = 0
 
 
 
@@ -841,6 +900,9 @@ def run_engine(code):
         "event_uuid":
             event_uuid,
 
+        "is_open":
+            is_open,
+
 
         "event_name":
             (
@@ -854,6 +916,9 @@ def run_engine(code):
 
         "workspace_name":
             workspace_name,
+
+        "confirm_phone":
+            confirm_phone,
 
 
         "workspace_uuid":

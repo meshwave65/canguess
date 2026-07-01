@@ -18,25 +18,7 @@
         "X",
         "2"
       ],
-      "points": 0
-    },
-    {
-      "user_uuid": "a529703c-a92f-4082-b09f-9db9524cbb27",
-      "user_name": "Cabo Duarte",
-      "predictions": [
-        "1",
-        "2",
-        "1",
-        "2",
-        "1",
-        "2",
-        "1",
-        "2",
-        "1",
-        "2",
-        "1"
-      ],
-      "points": 0
+      "points": 2
     },
     {
       "user_uuid": "df07a948-771b-4539-a623-b2f389e399a9",
@@ -54,8 +36,44 @@
         "X",
         "1"
       ],
+      "points": 2
+    },
+    {
+      "user_uuid": "093df2f8-1d8f-457f-a073-d1bbfc337752",
+      "user_name": "guest_1782710381412",
+      "predictions": [
+        "X",
+        "2",
+        "X",
+        "X",
+        "X",
+        "X",
+        "X",
+        "2",
+        "X",
+        "-",
+        "-"
+      ],
+      "points": 1
+    },
+    {
+      "user_uuid": "a529703c-a92f-4082-b09f-9db9524cbb27",
+      "user_name": "Juca Bala 65",
+      "predictions": [
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+        "-"
+      ],
       "points": 0
     }
   ],
-  "users_count": 3
+  "users_count": 4
 }

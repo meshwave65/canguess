@@ -331,6 +331,13 @@ export default function EventDashboard() {
 
               <button onClick={() => saveRound(round)} style={s.btn}>💾</button>
               <button onClick={() => deleteRound(round)} style={s.btn}>🗑</button>
+              <button style={s.btn} onClick={() =>
+                    navigate(
+                      `/admin/cadastros/parts?round=${round.id}`
+                )  }
+                >
+                ⚽ Parts
+               </button>
             </div>
           ))}
         </div>
