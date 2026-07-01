@@ -25,7 +25,7 @@ sys.path.append(ENGINES_DIR)
 
 import engine_canguess_2_0
 import engine_workspaces
-import create_events_assets
+import engine_assets
 
 
 # =========================
