@@ -32,7 +32,7 @@ SYSTEM_BANNER_DEFAULT = os.path.join(
 # =========================================================
 
 def generate_qr(event_code: str):
-    url = f"https://canguess.com.br/?code={event_code}"
+    url = f"https://canguess.com.br/events?code={event_code}"
 
     qr = qrcode.QRCode(
         version=1,

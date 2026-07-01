@@ -6,6 +6,7 @@ import os
 import sys
 import requests
 import uuid
+import threading
 
 
 # =========================
@@ -26,11 +27,12 @@ import engine_canguess_2_0
 import engine_workspaces
 import create_events_assets
 
-# =========================================================
-# ENV
-# =========================================================
 
-load_dotenv()  # ou ajusta depois se quiser local
+# =========================
+# ENV
+# =========================
+
+load_dotenv()
 
 VITE_BOLAO_SUPABASE_URL = os.getenv("VITE_BOLAO_SUPABASE_URL")
 VITE_BOLAO_SUPABASE_KEY = os.getenv("VITE_BOLAO_SUPABASE_ANON_KEY")
@@ -41,9 +43,10 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-# =========================================================
+
+# =========================
 # APP
-# =========================================================
+# =========================
 
 app = FastAPI()
 
@@ -55,17 +58,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# =========================================================
-# HEALTH
-# =========================================================
+
+# =========================
+# HEALTH (IMPORTANTE)
+# =========================
 
 @app.get("/")
 def root():
     return {"status": "bolao-backend-ok"}
 
-# =========================================================
+
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "service": "canguess-engine",
+        "engine": "2.0"
+    }
+
+
+# =========================
 # COUNTRIES
-# =========================================================
+# =========================
 
 @app.get("/countries")
 def get_countries():
@@ -73,7 +87,6 @@ def get_countries():
         f"{VITE_BOLAO_SUPABASE_URL}/rest/v1/countries?select=*",
         headers=HEADERS
     )
-
     return r.json()
 
 
@@ -96,6 +109,18 @@ async def create_country(payload: dict):
 
     return {"ok": True, "data": data}
 
+
+# =========================
+# WEBHOOKS
+# =========================
+
+def run_engine_async(code):
+    try:
+        engine_canguess_2_0.run_engine(code)
+    except Exception as e:
+        print("ENGINE ERROR:", e)
+
+
 @app.post("/webhook/round-result")
 async def round_result(req: Request):
     data = await req.json()
@@ -105,15 +130,24 @@ async def round_result(req: Request):
     if not code:
         raise HTTPException(status_code=400, detail="missing code")
 
-    engine_canguess_2_0.run_engine(code)
+    # NÃO bloqueia request HTTP
+    threading.Thread(
+        target=run_engine_async,
+        args=(code,)
+    ).start()
 
-    return {"ok": True}
+    return {"ok": True, "queued": True}
+
 
 @app.post("/webhook/workspace")
 async def workspace(req: Request):
-    engine_workspaces.run_engine()
+    try:
+        engine_workspaces.run_engine()
+    except Exception as e:
+        print("WORKSPACE ERROR:", e)
 
     return {"ok": True}
+
 
 @app.post("/webhook/event-created")
 async def event_created(req: Request):
@@ -124,6 +158,9 @@ async def event_created(req: Request):
     if not code:
         raise HTTPException(status_code=400, detail="missing code")
 
-    create_event_assets.run(code)
+    try:
+        create_event_assets.run(code)
+    except Exception as e:
+        print("EVENT CREATE ERROR:", e)
 
     return {"ok": True}
