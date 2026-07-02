@@ -19,7 +19,7 @@
         "1"
       ],
       "status": "Validado",
-      "points": 4
+      "points": 6
     },
     {
       "user_uuid": "e1359ad0-c444-4fcb-a071-26f7f58249d9",
@@ -38,7 +38,7 @@
         "1"
       ],
       "status": "Validado",
-      "points": 4
+      "points": 6
     },
     {
       "user_uuid": "4efc0838-fad2-4abe-9e0d-d8493f37b1aa",
@@ -57,7 +57,7 @@
         "1"
       ],
       "status": "Validado",
-      "points": 4
+      "points": 6
     },
     {
       "user_uuid": "9d424d8a-2888-4eac-83ab-19407ab0a198",
@@ -73,6 +73,139 @@
         "1",
         "1",
         "1",
+        "1"
+      ],
+      "status": "Validado",
+      "points": 6
+    },
+    {
+      "user_uuid": "847fbf74-ad59-4e27-ae9c-9f1367b19502",
+      "user_name": "Rodrigao",
+      "predictions": [
+        "1",
+        "1",
+        "2",
+        "1",
+        "X",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "status": "Validado",
+      "points": 5
+    },
+    {
+      "user_uuid": "092fbbd4-072d-4475-854c-874c5d4a8ad8",
+      "user_name": "Paulo",
+      "predictions": [
+        "1",
+        "X",
+        "X",
+        "1",
+        "1",
+        "1",
+        "X",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "status": "Validado",
+      "points": 5
+    },
+    {
+      "user_uuid": "fb5037f6-36dc-4988-8382-a6f9f2db57ed",
+      "user_name": "Teco",
+      "predictions": [
+        "1",
+        "X",
+        "X",
+        "1",
+        "X",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "X"
+      ],
+      "status": "Validado",
+      "points": 5
+    },
+    {
+      "user_uuid": "df07a948-771b-4539-a623-b2f389e399a9",
+      "user_name": "guest_1782709594511",
+      "predictions": [
+        "X",
+        "1",
+        "2",
+        "X",
+        "1",
+        "2",
+        "X",
+        "1",
+        "2",
+        "X",
+        "1"
+      ],
+      "status": "Em validação",
+      "points": 4
+    },
+    {
+      "user_uuid": "162a424b-2660-41df-9e3c-1c91e314295d",
+      "user_name": "Felipe",
+      "predictions": [
+        "1",
+        "X",
+        "X",
+        "1",
+        "X",
+        "1",
+        "X",
+        "1",
+        "1",
+        "X",
+        "1"
+      ],
+      "status": "Validado",
+      "points": 4
+    },
+    {
+      "user_uuid": "1096ab5b-3b53-4c1a-9274-10096c7e1e0d",
+      "user_name": "Sherri",
+      "predictions": [
+        "1",
+        "X",
+        "X",
+        "1",
+        "X",
+        "1",
+        "X",
+        "1",
+        "1",
+        "X",
+        "1"
+      ],
+      "status": "Validado",
+      "points": 4
+    },
+    {
+      "user_uuid": "eae43640-c70d-40ee-892b-3b048697710f",
+      "user_name": "Zé Bangu",
+      "predictions": [
+        "1",
+        "X",
+        "X",
+        "1",
+        "X",
+        "1",
+        "X",
+        "1",
+        "1",
+        "X",
         "1"
       ],
       "status": "Validado",
@@ -117,101 +250,6 @@
       "points": 3
     },
     {
-      "user_uuid": "847fbf74-ad59-4e27-ae9c-9f1367b19502",
-      "user_name": "Rodrigao",
-      "predictions": [
-        "1",
-        "1",
-        "2",
-        "1",
-        "X",
-        "1",
-        "1",
-        "1",
-        "1",
-        "1",
-        "1"
-      ],
-      "status": "Validado",
-      "points": 3
-    },
-    {
-      "user_uuid": "df07a948-771b-4539-a623-b2f389e399a9",
-      "user_name": "guest_1782709594511",
-      "predictions": [
-        "X",
-        "1",
-        "2",
-        "X",
-        "1",
-        "2",
-        "X",
-        "1",
-        "2",
-        "X",
-        "1"
-      ],
-      "status": "Em validação",
-      "points": 3
-    },
-    {
-      "user_uuid": "fb5037f6-36dc-4988-8382-a6f9f2db57ed",
-      "user_name": "Teco",
-      "predictions": [
-        "1",
-        "X",
-        "X",
-        "1",
-        "X",
-        "1",
-        "1",
-        "1",
-        "1",
-        "1",
-        "X"
-      ],
-      "status": "Validado",
-      "points": 3
-    },
-    {
-      "user_uuid": "162a424b-2660-41df-9e3c-1c91e314295d",
-      "user_name": "Felipe",
-      "predictions": [
-        "1",
-        "X",
-        "X",
-        "1",
-        "X",
-        "1",
-        "X",
-        "1",
-        "1",
-        "X",
-        "1"
-      ],
-      "status": "Validado",
-      "points": 3
-    },
-    {
-      "user_uuid": "1096ab5b-3b53-4c1a-9274-10096c7e1e0d",
-      "user_name": "Sherri",
-      "predictions": [
-        "1",
-        "X",
-        "X",
-        "1",
-        "X",
-        "1",
-        "X",
-        "1",
-        "1",
-        "X",
-        "1"
-      ],
-      "status": "Validado",
-      "points": 3
-    },
-    {
       "user_uuid": "07b572f7-0d46-4090-bf9b-dd840823de9a",
       "user_name": "Sidicley2",
       "predictions": [
@@ -229,44 +267,6 @@
       ],
       "status": "Validado",
       "points": 3
-    },
-    {
-      "user_uuid": "eae43640-c70d-40ee-892b-3b048697710f",
-      "user_name": "Zé Bangu",
-      "predictions": [
-        "1",
-        "X",
-        "X",
-        "1",
-        "X",
-        "1",
-        "X",
-        "1",
-        "1",
-        "X",
-        "1"
-      ],
-      "status": "Validado",
-      "points": 3
-    },
-    {
-      "user_uuid": "092fbbd4-072d-4475-854c-874c5d4a8ad8",
-      "user_name": "Paulo",
-      "predictions": [
-        "1",
-        "1",
-        "X",
-        "1",
-        "1",
-        "X",
-        "X",
-        "1",
-        "1",
-        "X",
-        "X"
-      ],
-      "status": "Validado",
-      "points": 2
     },
     {
       "user_uuid": "093df2f8-1d8f-457f-a073-d1bbfc337752",

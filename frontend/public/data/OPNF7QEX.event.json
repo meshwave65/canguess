@@ -238,14 +238,14 @@
       "local": "Estadio de Seattle - EUA",
       "round_date": "2026-07-01",
       "time_round": "17:00:00",
-      "score": null,
-      "result": null,
+      "score": "3x2",
+      "result": "1",
       "parts": [
         {
           "id": "ee4de8e6-543f-46dd-ad08-72ebdb519408",
           "round_uuid": "0b8f8cc5-e76f-4020-9407-5531b935e346",
           "team_uuid": "66ad62e8-6487-4ca9-bc23-992ddaf85f94",
-          "value": null,
+          "value": "3",
           "created_at": "2026-06-29T18:01:16.764772",
           "sequence_part": 1,
           "teams": {
@@ -257,7 +257,7 @@
           "id": "ba8f7341-994a-42bd-a1df-2f241794cf8b",
           "round_uuid": "0b8f8cc5-e76f-4020-9407-5531b935e346",
           "team_uuid": "49646b31-098e-4a22-aa06-9010160fddbd",
-          "value": null,
+          "value": "2",
           "created_at": "2026-06-29T18:01:16.764772",
           "sequence_part": 2,
           "teams": {
@@ -275,14 +275,14 @@
       "local": "Estadio de San Francisco - EUA",
       "round_date": "2026-07-01",
       "time_round": "21:00:00",
-      "score": null,
-      "result": null,
+      "score": "2x0",
+      "result": "1",
       "parts": [
         {
           "id": "2ec6e901-fea4-4910-ae4d-90bc7a1cf283",
           "round_uuid": "8624793e-10bf-4957-99ac-2880fd14f140",
           "team_uuid": "56a4f023-a473-4fca-b73c-b362e15c92c8",
-          "value": null,
+          "value": "2",
           "created_at": "2026-06-29T18:01:52.895847",
           "sequence_part": 1,
           "teams": {
@@ -294,7 +294,7 @@
           "id": "e937e7b0-5420-4702-8c51-45837179f502",
           "round_uuid": "8624793e-10bf-4957-99ac-2880fd14f140",
           "team_uuid": "777664e9-94e9-4d60-935e-3d36e4d37118",
-          "value": null,
+          "value": "0",
           "created_at": "2026-06-29T18:01:52.895847",
           "sequence_part": 2,
           "teams": {
