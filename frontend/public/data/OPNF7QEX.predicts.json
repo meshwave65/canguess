@@ -65,9 +65,28 @@
       "predictions": [
         "1",
         "X",
+        "2",
+        "1",
+        "2",
+        "1",
+        "1",
+        "1",
+        "1",
         "X",
+        "1"
+      ],
+      "status": "Validado",
+      "points": 6
+    },
+    {
+      "user_uuid": "07b572f7-0d46-4090-bf9b-dd840823de9a",
+      "user_name": "Sidicley2",
+      "predictions": [
         "1",
+        "X",
+        "2",
         "1",
+        "X",
         "1",
         "1",
         "1",
@@ -117,8 +136,8 @@
       "points": 5
     },
     {
-      "user_uuid": "fb5037f6-36dc-4988-8382-a6f9f2db57ed",
-      "user_name": "Teco",
+      "user_uuid": "162a424b-2660-41df-9e3c-1c91e314295d",
+      "user_name": "Felipe",
       "predictions": [
         "1",
         "X",
@@ -152,25 +171,6 @@
         "1"
       ],
       "status": "Em validação",
-      "points": 4
-    },
-    {
-      "user_uuid": "162a424b-2660-41df-9e3c-1c91e314295d",
-      "user_name": "Felipe",
-      "predictions": [
-        "1",
-        "X",
-        "X",
-        "1",
-        "X",
-        "1",
-        "X",
-        "1",
-        "1",
-        "X",
-        "1"
-      ],
-      "status": "Validado",
       "points": 4
     },
     {
@@ -250,20 +250,20 @@
       "points": 3
     },
     {
-      "user_uuid": "07b572f7-0d46-4090-bf9b-dd840823de9a",
-      "user_name": "Sidicley2",
+      "user_uuid": "fb5037f6-36dc-4988-8382-a6f9f2db57ed",
+      "user_name": "Teco",
       "predictions": [
-        "X",
+        "1",
         "1",
         "X",
         "1",
-        "2",
+        "1",
         "1",
         "X",
         "X",
+        "1",
         "X",
-        "X",
-        "2"
+        "X"
       ],
       "status": "Validado",
       "points": 3
